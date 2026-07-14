@@ -1,0 +1,27 @@
+kind = "web"
+previewPath = "/"
+title = "SkyGuard OS"
+version = "1.0.0"
+id = "artifacts/skyguard-os"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25095
+
+[services.development]
+run = "pnpm --filter @workspace/skyguard-os run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/skyguard-os", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/skyguard-os/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25095"
+BASE_PATH = "/"

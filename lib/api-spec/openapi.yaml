@@ -3,13 +3,19 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: SkyGuard OS drone-detection API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: home
+    description: Protected property / geofence configuration
+  - name: detections
+    description: Drone detection ingest and live tracking
+  - name: status
+    description: Ingest/system status
 paths:
   /healthz:
     get:
@@ -24,6 +30,108 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /home:
+    get:
+      operationId: getHomeConfig
+      tags: [home]
+      summary: Get protected property configuration
+      responses:
+        "200":
+          description: Home configuration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HomeConfig"
+    put:
+      operationId: updateHomeConfig
+      tags: [home]
+      summary: Update protected property configuration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/HomeConfigInput"
+      responses:
+        "200":
+          description: Updated home configuration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HomeConfig"
+
+  /detections:
+    post:
+      operationId: ingestDetection
+      tags: [detections]
+      summary: Ingest a drone detection point from the field hardware
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DetectionInput"
+      responses:
+        "201":
+          description: Detection recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Detection"
+
+  /detections/active:
+    get:
+      operationId: listActiveDroneTracks
+      tags: [detections]
+      summary: List currently active drone tracks with recent flight path
+      responses:
+        "200":
+          description: Active drone tracks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DroneTrack"
+
+  /detections/history:
+    get:
+      operationId: listFlightHistory
+      tags: [detections]
+      summary: List recent completed/ongoing flight sessions
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        "200":
+          description: Flight session summaries, most recent first
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FlightSummary"
+
+  /status:
+    get:
+      operationId: getIngestStatus
+      tags: [status]
+      summary: Get live ingest/system status
+      responses:
+        "200":
+          description: Ingest status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IngestStatus"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +142,251 @@ components:
       required:
         - status
 
+    HomeConfig:
+      type: object
+      description: The protected property location and geofence radius
+      required:
+        - propertyName
+        - lat
+        - lng
+        - geofenceRadiusMeters
+        - updatedAt
+      properties:
+        propertyName:
+          type: string
+        lat:
+          type: number
+        lng:
+          type: number
+        geofenceRadiusMeters:
+          type: number
+        updatedAt:
+          type: string
+          format: date-time
+
+    HomeConfigInput:
+      type: object
+      required:
+        - propertyName
+        - lat
+        - lng
+        - geofenceRadiusMeters
+      properties:
+        propertyName:
+          type: string
+          minLength: 1
+        lat:
+          type: number
+          minimum: -90
+          maximum: 90
+        lng:
+          type: number
+          minimum: -180
+          maximum: 180
+        geofenceRadiusMeters:
+          type: number
+          minimum: 1
+
+    DetectionInput:
+      type: object
+      description: A single telemetry sample reported by the roof bridge (HackRF/Raspberry Pi)
+      required:
+        - droneId
+        - lat
+        - lng
+      properties:
+        droneId:
+          type: string
+          description: Stable identifier for the drone session (e.g. DroneID serial or MAC-derived id)
+        model:
+          type: ["string", "null"]
+        signalType:
+          type: ["string", "null"]
+          description: "e.g. OcuSync, DroneID, FPV"
+        lat:
+          type: number
+          minimum: -90
+          maximum: 90
+        lng:
+          type: number
+          minimum: -180
+          maximum: 180
+        altitudeM:
+          type: ["number", "null"]
+        speedKmh:
+          type: ["number", "null"]
+        headingDeg:
+          type: ["number", "null"]
+        rssiDbm:
+          type: ["number", "null"]
+        pilotLat:
+          type: ["number", "null"]
+        pilotLng:
+          type: ["number", "null"]
+        timestamp:
+          type: ["string", "null"]
+          format: date-time
+          description: Defaults to server receipt time if omitted
+
+    Detection:
+      type: object
+      required:
+        - id
+        - droneId
+        - lat
+        - lng
+        - distanceFromHomeM
+        - timestamp
+        - createdAt
+      properties:
+        id:
+          type: integer
+        droneId:
+          type: string
+        model:
+          type: ["string", "null"]
+        signalType:
+          type: ["string", "null"]
+        lat:
+          type: number
+        lng:
+          type: number
+        altitudeM:
+          type: ["number", "null"]
+        speedKmh:
+          type: ["number", "null"]
+        headingDeg:
+          type: ["number", "null"]
+        rssiDbm:
+          type: ["number", "null"]
+        pilotLat:
+          type: ["number", "null"]
+        pilotLng:
+          type: ["number", "null"]
+        distanceFromHomeM:
+          type: number
+        timestamp:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+
+    DroneTrackPoint:
+      type: object
+      required:
+        - lat
+        - lng
+        - timestamp
+      properties:
+        lat:
+          type: number
+        lng:
+          type: number
+        altitudeM:
+          type: ["number", "null"]
+        timestamp:
+          type: string
+          format: date-time
+
+    DroneTrack:
+      type: object
+      description: An actively tracked drone with its recent flight path
+      required:
+        - droneId
+        - firstSeenAt
+        - lastSeenAt
+        - lat
+        - lng
+        - distanceFromHomeM
+        - alarmActive
+        - path
+      properties:
+        droneId:
+          type: string
+        model:
+          type: ["string", "null"]
+        signalType:
+          type: ["string", "null"]
+        firstSeenAt:
+          type: string
+          format: date-time
+        lastSeenAt:
+          type: string
+          format: date-time
+        lat:
+          type: number
+        lng:
+          type: number
+        altitudeM:
+          type: ["number", "null"]
+        speedKmh:
+          type: ["number", "null"]
+        headingDeg:
+          type: ["number", "null"]
+        rssiDbm:
+          type: ["number", "null"]
+        pilotLat:
+          type: ["number", "null"]
+        pilotLng:
+          type: ["number", "null"]
+        distanceFromHomeM:
+          type: number
+        alarmActive:
+          type: boolean
+        path:
+          type: array
+          items:
+            $ref: "#/components/schemas/DroneTrackPoint"
+
+    FlightSummary:
+      type: object
+      required:
+        - droneId
+        - firstSeenAt
+        - lastSeenAt
+        - minDistanceM
+        - pointCount
+        - stillActive
+      properties:
+        droneId:
+          type: string
+        model:
+          type: ["string", "null"]
+        signalType:
+          type: ["string", "null"]
+        firstSeenAt:
+          type: string
+          format: date-time
+        lastSeenAt:
+          type: string
+          format: date-time
+        minDistanceM:
+          type: number
+        maxAltitudeM:
+          type: ["number", "null"]
+        maxSpeedKmh:
+          type: ["number", "null"]
+        pointCount:
+          type: integer
+        stillActive:
+          type: boolean
+
+    IngestStatus:
+      type: object
+      required:
+        - connected
+        - lastIngestAt
+        - activeDroneCount
+        - detectionsToday
+      properties:
+        connected:
+          type: boolean
+          description: True if a detection was received within the last 15 seconds
+        lastIngestAt:
+          type: ["string", "null"]
+          format: date-time
+        activeDroneCount:
+          type: integer
+        detectionsToday:
+          type: integer
