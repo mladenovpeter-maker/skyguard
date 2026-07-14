@@ -1,32 +1,36 @@
 import { useListFlightHistory } from "@workspace/api-client-react";
 import { format } from "date-fns";
+import { bg, enUS } from "date-fns/locale";
 import { Activity, MapPin, Radio, AlertTriangle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/i18n";
 
 export default function History() {
   const { data: history = [], isLoading } = useListFlightHistory({ limit: 50 });
+  const { t, language } = useLanguage();
+  const dateLocale = language === "bg" ? bg : enUS;
 
   return (
     <div className="flex-1 flex flex-col p-6 max-w-5xl mx-auto w-full">
       <div className="mb-8">
         <h1 className="text-2xl font-mono font-bold text-primary uppercase tracking-wider flex items-center gap-3">
           <Activity className="w-6 h-6" />
-          Detection Log
+          {t("history.title")}
         </h1>
         <p className="text-muted-foreground font-mono text-sm mt-2 uppercase">
-          Historical record of identified incursions and flight sessions
+          {t("history.subtitle")}
         </p>
       </div>
 
       <div className="flex-1 bg-card border border-border rounded-lg shadow-sm overflow-hidden flex flex-col">
         <div className="grid grid-cols-6 gap-4 p-4 border-b border-border bg-muted/50 font-mono text-xs font-bold text-muted-foreground uppercase tracking-wider">
-          <div className="col-span-2">Target ID / Details</div>
-          <div>First Detected</div>
-          <div>Duration</div>
-          <div>Min Range</div>
-          <div>Peak Activity</div>
+          <div className="col-span-2">{t("history.table.targetId")}</div>
+          <div>{t("history.table.firstDetected")}</div>
+          <div>{t("history.table.duration")}</div>
+          <div>{t("history.table.minRange")}</div>
+          <div>{t("history.table.peakActivity")}</div>
         </div>
 
         <ScrollArea className="flex-1">
@@ -39,7 +43,7 @@ export default function History() {
           ) : history.length === 0 ? (
             <div className="p-12 text-center text-muted-foreground font-mono text-sm uppercase flex flex-col items-center gap-3">
               <Activity className="w-8 h-8 opacity-20" />
-              No historical data available
+              {t("history.empty")}
             </div>
           ) : (
             <div className="divide-y divide-border/50">
@@ -57,18 +61,18 @@ export default function History() {
                       </div>
                       <div className="text-xs text-muted-foreground mt-1 uppercase flex items-center gap-2">
                         <Radio className="w-3 h-3" />
-                        {session.model || "Unknown"} • {session.signalType || "RF"}
+                        {session.model || t("history.unknownModel")} • {session.signalType || "RF"}
                       </div>
                     </div>
                     
                     <div className="font-mono text-sm text-foreground">
-                      <div>{format(start, "MMM dd, yyyy")}</div>
+                      <div>{format(start, "MMM dd, yyyy", { locale: dateLocale })}</div>
                       <div className="text-xs text-muted-foreground mt-0.5">{format(start, "HH:mm:ss")}</div>
                     </div>
                     
                     <div className="font-mono text-sm text-foreground">
-                      {durationMinutes} min
-                      <div className="text-xs text-muted-foreground mt-0.5">{session.pointCount} points</div>
+                      {durationMinutes} {t("history.minutes")}
+                      <div className="text-xs text-muted-foreground mt-0.5">{session.pointCount} {t("history.points")}</div>
                     </div>
                     
                     <div className="font-mono text-sm">
@@ -81,8 +85,8 @@ export default function History() {
                     </div>
                     
                     <div className="font-mono text-xs text-muted-foreground uppercase space-y-1">
-                      <div>ALT: {session.maxAltitudeM ? `${Math.round(session.maxAltitudeM)}m` : '---'}</div>
-                      <div>SPD: {session.maxSpeedKmh ? `${Math.round(session.maxSpeedKmh)}kph` : '---'}</div>
+                      <div>{t("history.alt")}: {session.maxAltitudeM ? `${Math.round(session.maxAltitudeM)}m` : '---'}</div>
+                      <div>{t("history.spd")}: {session.maxSpeedKmh ? `${Math.round(session.maxSpeedKmh)}kph` : '---'}</div>
                     </div>
                   </div>
                 );

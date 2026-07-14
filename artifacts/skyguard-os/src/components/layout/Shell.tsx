@@ -1,10 +1,12 @@
 import { Link, useLocation } from "wouter";
 import { useGetIngestStatus, getGetIngestStatusQueryKey } from "@workspace/api-client-react";
-import { Activity, Settings, History, Radar, AlertTriangle, ShieldCheck } from "lucide-react";
+import { Activity, Settings, History, Radar, AlertTriangle, ShieldCheck, Languages } from "lucide-react";
 import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/i18n";
 
 function ConnectionBadge() {
+  const { t } = useLanguage();
   const { data: status } = useGetIngestStatus({
     query: { refetchInterval: 3000, queryKey: getGetIngestStatusQueryKey() },
   });
@@ -24,24 +26,40 @@ function ConnectionBadge() {
         )}
       </div>
       <span className={cn("text-xs font-mono font-medium tracking-wide uppercase", isConnected ? "text-primary" : "text-destructive")}>
-        {isConnected ? "System Online" : "Hardware Offline"}
+        {isConnected ? t("badge.online") : t("badge.offline")}
       </span>
       {status && (
         <span className="text-xs font-mono text-muted-foreground ml-2 border-l border-border pl-2">
-          DET: {status.detectionsToday}
+          {t("badge.det")}: {status.detectionsToday}
         </span>
       )}
     </div>
   );
 }
 
+function LanguageToggle() {
+  const { language, toggleLanguage } = useLanguage();
+  return (
+    <button
+      type="button"
+      onClick={toggleLanguage}
+      className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-card/50 border shadow-sm text-xs font-mono font-medium uppercase tracking-wide text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+      aria-label="Toggle language"
+    >
+      <Languages className="h-3.5 w-3.5" />
+      {language === "en" ? "BG" : "EN"}
+    </button>
+  );
+}
+
 export function Shell({ children }: { children: ReactNode }) {
   const [location] = useLocation();
+  const { t } = useLanguage();
 
   const links = [
-    { href: "/", label: "Radar", icon: Radar },
-    { href: "/history", label: "History", icon: History },
-    { href: "/settings", label: "Settings", icon: Settings },
+    { href: "/", label: t("nav.radar"), icon: Radar },
+    { href: "/history", label: t("nav.history"), icon: History },
+    { href: "/settings", label: t("nav.settings"), icon: Settings },
   ];
 
   return (
@@ -74,7 +92,8 @@ export function Shell({ children }: { children: ReactNode }) {
             })}
           </nav>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
+          <LanguageToggle />
           <ConnectionBadge />
         </div>
       </header>

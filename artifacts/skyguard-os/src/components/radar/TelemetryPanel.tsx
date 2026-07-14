@@ -1,20 +1,25 @@
 import { DroneTrack } from "@workspace/api-client-react";
 import { formatDistanceToNow } from "date-fns";
+import { bg, enUS } from "date-fns/locale";
 import { AlertTriangle, Crosshair, Navigation, Radio, Activity, MapPin } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/i18n";
 
 interface TelemetryPanelProps {
   tracks: DroneTrack[];
 }
 
 export function TelemetryPanel({ tracks }: TelemetryPanelProps) {
+  const { t, language } = useLanguage();
+  const dateLocale = language === "bg" ? bg : enUS;
+
   return (
     <div className="w-80 h-full border-l border-border bg-card/80 backdrop-blur-md flex flex-col relative z-10">
       <div className="p-4 border-b border-border/50">
         <h2 className="font-mono text-sm font-bold text-primary uppercase tracking-wider flex items-center gap-2">
           <Activity className="w-4 h-4" />
-          Active Targets ({tracks.length})
+          {t("telemetry.activeTargets")} ({tracks.length})
         </h2>
       </div>
 
@@ -23,7 +28,7 @@ export function TelemetryPanel({ tracks }: TelemetryPanelProps) {
           {tracks.length === 0 ? (
             <div className="text-center p-8 border border-dashed border-border rounded-lg text-muted-foreground flex flex-col items-center gap-2">
               <Crosshair className="w-8 h-8 opacity-20" />
-              <span className="text-sm font-mono uppercase">No targets detected</span>
+              <span className="text-sm font-mono uppercase">{t("telemetry.noTargets")}</span>
             </div>
           ) : (
             tracks.map(track => (
@@ -45,37 +50,37 @@ export function TelemetryPanel({ tracks }: TelemetryPanelProps) {
                       </span>
                     </div>
                     <div className="text-[10px] text-muted-foreground mt-1 uppercase">
-                      {track.model || "Unknown Target"} • {track.signalType || "RF"}
+                      {track.model || t("telemetry.unknownTarget")} • {track.signalType || "RF"}
                     </div>
                   </div>
                   <div className="text-right">
                     <div className={cn("font-bold text-sm", track.alarmActive ? "text-destructive" : "text-foreground")}>
                       {Math.round(track.distanceFromHomeM)}m
                     </div>
-                    <div className="text-[10px] text-muted-foreground uppercase mt-1">Distance</div>
+                    <div className="text-[10px] text-muted-foreground uppercase mt-1">{t("telemetry.distance")}</div>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-border/50">
                   <div className="flex flex-col gap-1">
-                    <span className="text-muted-foreground flex items-center gap-1"><Navigation className="w-3 h-3"/> ALT / SPD</span>
+                    <span className="text-muted-foreground flex items-center gap-1"><Navigation className="w-3 h-3"/> {t("telemetry.altSpd")}</span>
                     <span>{track.altitudeM ? `${Math.round(track.altitudeM)}m` : '---'} / {track.speedKmh ? `${Math.round(track.speedKmh)}kph` : '---'}</span>
                   </div>
                   <div className="flex flex-col gap-1">
-                    <span className="text-muted-foreground flex items-center gap-1"><Radio className="w-3 h-3"/> SIGNAL</span>
+                    <span className="text-muted-foreground flex items-center gap-1"><Radio className="w-3 h-3"/> {t("telemetry.signal")}</span>
                     <span>{track.rssiDbm ? `${track.rssiDbm} dBm` : '---'}</span>
                   </div>
                 </div>
                 
                 {track.pilotLat && (
                   <div className="mt-3 pt-3 border-t border-border/50 flex flex-col gap-1">
-                     <span className="text-muted-foreground flex items-center gap-1"><MapPin className="w-3 h-3"/> PILOT EST LOC</span>
+                     <span className="text-muted-foreground flex items-center gap-1"><MapPin className="w-3 h-3"/> {t("telemetry.pilotLoc")}</span>
                      <span className="text-accent">{track.pilotLat.toFixed(5)}, {track.pilotLng?.toFixed(5)}</span>
                   </div>
                 )}
                 
                 <div className="mt-3 text-[10px] text-muted-foreground/50 text-right uppercase">
-                  Last seen {formatDistanceToNow(new Date(track.lastSeenAt), { addSuffix: true })}
+                  {t("telemetry.lastSeen", { time: formatDistanceToNow(new Date(track.lastSeenAt), { addSuffix: true, locale: dateLocale }) })}
                 </div>
               </div>
             ))

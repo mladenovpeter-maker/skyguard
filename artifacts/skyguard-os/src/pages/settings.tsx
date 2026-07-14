@@ -11,19 +11,21 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
-
-const formSchema = z.object({
-  propertyName: z.string().min(1, "Property name is required"),
-  lat: z.coerce.number().min(-90).max(90),
-  lng: z.coerce.number().min(-180).max(180),
-  geofenceRadiusMeters: z.coerce.number().min(1, "Radius must be at least 1 meter"),
-});
+import { useLanguage } from "@/lib/i18n";
 
 export default function Settings() {
   const { data: config, isLoading } = useGetHomeConfig();
   const updateConfig = useUpdateHomeConfig();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLanguage();
+
+  const formSchema = z.object({
+    propertyName: z.string().min(1, t("settings.field.designationRequired")),
+    lat: z.coerce.number().min(-90).max(90),
+    lng: z.coerce.number().min(-180).max(180),
+    geofenceRadiusMeters: z.coerce.number().min(1, t("settings.field.radiusMin")),
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -53,14 +55,14 @@ export default function Settings() {
         onSuccess: (data) => {
           queryClient.setQueryData(getGetHomeConfigQueryKey(), data);
           toast({
-            title: "Configuration Saved",
-            description: "Property and geofence settings updated successfully.",
+            title: t("settings.toast.savedTitle"),
+            description: t("settings.toast.savedDesc"),
           });
         },
         onError: () => {
           toast({
-            title: "Error",
-            description: "Failed to save configuration. Please try again.",
+            title: t("settings.toast.errorTitle"),
+            description: t("settings.toast.errorDesc"),
             variant: "destructive",
           });
         },
@@ -73,10 +75,10 @@ export default function Settings() {
       <div className="mb-8">
         <h1 className="text-2xl font-mono font-bold text-primary uppercase tracking-wider flex items-center gap-3">
           <SettingsIcon className="w-6 h-6" />
-          System Configuration
+          {t("settings.title")}
         </h1>
         <p className="text-muted-foreground font-mono text-sm mt-2 uppercase">
-          Configure property coordinates and perimeter defense radius
+          {t("settings.subtitle")}
         </p>
       </div>
 
@@ -94,7 +96,7 @@ export default function Settings() {
               
               <div className="space-y-4">
                 <h3 className="text-lg font-mono font-bold text-foreground border-b border-border pb-2 flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-primary" /> Property Details
+                  <Shield className="w-4 h-4 text-primary" /> {t("settings.section.propertyDetails")}
                 </h3>
                 
                 <FormField
@@ -102,12 +104,12 @@ export default function Settings() {
                   name="propertyName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-mono uppercase">Designation</FormLabel>
+                      <FormLabel className="font-mono uppercase">{t("settings.field.designation")}</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g. ALPHA BASE" className="font-mono bg-background" {...field} />
+                        <Input placeholder={t("settings.field.designationPlaceholder")} className="font-mono bg-background" {...field} />
                       </FormControl>
                       <FormDescription className="font-mono text-xs">
-                        Internal reference name for this installation.
+                        {t("settings.field.designationDesc")}
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -117,7 +119,7 @@ export default function Settings() {
 
               <div className="space-y-4 pt-4">
                 <h3 className="text-lg font-mono font-bold text-foreground border-b border-border pb-2 flex items-center gap-2">
-                  <MapIcon className="w-4 h-4 text-primary" /> Global Positioning
+                  <MapIcon className="w-4 h-4 text-primary" /> {t("settings.section.positioning")}
                 </h3>
                 
                 <div className="grid grid-cols-2 gap-4">
@@ -127,7 +129,7 @@ export default function Settings() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="font-mono uppercase flex items-center gap-1">
-                          <MapPin className="w-3 h-3 text-muted-foreground" /> Latitude
+                          <MapPin className="w-3 h-3 text-muted-foreground" /> {t("settings.field.latitude")}
                         </FormLabel>
                         <FormControl>
                           <Input type="number" step="any" className="font-mono bg-background" {...field} />
@@ -143,7 +145,7 @@ export default function Settings() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="font-mono uppercase flex items-center gap-1">
-                          <MapPin className="w-3 h-3 text-muted-foreground" /> Longitude
+                          <MapPin className="w-3 h-3 text-muted-foreground" /> {t("settings.field.longitude")}
                         </FormLabel>
                         <FormControl>
                           <Input type="number" step="any" className="font-mono bg-background" {...field} />
@@ -157,7 +159,7 @@ export default function Settings() {
 
               <div className="space-y-4 pt-4">
                 <h3 className="text-lg font-mono font-bold text-foreground border-b border-border pb-2 flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-primary" /> Perimeter Defense
+                  <Shield className="w-4 h-4 text-primary" /> {t("settings.section.perimeter")}
                 </h3>
                 
                 <FormField
@@ -165,12 +167,12 @@ export default function Settings() {
                   name="geofenceRadiusMeters"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-mono uppercase">Alarm Radius (Meters)</FormLabel>
+                      <FormLabel className="font-mono uppercase">{t("settings.field.radius")}</FormLabel>
                       <FormControl>
                         <Input type="number" className="font-mono bg-background" {...field} />
                       </FormControl>
                       <FormDescription className="font-mono text-xs">
-                        Proximity threshold for triggering audible and visual alarms.
+                        {t("settings.field.radiusDesc")}
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -184,10 +186,10 @@ export default function Settings() {
                   disabled={updateConfig.isPending}
                   className="font-mono uppercase tracking-wider bg-primary text-primary-foreground hover:bg-primary/90"
                 >
-                  {updateConfig.isPending ? "Committing..." : (
+                  {updateConfig.isPending ? t("settings.button.committing") : (
                     <>
                       <Save className="w-4 h-4 mr-2" />
-                      Commit Changes
+                      {t("settings.button.commit")}
                     </>
                   )}
                 </Button>
