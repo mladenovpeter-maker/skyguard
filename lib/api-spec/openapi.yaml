@@ -16,6 +16,8 @@ tags:
     description: Drone detection ingest and live tracking
   - name: status
     description: Ingest/system status
+  - name: devices
+    description: Field hardware device registration and API keys (admin only)
 paths:
   /healthz:
     get:
@@ -131,6 +133,53 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/IngestStatus"
+
+  /devices:
+    get:
+      operationId: listDevices
+      tags: [devices]
+      summary: List registered field hardware devices
+      responses:
+        "200":
+          description: Registered devices
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Device"
+    post:
+      operationId: createDevice
+      tags: [devices]
+      summary: Register a new field hardware device and issue its API key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDeviceInput"
+      responses:
+        "201":
+          description: Device registered. The plaintext API key is only returned here.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeviceWithKey"
+
+  /devices/{deviceId}:
+    delete:
+      operationId: revokeDevice
+      tags: [devices]
+      summary: Revoke a device's API key
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Device revoked
 
 components:
   schemas:
@@ -390,3 +439,50 @@ components:
           type: integer
         detectionsToday:
           type: integer
+
+    Device:
+      type: object
+      description: A registered field hardware device (e.g. Raspberry Pi + HackRF bridge)
+      required:
+        - id
+        - name
+        - apiKeyPrefix
+        - revoked
+        - createdAt
+        - lastSeenAt
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        apiKeyPrefix:
+          type: string
+          description: Non-secret prefix of the API key, for identification only
+        revoked:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        lastSeenAt:
+          type: ["string", "null"]
+          format: date-time
+
+    CreateDeviceInput:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+
+    DeviceWithKey:
+      allOf:
+        - $ref: "#/components/schemas/Device"
+        - type: object
+          required:
+            - apiKey
+          properties:
+            apiKey:
+              type: string
+              description: Plaintext API key — shown only once, at creation time

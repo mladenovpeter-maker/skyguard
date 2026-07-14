@@ -1,1 +1,2 @@
 - [Leaflet dark-mode via CSS invert](leaflet-dark-invert.md) — inverting an already-dark tile layer washes it out light; only invert controls, not `.leaflet-layer`.
+- [Testing Clerk-gated flows](clerk-testing-tickets.md) — sign-up/sign-in UI hits bot/email challenges a tester can't solve; use Clerk Backend API sign-in tickets to bypass.

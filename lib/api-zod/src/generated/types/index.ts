@@ -6,8 +6,11 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from './createDeviceInput';
 export * from './detection';
 export * from './detectionInput';
+export * from './device';
+export * from './deviceWithKey';
 export * from './droneTrack';
 export * from './droneTrackPoint';
 export * from './flightSummary';

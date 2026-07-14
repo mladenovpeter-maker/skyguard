@@ -3,12 +3,13 @@ import { and, gte, sql, count } from "drizzle-orm";
 import { db, detectionsTable } from "@workspace/db";
 import { GetIngestStatusResponse } from "@workspace/api-zod";
 import { ACTIVE_WINDOW_MS } from "../lib/flight-sessions";
+import { requireAuth } from "../middlewares/requireAuth";
 
 const router: IRouter = Router();
 
 const CONNECTED_WINDOW_MS = 15 * 1000;
 
-router.get("/status", async (_req, res): Promise<void> => {
+router.get("/status", requireAuth, async (_req, res): Promise<void> => {
   const now = Date.now();
 
   const [{ lastIngestAt } = { lastIngestAt: null }] = await db

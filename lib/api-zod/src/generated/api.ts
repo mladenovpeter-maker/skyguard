@@ -170,3 +170,49 @@ export const GetIngestStatusResponse = zod.object({
 })
 
 
+/**
+ * @summary List registered field hardware devices
+ */
+export const ListDevicesResponseItem = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "apiKeyPrefix": zod.string().describe('Non-secret prefix of the API key, for identification only'),
+  "revoked": zod.boolean(),
+  "createdAt": zod.coerce.date(),
+  "lastSeenAt": zod.coerce.date().nullable()
+}).describe('A registered field hardware device (e.g. Raspberry Pi + HackRF bridge)')
+export const ListDevicesResponse = zod.array(ListDevicesResponseItem)
+
+
+/**
+ * @summary Register a new field hardware device and issue its API key
+ */
+
+
+
+export const CreateDeviceBody = zod.object({
+  "name": zod.string().min(1)
+})
+
+export const CreateDeviceResponse = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "apiKeyPrefix": zod.string().describe('Non-secret prefix of the API key, for identification only'),
+  "revoked": zod.boolean(),
+  "createdAt": zod.coerce.date(),
+  "lastSeenAt": zod.coerce.date().nullable()
+}).describe('A registered field hardware device (e.g. Raspberry Pi + HackRF bridge)').and(zod.object({
+  "apiKey": zod.string().describe('Plaintext API key — shown only once, at creation time')
+}))
+
+
+/**
+ * @summary Revoke a device's API key
+ */
+export const RevokeDeviceParams = zod.object({
+  "deviceId": zod.coerce.number()
+})
+
+export const RevokeDeviceResponse = zod.void()
+
+

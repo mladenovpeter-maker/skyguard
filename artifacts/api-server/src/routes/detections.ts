@@ -10,6 +10,8 @@ import {
 } from "@workspace/api-zod";
 import { distanceMeters } from "../lib/geo";
 import { groupIntoSessions, ACTIVE_WINDOW_MS } from "../lib/flight-sessions";
+import { requireAuth } from "../middlewares/requireAuth";
+import { requireDeviceKey } from "../middlewares/requireDeviceKey";
 
 const router: IRouter = Router();
 
@@ -38,7 +40,7 @@ function toTrackPoint(detection: DetectionRow) {
   };
 }
 
-router.post("/detections", async (req, res): Promise<void> => {
+router.post("/detections", requireDeviceKey, async (req, res): Promise<void> => {
   const parsed = IngestDetectionBody.safeParse(req.body);
   if (!parsed.success) {
     req.log.warn({ errors: parsed.error.message }, "Invalid detection payload");
@@ -80,7 +82,7 @@ router.post("/detections", async (req, res): Promise<void> => {
   );
 });
 
-router.get("/detections/active", async (_req, res): Promise<void> => {
+router.get("/detections/active", requireAuth, async (_req, res): Promise<void> => {
   const home = await getOrCreateHomeConfig();
   const cutoff = new Date(Date.now() - ACTIVE_WINDOW_MS);
 
@@ -122,7 +124,7 @@ router.get("/detections/active", async (_req, res): Promise<void> => {
   res.json(ListActiveDroneTracksResponse.parse(tracks));
 });
 
-router.get("/detections/history", async (req, res): Promise<void> => {
+router.get("/detections/history", requireAuth, async (req, res): Promise<void> => {
   const query = ListFlightHistoryQueryParams.safeParse(req.query);
   if (!query.success) {
     res.status(400).json({ error: query.error.message });

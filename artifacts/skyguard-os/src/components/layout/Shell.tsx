@@ -1,9 +1,12 @@
 import { Link, useLocation } from "wouter";
 import { useGetIngestStatus, getGetIngestStatusQueryKey } from "@workspace/api-client-react";
-import { Activity, Settings, History, Radar, AlertTriangle, ShieldCheck, Languages } from "lucide-react";
+import { Activity, Settings, History, Radar, AlertTriangle, ShieldCheck, Languages, Cpu, LogOut } from "lucide-react";
 import { ReactNode } from "react";
+import { useClerk, useUser } from "@clerk/react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n";
+
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
 function ConnectionBadge() {
   const { t } = useLanguage();
@@ -52,6 +55,30 @@ function LanguageToggle() {
   );
 }
 
+function UserMenu() {
+  const { t } = useLanguage();
+  const { signOut } = useClerk();
+  const { user } = useUser();
+
+  return (
+    <div className="flex items-center gap-2 pl-3 border-l border-border/50">
+      {user && (
+        <span className="text-xs font-mono text-muted-foreground hidden lg:inline">
+          {user.primaryEmailAddress?.emailAddress}
+        </span>
+      )}
+      <button
+        type="button"
+        onClick={() => signOut({ redirectUrl: basePath || "/" })}
+        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-mono font-medium uppercase tracking-wide text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+        aria-label={t("nav.logout")}
+      >
+        <LogOut className="h-3.5 w-3.5" />
+      </button>
+    </div>
+  );
+}
+
 export function Shell({ children }: { children: ReactNode }) {
   const [location] = useLocation();
   const { t } = useLanguage();
@@ -60,6 +87,7 @@ export function Shell({ children }: { children: ReactNode }) {
     { href: "/", label: t("nav.radar"), icon: Radar },
     { href: "/history", label: t("nav.history"), icon: History },
     { href: "/settings", label: t("nav.settings"), icon: Settings },
+    { href: "/admin", label: t("nav.admin"), icon: Cpu },
   ];
 
   return (
@@ -95,6 +123,7 @@ export function Shell({ children }: { children: ReactNode }) {
         <div className="flex items-center gap-3">
           <LanguageToggle />
           <ConnectionBadge />
+          <UserMenu />
         </div>
       </header>
       <main className="flex-1 flex flex-col relative overflow-hidden">

@@ -169,6 +169,30 @@ export interface IngestStatus {
   detectionsToday: number;
 }
 
+/**
+ * A registered field hardware device (e.g. Raspberry Pi + HackRF bridge)
+ */
+export interface Device {
+  id: number;
+  name: string;
+  /** Non-secret prefix of the API key, for identification only */
+  apiKeyPrefix: string;
+  revoked: boolean;
+  createdAt: string;
+  /** @nullable */
+  lastSeenAt: string | null;
+}
+
+export interface CreateDeviceInput {
+  /** @minLength 1 */
+  name: string;
+}
+
+export type DeviceWithKey = Device & {
+  /** Plaintext API key — shown only once, at creation time */
+  apiKey: string;
+};
+
 export type ListFlightHistoryParams = {
 /**
  * @minimum 1

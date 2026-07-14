@@ -20,8 +20,11 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  CreateDeviceInput,
   Detection,
   DetectionInput,
+  Device,
+  DeviceWithKey,
   DroneTrack,
   FlightSummary,
   HealthStatus,
@@ -592,4 +595,223 @@ export function useGetIngestStatus<TData = Awaited<ReturnType<typeof getIngestSt
 
 
 
+
+export const getListDevicesUrl = () => {
+
+
+
+
+  return `/api/devices`
+}
+
+/**
+ * @summary List registered field hardware devices
+ */
+export const listDevices = async ( options?: RequestInit): Promise<Device[]> => {
+
+  return customFetch<Device[]>(getListDevicesUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListDevicesQueryKey = () => {
+    return [
+    `/api/devices`
+    ] as const;
+    }
+
+
+export const getListDevicesQueryOptions = <TData = Awaited<ReturnType<typeof listDevices>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listDevices>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListDevicesQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listDevices>>> = ({ signal }) => listDevices({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listDevices>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListDevicesQueryResult = NonNullable<Awaited<ReturnType<typeof listDevices>>>
+export type ListDevicesQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary List registered field hardware devices
+ */
+
+export function useListDevices<TData = Awaited<ReturnType<typeof listDevices>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listDevices>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListDevicesQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getCreateDeviceUrl = () => {
+
+
+
+
+  return `/api/devices`
+}
+
+/**
+ * @summary Register a new field hardware device and issue its API key
+ */
+export const createDevice = async (createDeviceInput: CreateDeviceInput, options?: RequestInit): Promise<DeviceWithKey> => {
+
+  return customFetch<DeviceWithKey>(getCreateDeviceUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(createDeviceInput)
+  }
+);}
+
+
+
+
+
+export const getCreateDeviceMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createDevice>>, TError,{data: BodyType<CreateDeviceInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createDevice>>, TError,{data: BodyType<CreateDeviceInput>}, TContext> => {
+
+const mutationKey = ['createDevice'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createDevice>>, {data: BodyType<CreateDeviceInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createDevice(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateDeviceMutationResult = NonNullable<Awaited<ReturnType<typeof createDevice>>>
+    export type CreateDeviceMutationBody = BodyType<CreateDeviceInput>
+    export type CreateDeviceMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Register a new field hardware device and issue its API key
+ */
+export const useCreateDevice = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createDevice>>, TError,{data: BodyType<CreateDeviceInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof createDevice>>,
+        TError,
+        {data: BodyType<CreateDeviceInput>},
+        TContext
+      > => {
+      return useMutation(getCreateDeviceMutationOptions(options));
+    }
+
+export const getRevokeDeviceUrl = (deviceId: number,) => {
+
+
+
+
+  return `/api/devices/${deviceId}`
+}
+
+/**
+ * @summary Revoke a device's API key
+ */
+export const revokeDevice = async (deviceId: number, options?: RequestInit): Promise<void> => {
+
+  return customFetch<void>(getRevokeDeviceUrl(deviceId),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+
+export const getRevokeDeviceMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof revokeDevice>>, TError,{deviceId: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof revokeDevice>>, TError,{deviceId: number}, TContext> => {
+
+const mutationKey = ['revokeDevice'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof revokeDevice>>, {deviceId: number}> = (props) => {
+          const {deviceId} = props ?? {};
+
+          return  revokeDevice(deviceId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RevokeDeviceMutationResult = NonNullable<Awaited<ReturnType<typeof revokeDevice>>>
+
+    export type RevokeDeviceMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Revoke a device's API key
+ */
+export const useRevokeDevice = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof revokeDevice>>, TError,{deviceId: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof revokeDevice>>,
+        TError,
+        {deviceId: number},
+        TContext
+      > => {
+      return useMutation(getRevokeDeviceMutationOptions(options));
+    }
 
