@@ -11,6 +11,26 @@ env = { "CI" = "true" }
 [workflows]
 runButton = "Project"
 
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Drone Simulator Loop"
+
+[[workflows.workflow]]
+name = "Drone Simulator Loop"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd scripts && SKYGUARD_API_BASE=https://$REPLIT_DEV_DOMAIN/api SKYGUARD_DEVICE_KEY=sg_a637f2e7a490e894860a60f34e75b058831c5d949de666fb HOME_LAT=42.61664661691201 HOME_LNG=23.375076055526737 LOOP=true MIN_DISTANCE_M=300 START_DISTANCE_M=1500 CYCLE_STEPS=30 STEP_INTERVAL_MS=2000 pnpm run simulate"
+
+[workflows.workflow.metadata]
+outputType = "console"
+
 [agent]
 stack = "PNPM_WORKSPACE"
 expertMode = true
