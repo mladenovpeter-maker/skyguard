@@ -1,0 +1,17 @@
+[Unit]
+Description=SkyGuard OS <-> DragonSync MQTT bridge
+After=network-online.target mosquitto.service dragonsync.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Adjust the path below to wherever this folder lives on the Linux server.
+WorkingDirectory=/opt/skyguard-dragonsync-bridge
+EnvironmentFile=/opt/skyguard-dragonsync-bridge/.env
+ExecStart=/usr/bin/python3 /opt/skyguard-dragonsync-bridge/bridge.py
+Restart=always
+RestartSec=5
+User=dragonsync
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,70 @@
+import time
+import requests
+import paho.mqtt.client as mqtt
+import json
+
+# НАСТРОЙКИ
+MQTT_BROKER = "localhost"  # Скриптът работи локално на Pi-я
+MQTT_PORT = 1883
+MQTT_TOPIC = "wardragon/drones"  # Темата, в която се публикуват дроновете
+
+BACKEND_API_URL = "https://your-replit-app.replit.app/api/detections"
+DEVICE_KEY = "SUPER_SECRET_ADMIN_KEY_123"
+
+def map_drone_data(raw_data):
+    """ Превежда полетата от тактическия формат към нашия API формат """
+    try:
+        # Преобразуване на скоростта от m/s в km/h
+        speed_mps = float(raw_data.get("speed", 0))
+        speed_kmh = round(speed_mps * 3.6, 1)
+
+        mapped = {
+            "deviceKey": DEVICE_KEY,
+            "droneId": raw_data.get("id", "UNKNOWN_ID"),
+            "lat": float(raw_data.get("lat")),
+            "lng": float(raw_data.get("lon")),
+            "altitudeM": float(raw_data.get("alt", 0)),
+            "speedKmh": speed_kmh,
+            "headingDeg": int(raw_data.get("direction", 0)),
+            "rssiDbm": int(raw_data.get("rssi", -100)),
+            "model": raw_data.get("description") or raw_data.get("rid_model") or "Generic Drone",
+            "signalType": raw_data.get("transport", "SDR_OcuSync")
+        }
+
+        # Добавяме координатите на пилота само ако съществуват в пакета
+        if raw_data.get("pilot_lat") and raw_data.get("pilot_lon"):
+            mapped["pilotLat"] = float(raw_data.get("pilot_lat"))
+            mapped["pilotLng"] = float(raw_data.get("pilot_lon"))
+
+        return mapped
+    except (ValueError, TypeError, KeyError) as e:
+        print(f"Грешка при мапване на данните: {e}")
+        return None
+
+def on_message(client, userdata, msg):
+    try:
+        raw_payload = json.loads(msg.payload.decode("utf-8"))
+        print(f"Получени сурови данни: {raw_payload}")
+        
+        payload_to_send = map_drone_data(raw_payload)
+        
+        if payload_to_send:
+            # Изпращаме към нашия уеб радар
+            headers = {"Content-Type": "application/json"}
+            response = requests.post(BACKEND_API_URL, json=payload_to_send, headers=headers, timeout=5)
+            print(f"Изпратено към уеб радара. Статус код: {response.status_code}")
+            
+    except Exception as e:
+        print(f"Грешка в обработката на съобщението: {e}")
+
+# Инициализация на MQTT клиента на Raspberry Pi
+client = mqtt.Client()
+client.on_message = on_message
+
+print("Стартиране на SkyGuard Bridge...")
+try:
+    client.connect(MQTT_BROKER, MQTT_PORT, 60)
+    client.subscribe(MQTT_TOPIC)
+    client.loop_forever()
+except Exception as e:
+    print(f"Неуспешна връзка с локалния брокер: {e}")
