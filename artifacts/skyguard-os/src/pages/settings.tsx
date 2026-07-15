@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage } from "@/lib/i18n";
+import { LocationPicker } from "@/components/settings/LocationPicker";
 
 export default function Settings() {
   const { data: config, isLoading } = useGetHomeConfig();
@@ -122,6 +123,15 @@ export default function Settings() {
                   <MapIcon className="w-4 h-4 text-primary" /> {t("settings.section.positioning")}
                 </h3>
                 
+                <LocationPicker
+                  lat={form.watch("lat")}
+                  lng={form.watch("lng")}
+                  onChange={(lat, lng) => {
+                    form.setValue("lat", lat, { shouldDirty: true, shouldValidate: true });
+                    form.setValue("lng", lng, { shouldDirty: true, shouldValidate: true });
+                  }}
+                />
+
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
