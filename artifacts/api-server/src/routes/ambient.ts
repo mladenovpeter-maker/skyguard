@@ -3,41 +3,57 @@ import { gte } from "drizzle-orm";
 import { db, ambientScansTable } from "@workspace/db";
 import { requireAuth } from "../middlewares/requireAuth";
 import { requireDeviceKey } from "../middlewares/requireDeviceKey";
-import { z } from "zod";
-
 const router: IRouter = Router();
 
 const AMBIENT_WINDOW_MS = 5 * 60 * 1000; // 5 minutes
 
-const IngestAmbientItem = z.object({
-  mac: z.string(),
-  name: z.string().nullish(),
-  signalType: z.enum(["BLE", "WIFI"]),
-  rssiDbm: z.number().nullish(),
-  vendor: z.string().nullish(),
-  timestamp: z.string().optional(),
-});
+interface AmbientItem {
+  mac: string;
+  name?: string | null;
+  signalType: "BLE" | "WIFI";
+  rssiDbm?: number | null;
+  vendor?: string | null;
+  timestamp?: string;
+}
 
-const IngestAmbientBatch = z.array(IngestAmbientItem);
+function parseAmbientBatch(body: unknown): AmbientItem[] | null {
+  if (!Array.isArray(body)) return null;
+  const result: AmbientItem[] = [];
+  for (const item of body) {
+    if (typeof item !== "object" || item === null) return null;
+    const d = item as Record<string, unknown>;
+    if (typeof d["mac"] !== "string") return null;
+    if (d["signalType"] !== "BLE" && d["signalType"] !== "WIFI") return null;
+    result.push({
+      mac: d["mac"] as string,
+      name: typeof d["name"] === "string" ? d["name"] : null,
+      signalType: d["signalType"] as "BLE" | "WIFI",
+      rssiDbm: typeof d["rssiDbm"] === "number" ? d["rssiDbm"] : null,
+      vendor: typeof d["vendor"] === "string" ? d["vendor"] : null,
+      timestamp: typeof d["timestamp"] === "string" ? d["timestamp"] : undefined,
+    });
+  }
+  return result;
+}
 
 /**
  * POST /ambient
  * Ingest a batch of non-drone RF devices (phones, APs, IoT…).
  */
 router.post("/ambient", requireDeviceKey, async (req, res): Promise<void> => {
-  const parsed = IngestAmbientBatch.safeParse(req.body);
-  if (!parsed.success) {
-    req.log.warn({ errors: parsed.error.message }, "Invalid ambient payload");
-    res.status(400).json({ error: parsed.error.message });
+  const parsed = parseAmbientBatch(req.body);
+  if (parsed === null) {
+    req.log.warn("Invalid ambient payload");
+    res.status(400).json({ error: "Invalid payload: expected array of {mac, signalType, ...}" });
     return;
   }
 
-  if (parsed.data.length === 0) {
+  if (parsed.length === 0) {
     res.json({ inserted: 0 });
     return;
   }
 
-  const rows = parsed.data.map((d) => ({
+  const rows = parsed.map((d) => ({
     mac: d.mac,
     name: d.name ?? null,
     signalType: d.signalType,

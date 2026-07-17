@@ -1,0 +1,25 @@
+tmm@tmm:~/skyguard$ sudo systemctl status skyguard-api --no-pager | head -10
+curl -s http://localhost:3001/api/healthz
+sudo journalctl -u skyguard-api -n 15 --no-pager
+● skyguard-api.service - SkyGuard API Server
+     Loaded: loaded (/etc/systemd/system/skyguard-api.service; enabled; preset: enabled)
+     Active: activating (auto-restart) (Result: exit-code) since Fri 2026-07-17 03:32:06 UTC; 4s ago
+    Process: 3609778 ExecStart=/usr/bin/node --enable-source-maps ./dist/index.mjs (code=exited, status=1/FAILURE)
+   Main PID: 3609778 (code=exited, status=1/FAILURE)
+        CPU: 195ms
+Jul 17 03:32:06 tmm node[3609778]:         ^
+Jul 17 03:32:06 tmm node[3609778]: Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'zod' imported from /home/tmm/skyguard/artifacts/api-server/dist/index.mjs
+Jul 17 03:32:06 tmm node[3609778]:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+Jul 17 03:32:06 tmm node[3609778]:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+Jul 17 03:32:06 tmm node[3609778]:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+Jul 17 03:32:06 tmm node[3609778]:     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:708:12)
+Jul 17 03:32:06 tmm node[3609778]:     at #cachedDefaultResolve (node:internal/modules/esm/loader:657:25)
+Jul 17 03:32:06 tmm node[3609778]:     at ModuleLoader.resolve (node:internal/modules/esm/loader:640:38)
+Jul 17 03:32:06 tmm node[3609778]:     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:264:38)
+Jul 17 03:32:06 tmm node[3609778]:     at ModuleJob._link (node:internal/modules/esm/module_job:168:49) {
+Jul 17 03:32:06 tmm node[3609778]:   code: 'ERR_MODULE_NOT_FOUND'
+Jul 17 03:32:06 tmm node[3609778]: }
+Jul 17 03:32:06 tmm node[3609778]: Node.js v20.20.2
+Jul 17 03:32:06 tmm systemd[1]: skyguard-api.service: Main process exited, code=exited, status=1/FAILURE
+Jul 17 03:32:06 tmm systemd[1]: skyguard-api.service: Failed with result 'exit-code'.
+tmm@tmm:~/skyguard$ 
