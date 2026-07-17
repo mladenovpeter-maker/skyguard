@@ -1,0 +1,59 @@
+(venv) admin@skyguard:~/skyguard $ cd ~/skyguard && git pull && \
+  sudo cp hardware/hackrf-bridge/skyguard-hackrf-bridge.service /etc/systemd/system/ && \
+  sudo systemctl daemon-reload && \
+  sudo systemctl enable --now skyguard-hackrf-bridge.service && \
+  sudo journalctl -u skyguard-hackrf-bridge -f
+remote: Enumerating objects: 18, done.
+remote: Counting objects: 100% (18/18), done.
+remote: Compressing objects: 100% (7/7), done.
+remote: Total 16 (delta 9), reused 16 (delta 9), pack-reused 0 (from 0)
+Unpacking objects: 100% (16/16), 4.57 KiB | 173.00 KiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+   2d9141b..0b299c4  main       -> origin/main
+Updating 2d9141b..0b299c4
+Fast-forward
+ ...rd-PORT-3000-pnpm-filter-work_1784262064281.txt | 23 +++++++
+ ...rd-git-pull-DATABASE-URL-post_1784261816820.txt | 78 ++++++++++++++++++++++
+ ...rd-git-pull-DATABASE-URL-post_1784261968072.txt | 56 ++++++++++++++++
+ ...rd-pnpm-filter-workspace-skyg_1784262029252.txt | 23 +++++++
+ 4 files changed, 180 insertions(+)
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-cd-skyguard-PORT-3000-pnpm-filter-work_1784262064281.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-cd-skyguard-git-pull-DATABASE-URL-post_1784261816820.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-cd-skyguard-git-pull-DATABASE-URL-post_1784261968072.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-cd-skyguard-pnpm-filter-workspace-skyg_1784262029252.txt
+Created symlink '/etc/systemd/system/multi-user.target.wants/skyguard-hackrf-bridge.service' → '/etc/systemd/system/skyguard-hackrf-bridge.service'.
+Jul 17 07:22:32 skyguard systemd[1]: Started skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+Jul 17 07:22:33 skyguard python3[7477]: 2026-07-17 07:22:33,953 [INFO] Loaded 10 frequency bands from /home/admin/skyguard/hardware/hackrf-bridge/frequencies.json
+Jul 17 07:22:33 skyguard python3[7477]: 2026-07-17 07:22:33,955 [ERROR] websockets not installed. Run: pip3 install websockets
+Jul 17 07:22:34 skyguard systemd[1]: skyguard-hackrf-bridge.service: Main process exited, code=exited, status=1/FAILURE
+Jul 17 07:22:34 skyguard systemd[1]: skyguard-hackrf-bridge.service: Failed with result 'exit-code'.
+Jul 17 07:22:34 skyguard systemd[1]: skyguard-hackrf-bridge.service: Consumed 1.231s CPU time.
+Jul 17 07:22:39 skyguard systemd[1]: skyguard-hackrf-bridge.service: Scheduled restart job, restart counter is at 1.
+Jul 17 07:22:39 skyguard systemd[1]: Started skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+Jul 17 07:22:40 skyguard python3[7492]: 2026-07-17 07:22:40,374 [INFO] Loaded 10 frequency bands from /home/admin/skyguard/hardware/hackrf-bridge/frequencies.json
+Jul 17 07:22:40 skyguard python3[7492]: 2026-07-17 07:22:40,377 [ERROR] websockets not installed. Run: pip3 install websockets
+Jul 17 07:22:40 skyguard systemd[1]: skyguard-hackrf-bridge.service: Main process exited, code=exited, status=1/FAILURE
+Jul 17 07:22:40 skyguard systemd[1]: skyguard-hackrf-bridge.service: Failed with result 'exit-code'.
+Jul 17 07:22:40 skyguard systemd[1]: skyguard-hackrf-bridge.service: Consumed 1.187s CPU time.
+Jul 17 07:22:45 skyguard systemd[1]: skyguard-hackrf-bridge.service: Scheduled restart job, restart counter is at 2.
+Jul 17 07:22:45 skyguard systemd[1]: Started skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+Jul 17 07:22:46 skyguard python3[7497]: 2026-07-17 07:22:46,651 [INFO] Loaded 10 frequency bands from /home/admin/skyguard/hardware/hackrf-bridge/frequencies.json
+Jul 17 07:22:46 skyguard python3[7497]: 2026-07-17 07:22:46,653 [ERROR] websockets not installed. Run: pip3 install websockets
+Jul 17 07:22:46 skyguard systemd[1]: skyguard-hackrf-bridge.service: Main process exited, code=exited, status=1/FAILURE
+Jul 17 07:22:46 skyguard systemd[1]: skyguard-hackrf-bridge.service: Failed with result 'exit-code'.
+Jul 17 07:22:46 skyguard systemd[1]: skyguard-hackrf-bridge.service: Consumed 1.198s CPU time.
+Jul 17 07:22:51 skyguard systemd[1]: skyguard-hackrf-bridge.service: Scheduled restart job, restart counter is at 3.
+Jul 17 07:22:51 skyguard systemd[1]: Started skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+Jul 17 07:22:52 skyguard python3[7508]: 2026-07-17 07:22:52,918 [INFO] Loaded 10 frequency bands from /home/admin/skyguard/hardware/hackrf-bridge/frequencies.json
+Jul 17 07:22:52 skyguard python3[7508]: 2026-07-17 07:22:52,921 [ERROR] websockets not installed. Run: pip3 install websockets
+Jul 17 07:22:53 skyguard systemd[1]: skyguard-hackrf-bridge.service: Main process exited, code=exited, status=1/FAILURE
+Jul 17 07:22:53 skyguard systemd[1]: skyguard-hackrf-bridge.service: Failed with result 'exit-code'.
+Jul 17 07:22:53 skyguard systemd[1]: skyguard-hackrf-bridge.service: Consumed 1.221s CPU time.
+Jul 17 07:22:58 skyguard systemd[1]: skyguard-hackrf-bridge.service: Scheduled restart job, restart counter is at 4.
+Jul 17 07:22:58 skyguard systemd[1]: Started skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+Jul 17 07:22:59 skyguard python3[7515]: 2026-07-17 07:22:59,386 [INFO] Loaded 10 frequency bands from /home/admin/skyguard/hardware/hackrf-bridge/frequencies.json
+Jul 17 07:22:59 skyguard python3[7515]: 2026-07-17 07:22:59,389 [ERROR] websockets not installed. Run: pip3 install websockets
+Jul 17 07:22:59 skyguard systemd[1]: skyguard-hackrf-bridge.service: Main process exited, code=exited, status=1/FAILURE
+Jul 17 07:22:59 skyguard systemd[1]: skyguard-hackrf-bridge.service: Failed with result 'exit-code'.
+Jul 17 07:22:59 skyguard systemd[1]: skyguard-hackrf-bridge.service: Consumed 1.197s CPU time.
+
