@@ -9,6 +9,7 @@ import ambientRouter from "./ambient";
 import rfAlertsRouter from "./rf-alerts";
 import knownRfSourcesRouter from "./known-rf-sources";
 import piStatusRouter from "./pi-status";
+import bleStatusRouter from "./ble-status";
 
 const router: IRouter = Router();
 
@@ -22,5 +23,6 @@ router.use(ambientRouter);
 router.use(rfAlertsRouter);
 router.use(knownRfSourcesRouter);
 router.use(piStatusRouter);
+router.use(bleStatusRouter);
 
 export default router;

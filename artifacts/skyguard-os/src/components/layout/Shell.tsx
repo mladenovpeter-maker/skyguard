@@ -78,6 +78,33 @@ function usePiStatus() {
   });
 }
 
+function useBleStatus() {
+  return useQuery<{ totalScans: number; dronesDetected: number; adapter: string; receivedAt: string } | null>({
+    queryKey: ["ble-status"],
+    queryFn: async () => {
+      const res = await fetch(`${import.meta.env.BASE_URL}api/ble-status`, { credentials: "include" });
+      if (res.status === 204) return null;
+      return res.ok ? res.json() : null;
+    },
+    refetchInterval: 30_000,
+    staleTime: 29_000,
+  });
+}
+
+function BleBadge() {
+  const { data: ble } = useBleStatus();
+  if (!ble) return null;
+  const alive = Date.now() - new Date(ble.receivedAt).getTime() < 120_000;
+  if (!alive) return null;
+  return (
+    <div className="hidden md:flex items-center gap-1.5 px-2 py-1 rounded bg-card/50 border text-[10px] font-mono" title={`Adapter: ${ble.adapter} | Scans: ${ble.totalScans}`}>
+      <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+      <span className="text-blue-400">BLE</span>
+      {ble.dronesDetected > 0 && <span className="text-yellow-400">{ble.dronesDetected}</span>}
+    </div>
+  );
+}
+
 function MiniBar({ pct, warn = 70, danger = 90 }: { pct: number; warn?: number; danger?: number }) {
   const color = pct >= danger ? "#ef4444" : pct >= warn ? "#f59e0b" : "#22c55e";
   return (
@@ -165,6 +192,7 @@ export function Shell({ children }: { children: ReactNode }) {
         {/* Right: badges + hamburger */}
         <div className="flex items-center gap-2">
           <LanguageToggle />
+          <BleBadge />
           <PiMonitor />
           <ConnectionBadge />
           {/* User email + logout — desktop */}

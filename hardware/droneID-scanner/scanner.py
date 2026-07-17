@@ -160,11 +160,16 @@ def _parse_odid_packet(service_data: bytes) -> dict:
 
 
 # ------------------------------------------------------------------ #
+BLE_STATUS_URL = f"{API_BASE}/api/ble-status"
+
+# ------------------------------------------------------------------ #
 # Active drones cache (avoid duplicate POSTs within 10s window)
 # ------------------------------------------------------------------ #
 
 _seen: dict[str, float] = {}   # mac → last_post_time
 DEDUPE_S = 10.0
+_total_scans = 0
+_total_drones = 0
 
 
 def _should_post(mac: str) -> bool:
@@ -252,9 +257,22 @@ def _post_detection(entry: dict) -> None:
 # Main loop
 # ------------------------------------------------------------------ #
 
+def _post_heartbeat() -> None:
+    """POST a heartbeat to /api/ble-status every ~30 cycles."""
+    try:
+        requests.post(BLE_STATUS_URL, json={
+            "totalScans":     _total_scans,
+            "dronesDetected": _total_drones,
+            "adapter":        BLE_ADAPTER,
+            "ts":             __import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat(),
+        }, headers=AUTH_HEADERS, timeout=5)
+    except Exception:
+        pass
+
+
 async def scan_cycle() -> None:
     """Run one BLE scan window."""
-    global detected
+    global detected, _total_scans, _total_drones
     detected = {}
 
     scanner = BleakScanner(
@@ -266,12 +284,19 @@ async def scan_cycle() -> None:
     async with scanner:
         await asyncio.sleep(SCAN_TIMEOUT_S)
 
+    _total_scans += 1
+
     for mac, entry in detected.items():
         if entry.get("lat") and entry.get("lng") and _should_post(mac):
             _post_detection(entry)
+            _total_drones += 1
 
     if detected:
         log.info("Cycle complete — %d DroneID device(s) seen", len(detected))
+
+    # Heartbeat every 30 cycles (~5 min with default settings, or every ~30s)
+    if _total_scans % 4 == 0:
+        _post_heartbeat()
 
 
 async def main() -> None:
