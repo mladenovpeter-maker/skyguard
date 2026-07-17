@@ -69,22 +69,6 @@ _last_sent: dict[str, float] = {}
 _last_heartbeat: float = 0
 _last_ambient: float = 0
 
-# Sparrow ambient endpoints to try (in order). First 200-OK wins.
-_SPARROW_BLE_CANDIDATES = [
-    "/api/ble",
-    "/api/ble/devices",
-    "/api/scan/ble",
-    "/api/bluetooth/devices",
-]
-_SPARROW_WIFI_CANDIDATES = [
-    "/api/wifi",
-    "/api/wifi/devices",
-    "/api/scan/wifi",
-]
-_ble_endpoint: str | None = None
-_wifi_endpoint: str | None = None
-_ambient_discovery_done = False
-
 SPARROW_SESSION = requests.Session()
 SPARROW_SESSION.timeout = 4  # type: ignore[attr-defined]
 
@@ -201,64 +185,108 @@ def maybe_send_heartbeat() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Ambient BLE / WiFi scan
+# Ambient BLE / WiFi scan — direct system scan (no Sparrow dependency)
 # ---------------------------------------------------------------------------
+# Sparrow DroneID only decodes Remote ID packets — it doesn't expose a
+# generic device list.  We scan directly via Linux system tools instead:
+#   BLE  → hcitool lescan  (bluetoothctl scan also works)
+#   WiFi → iwlist scan     (lists nearby access points)
+# Both commands are best-effort; missing tools or adapters are silently
+# ignored so the bridge keeps running on systems without BT/WiFi.
 
-def _discover_ambient_endpoints() -> None:
-    """Try candidate endpoints once at startup; log result."""
-    global _ble_endpoint, _wifi_endpoint, _ambient_discovery_done
-    _ambient_discovery_done = True
+import re
+import subprocess
 
-    for path in _SPARROW_BLE_CANDIDATES:
-        try:
-            r = SPARROW_SESSION.get(f"{SPARROW_API_BASE}{path}")
-            if r.status_code == 200:
-                _ble_endpoint = path
-                log.info("Sparrow BLE ambient endpoint: %s", path)
-                break
-        except Exception:
-            pass
-    if _ble_endpoint is None:
-        log.info("No Sparrow BLE ambient endpoint found — BLE ambient scan disabled.")
-
-    for path in _SPARROW_WIFI_CANDIDATES:
-        try:
-            r = SPARROW_SESSION.get(f"{SPARROW_API_BASE}{path}")
-            if r.status_code == 200:
-                _wifi_endpoint = path
-                log.info("Sparrow WiFi ambient endpoint: %s", path)
-                break
-        except Exception:
-            pass
-    if _wifi_endpoint is None:
-        log.info("No Sparrow WiFi ambient endpoint found — WiFi ambient scan disabled.")
+_BT_AVAILABLE: bool | None = None   # None = not yet checked
 
 
-def _fetch_raw(endpoint: str) -> list[dict]:
+def _check_bt() -> bool:
+    """Return True if an hci adapter is present."""
+    global _BT_AVAILABLE
+    if _BT_AVAILABLE is not None:
+        return _BT_AVAILABLE
     try:
-        r = SPARROW_SESSION.get(f"{SPARROW_API_BASE}{endpoint}")
-        r.raise_for_status()
-        data = r.json()
-        # Handle both list and {"devices": [...]} shapes
-        if isinstance(data, list):
-            return data
-        return data.get("devices", data.get("results", []))
-    except Exception as exc:
-        log.debug("Ambient fetch %s failed: %s", endpoint, exc)
+        out = subprocess.run(["hcitool", "dev"], capture_output=True, text=True, timeout=3).stdout
+        _BT_AVAILABLE = "hci" in out
+    except Exception:
+        _BT_AVAILABLE = False
+    if not _BT_AVAILABLE:
+        log.info("No Bluetooth adapter found — BLE ambient scan disabled.")
+    return _BT_AVAILABLE
+
+
+def _scan_ble(duration_s: float = 5.0) -> list[dict]:
+    """Active BLE scan for `duration_s` seconds; returns list of ambient items."""
+    if not _check_bt():
         return []
+    items: dict[str, dict] = {}
+    try:
+        # Start scan process
+        proc = subprocess.Popen(
+            ["hcitool", "lescan", "--duplicates"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+            text=True,
+        )
+        deadline = time.monotonic() + duration_s
+        assert proc.stdout is not None
+        while time.monotonic() < deadline:
+            line = proc.stdout.readline()
+            if not line:
+                break
+            # Format: "XX:XX:XX:XX:XX:XX  Device Name" or "XX:XX:XX:XX:XX:XX  (unknown)"
+            parts = line.strip().split(None, 1)
+            if len(parts) == 2:
+                mac, name = parts
+                if re.fullmatch(r"([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}", mac):
+                    mac = mac.upper()
+                    display_name = name if name != "(unknown)" else None
+                    items[mac] = {"mac": mac, "name": display_name, "signalType": "BLE", "rssiDbm": None, "vendor": None}
+        proc.terminate()
+        proc.wait(timeout=2)
+    except Exception as exc:
+        log.debug("BLE scan error: %s", exc)
+    return list(items.values())
 
 
-def _to_ambient_item(device: dict, signal_type: str) -> dict | None:
-    mac = device.get("mac") or device.get("mac_address") or device.get("bssid")
-    if not mac:
-        return None
-    return {
-        "mac":        mac.upper(),
-        "name":       device.get("name") or device.get("ssid") or device.get("hostname") or None,
-        "signalType": signal_type,
-        "rssiDbm":    device.get("rssi") or device.get("signal") or None,
-        "vendor":     device.get("vendor") or device.get("manufacturer") or None,
-    }
+def _scan_wifi() -> list[dict]:
+    """Scan for nearby WiFi access points using iwlist."""
+    items: list[dict] = []
+    try:
+        result = subprocess.run(
+            ["iwlist", "scan"],
+            capture_output=True, text=True, timeout=10,
+        )
+        output = result.stdout
+        # Parse cells
+        current: dict = {}
+        for line in output.splitlines():
+            line = line.strip()
+            if line.startswith("Cell "):
+                if current.get("mac"):
+                    items.append(current)
+                current = {}
+                m = re.search(r"Address:\s*([0-9A-Fa-f:]{17})", line)
+                if m:
+                    current["mac"] = m.group(1).upper()
+                    current["signalType"] = "WIFI"
+                    current["rssiDbm"] = None
+                    current["name"] = None
+                    current["vendor"] = None
+            elif "ESSID:" in line:
+                m = re.search(r'ESSID:"(.*?)"', line)
+                if m and current:
+                    name = m.group(1)
+                    current["name"] = name if name else None
+            elif "Signal level=" in line:
+                m = re.search(r"Signal level=(-?\d+)", line)
+                if m and current:
+                    current["rssiDbm"] = int(m.group(1))
+        if current.get("mac"):
+            items.append(current)
+    except Exception as exc:
+        log.debug("WiFi scan error: %s", exc)
+    return items
 
 
 def maybe_post_ambient() -> None:
@@ -267,32 +295,20 @@ def maybe_post_ambient() -> None:
     if now - _last_ambient < AMBIENT_INTERVAL_S:
         return
 
-    if not _ambient_discovery_done:
-        _discover_ambient_endpoints()
-
     items: list[dict] = []
+    items.extend(_scan_ble(duration_s=4.0))
+    items.extend(_scan_wifi())
 
-    if _ble_endpoint:
-        for d in _fetch_raw(_ble_endpoint):
-            item = _to_ambient_item(d, "BLE")
-            if item:
-                items.append(item)
-
-    if _wifi_endpoint:
-        for d in _fetch_raw(_wifi_endpoint):
-            item = _to_ambient_item(d, "WIFI")
-            if item:
-                items.append(item)
+    _last_ambient = now  # always update so we don't spam on empty results
 
     if not items:
-        _last_ambient = now
+        log.debug("Ambient scan: no devices found.")
         return
 
     try:
         resp = requests.post(AMBIENT_URL, json=items, headers=AUTH_HEADERS, timeout=5)
         if resp.status_code == 200:
-            log.debug("Ambient batch: %d devices", len(items))
-            _last_ambient = now
+            log.info("Ambient batch: %d device(s) posted.", len(items))
         else:
             log.warning("Ambient POST %s: %s", resp.status_code, resp.text[:100])
     except requests.RequestException as exc:
