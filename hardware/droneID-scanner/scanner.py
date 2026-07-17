@@ -259,7 +259,7 @@ async def scan_cycle() -> None:
 
     scanner = BleakScanner(
         detection_callback=_on_device,
-        scanning_mode="passive",
+        scanning_mode="active",
         adapter=BLE_ADAPTER,
     )
 
