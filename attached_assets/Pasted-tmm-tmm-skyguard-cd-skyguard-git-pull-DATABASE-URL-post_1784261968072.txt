@@ -1,0 +1,56 @@
+tmm@tmm:~/skyguard$ cd ~/skyguard && git pull && \
+  DATABASE_URL="postgresql://tmm@localhost:5433/skyguard" pnpm --filter @workspace/db run push && \
+  pnpm --filter @workspace/api-server run build && \
+  sudo systemctl restart skyguard-api
+remote: Enumerating objects: 55, done.
+remote: Counting objects: 100% (55/55), done.
+remote: Compressing objects: 100% (14/14), done.
+remote: Total 30 (delta 16), reused 30 (delta 16), pack-reused 0 (from 0)
+Unpacking objects: 100% (30/30), 13.26 KiB | 503.00 KiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+   10a05b1..2d9141b  main       -> origin/main
+Updating 10a05b1..2d9141b
+Fast-forward
+ artifacts/api-server/src/routes/index.ts           |   2 +
+ artifacts/api-server/src/routes/rf-alerts.ts       |  63 +++
+ artifacts/skyguard-os/src/App.tsx                  |   4 +
+ .../skyguard-os/src/components/layout/Shell.tsx    |   3 +-
+ artifacts/skyguard-os/src/lib/i18n.tsx             |   2 +
+ artifacts/skyguard-os/src/pages/spectrum.tsx       | 466 +++++++++++++++++++++
+ hardware/hackrf-bridge/.env.example                |  26 +-
+ hardware/hackrf-bridge/bridge.py                   | 435 ++++++++++++-------
+ hardware/hackrf-bridge/frequencies.json            | 110 +++++
+ .../hackrf-bridge/skyguard-hackrf-bridge.service   |  14 +-
+ lib/db/src/schema/index.ts                         |   3 +-
+ lib/db/src/schema/rf-alerts.ts                     |  18 +
+ 12 files changed, 968 insertions(+), 178 deletions(-)
+ create mode 100644 artifacts/api-server/src/routes/rf-alerts.ts
+ create mode 100644 artifacts/skyguard-os/src/pages/spectrum.tsx
+ create mode 100644 hardware/hackrf-bridge/frequencies.json
+ create mode 100644 lib/db/src/schema/rf-alerts.ts
+
+> @workspace/db@0.0.0 push /home/tmm/skyguard/lib/db
+> drizzle-kit push --config ./drizzle.config.ts
+
+Reading config file '/home/tmm/skyguard/lib/db/drizzle.config.ts'
+Using 'pg' driver for database querying
+[✓] Pulling schema from database...
+[✓] Changes applied
+
+> @workspace/api-server@0.0.0 build /home/tmm/skyguard/artifacts/api-server
+> node ./build.mjs
+
+
+  dist/index.mjs                       2.7mb ⚠️
+  dist/pino-worker.mjs               153.4kb
+  dist/pino-file.mjs                 142.1kb
+  dist/pino-pretty.mjs               114.4kb
+  dist/thread-stream-worker.mjs        7.3kb
+  dist/index.mjs.map                   4.9mb
+  dist/pino-worker.mjs.map           256.9kb
+  dist/pino-file.mjs.map             229.0kb
+  dist/pino-pretty.mjs.map           203.6kb
+  dist/thread-stream-worker.mjs.map   12.0kb
+
+⚡ Done in 204ms
+tmm@tmm:~/skyguard$ 
