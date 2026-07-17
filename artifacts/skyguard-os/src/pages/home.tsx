@@ -1,25 +1,11 @@
 import { useGetHomeConfig, useListActiveDroneTracks, getListActiveDroneTracksQueryKey } from "@workspace/api-client-react";
-import { RadarMap, type AmbientDevice, type RfAlertMapEntry } from "@/components/radar/RadarMap";
+import { RadarMap, type RfAlertMapEntry } from "@/components/radar/RadarMap";
 import { TelemetryPanel } from "@/components/radar/TelemetryPanel";
 import { AudioAlarm } from "@/components/radar/AudioAlarm";
-import { AlertTriangle, Loader2, Wifi, Zap } from "lucide-react";
+import { AlertTriangle, Loader2, Zap } from "lucide-react";
+// Wifi and Radio imports removed — ambient devices no longer shown on map
 import { useLanguage } from "@/lib/i18n";
 import { useQuery } from "@tanstack/react-query";
-
-function useAmbientDevices() {
-  return useQuery<AmbientDevice[]>({
-    queryKey: ["ambient-active"],
-    queryFn: async () => {
-      const res = await fetch(`${import.meta.env.BASE_URL}api/ambient/active`, {
-        credentials: "include",
-      });
-      if (!res.ok) return [];
-      return res.json();
-    },
-    refetchInterval: 10_000,
-    staleTime: 9_000,
-  });
-}
 
 function useRecentRfAlerts() {
   return useQuery<RfAlertMapEntry[]>({
@@ -42,11 +28,9 @@ export default function Home() {
   const { data: tracks = [] } = useListActiveDroneTracks({
     query: { refetchInterval: 2000, queryKey: getListActiveDroneTracksQueryKey() }
   });
-  const { data: ambientDevices = [] } = useAmbientDevices();
   const { data: rfAlerts = [] } = useRecentRfAlerts();
 
   const hasAlarm = tracks.some(t => t.alarmActive);
-  const wifiCount = ambientDevices.filter(d => d.signalType === "WIFI").length;
 
   // Deduplicate by bandId — keep latest per band
   const latestRfAlerts = Object.values(
@@ -84,7 +68,7 @@ export default function Home() {
       
       {/* Map View */}
       <div className="flex-1 relative min-h-[50vh] md:min-h-0">
-        <RadarMap config={config} activeTracks={tracks} ambientDevices={ambientDevices} rfAlerts={latestRfAlerts} />
+        <RadarMap config={config} activeTracks={tracks} rfAlerts={latestRfAlerts} />
         
         {hasAlarm && (
           <div className="absolute top-4 left-4 z-[400] bg-destructive text-destructive-foreground px-4 py-2 rounded-md font-mono font-bold text-sm uppercase tracking-widest shadow-[0_0_20px_rgba(255,0,0,0.5)] animate-pulse flex items-center gap-2 border border-destructive-foreground/20">
@@ -93,14 +77,8 @@ export default function Home() {
           </div>
         )}
 
-        {/* Ambient RF badge */}
+        {/* RF badge */}
         <div className="absolute bottom-6 left-4 z-[400] flex gap-2 flex-wrap">
-          {wifiCount > 0 && (
-            <div className="flex items-center gap-1.5 bg-black/60 border border-violet-400/30 text-violet-400 px-2.5 py-1 rounded font-mono text-xs backdrop-blur-sm">
-              <Wifi className="w-3 h-3" />
-              WiFi {wifiCount}
-            </div>
-          )}
           {latestRfAlerts.filter(a => a.threat === "high").length > 0 && (
             <div className="flex items-center gap-1.5 bg-black/60 border border-red-500/40 text-red-400 px-2.5 py-1 rounded font-mono text-xs backdrop-blur-sm animate-pulse">
               <Zap className="w-3 h-3" />

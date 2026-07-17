@@ -40,54 +40,7 @@ const createPilotIcon = () => {
   });
 };
 
-const createAmbientIcon = () => {
-  const color = "#a78bfa"; // violet for WiFi APs
-  return new DivIcon({
-    className: "bg-transparent",
-    html: `<div class="relative w-4 h-4 flex items-center justify-center">
-      <div class="absolute w-4 h-4 rounded-full border opacity-30 animate-ping" style="border-color:${color}"></div>
-      <div class="w-2 h-2 rounded-full opacity-60" style="background:${color}"></div>
-    </div>`,
-    iconSize: [16, 16],
-    iconAnchor: [8, 8]
-  });
-};
 
-/** Simple deterministic hash of a string → 0..1 float */
-function macToFloat(mac: string): number {
-  let h = 0;
-  for (let i = 0; i < mac.length; i++) {
-    h = (Math.imul(31, h) + mac.charCodeAt(i)) | 0;
-  }
-  return (h >>> 0) / 0xffffffff;
-}
-
-/** Place ambient device near home base using MAC hash for angle, RSSI for distance. */
-function ambientPosition(
-  homeLat: number,
-  homeLng: number,
-  mac: string,
-  rssiDbm: number | null,
-): [number, number] {
-  const angle = macToFloat(mac) * 2 * Math.PI;
-  // RSSI: -40 strong (close) → -90 weak (far). Map to 50–250 m.
-  const rssi = rssiDbm ?? -70;
-  const distM = Math.max(50, Math.min(250, 50 + (rssi + 40) * -2.5));
-  // Rough metre-to-degree conversion
-  const dlat = (distM / 111320) * Math.cos(angle);
-  const dlng = (distM / (111320 * Math.cos((homeLat * Math.PI) / 180))) * Math.sin(angle);
-  return [homeLat + dlat, homeLng + dlng];
-}
-
-export interface AmbientDevice {
-  id: number;
-  mac: string;
-  name: string | null;
-  signalType: string;
-  rssiDbm: number | null;
-  vendor: string | null;
-  timestamp: string;
-}
 
 export interface RfAlertMapEntry {
   id: number;
@@ -130,11 +83,10 @@ function MapViewUpdater({ lat, lng }: { lat: number, lng: number }) {
 interface RadarMapProps {
   config: HomeConfig;
   activeTracks: DroneTrack[];
-  ambientDevices?: AmbientDevice[];
   rfAlerts?: RfAlertMapEntry[];
 }
 
-export function RadarMap({ config, activeTracks, ambientDevices = [], rfAlerts = [] }: RadarMapProps) {
+export function RadarMap({ config, activeTracks, rfAlerts = [] }: RadarMapProps) {
   const hasAlarm = activeTracks.some(t => t.alarmActive);
   
   return (
@@ -212,24 +164,6 @@ export function RadarMap({ config, activeTracks, ambientDevices = [], rfAlerts =
                 </div>
               </Tooltip>
             </Circle>
-          );
-        })}
-
-        {/* Ambient WiFi APs (BLE handled by nRF52840 DroneID scanner) */}
-        {ambientDevices.filter(dev => dev.signalType === "WIFI").map(dev => {
-          const pos = ambientPosition(config.lat, config.lng, dev.mac, dev.rssiDbm);
-          const label = dev.name || dev.vendor || dev.mac;
-          const rssiStr = dev.rssiDbm != null ? `${dev.rssiDbm} dBm` : "?";
-          return (
-            <Marker key={dev.mac} position={pos} icon={createAmbientIcon()}>
-              <Tooltip direction="top" offset={[0, -8]} opacity={0.9}>
-                <div className="font-mono text-xs space-y-0.5">
-                  <div className="font-bold">WiFi — {label}</div>
-                  <div className="text-muted-foreground">{dev.mac}</div>
-                  <div>RSSI: {rssiStr}</div>
-                </div>
-              </Tooltip>
-            </Marker>
           );
         })}
 
