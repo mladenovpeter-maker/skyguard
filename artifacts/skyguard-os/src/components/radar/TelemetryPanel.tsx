@@ -1,16 +1,18 @@
 import { DroneTrack } from "@workspace/api-client-react";
 import { formatDistanceToNow } from "date-fns";
 import { bg, enUS } from "date-fns/locale";
-import { AlertTriangle, Crosshair, Navigation, Radio, Activity, MapPin } from "lucide-react";
+import { AlertTriangle, Crosshair, Navigation, Radio, Activity, MapPin, Zap } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n";
+import type { RfAlertMapEntry } from "./RadarMap";
 
 interface TelemetryPanelProps {
   tracks: DroneTrack[];
+  rfAlerts?: RfAlertMapEntry[];
 }
 
-export function TelemetryPanel({ tracks }: TelemetryPanelProps) {
+export function TelemetryPanel({ tracks, rfAlerts = [] }: TelemetryPanelProps) {
   const { t, language } = useLanguage();
   const dateLocale = language === "bg" ? bg : enUS;
 
@@ -87,6 +89,37 @@ export function TelemetryPanel({ tracks }: TelemetryPanelProps) {
           )}
         </div>
       </ScrollArea>
+
+      {/* RF Alerts from HackRF */}
+      {rfAlerts.length > 0 && (
+        <div className="border-t border-border/50 p-3 space-y-2">
+          <div className="font-mono text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-2">
+            <Zap className="w-3.5 h-3.5 text-yellow-400" />
+            RF засичания ({rfAlerts.length})
+          </div>
+          {rfAlerts.map(alert => {
+            const drones: string[] = (() => {
+              try { return alert.possibleDrones ? JSON.parse(alert.possibleDrones) : []; }
+              catch { return []; }
+            })();
+            const color = alert.threat === "high" ? "#ef4444" : alert.threat === "medium" ? "#f59e0b" : "#a78bfa";
+            return (
+              <div key={alert.bandId} className="rounded border p-2 text-[10px] font-mono space-y-1" style={{ borderColor: color + "40", backgroundColor: color + "08" }}>
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-xs" style={{ color }}>{alert.bandLabel}</span>
+                  <span className="text-muted-foreground">{alert.peakDbm} dBm</span>
+                </div>
+                <div className="text-muted-foreground">{(alert.peakHz / 1e6).toFixed(1)} MHz</div>
+                {drones.length > 0 && (
+                  <div className="text-muted-foreground/80">
+                    {drones.slice(0, 2).join(" · ")}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

@@ -1,0 +1,37 @@
+tmm@tmm:~/skyguard$ cd ~/skyguard && git pull && \
+  PORT=3000 BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build && \
+  sudo cp -r artifacts/skyguard-os/dist/public/* /var/www/skyguard/public/
+remote: Enumerating objects: 40, done.
+remote: Counting objects: 100% (40/40), done.
+remote: Compressing objects: 100% (13/13), done.
+remote: Total 28 (delta 22), reused 21 (delta 15), pack-reused 0 (from 0)
+Unpacking objects: 100% (28/28), 426.95 KiB | 3.36 MiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+   fe7eb01..1d1d40a  main       -> origin/main
+Updating fe7eb01..1d1d40a
+Fast-forward
+ artifacts/skyguard-os/src/pages/spectrum.tsx           |   6 ++++--
+ ...Screenshot_2026-07-17_at_07.39.21_1784263164673.png | Bin 0 -> 485649 bytes
+ hardware/hackrf-bridge/.env.example                    |   2 +-
+ hardware/hackrf-bridge/bridge.py                       |   3 ++-
+ hardware/hackrf-bridge/frequencies.json                |   7 +++++++
+ 5 files changed, 14 insertions(+), 4 deletions(-)
+ create mode 100644 attached_assets/Screenshot_2026-07-17_at_07.39.21_1784263164673.png
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2779 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.54 kB
+dist/public/assets/index-Du22l5DX.css  130.99 kB │ gzip:  27.99 kB
+dist/public/assets/index-PIHYUscs.js   807.88 kB │ gzip: 245.67 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 4.91s
+tmm@tmm:~/skyguard$ 

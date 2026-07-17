@@ -89,6 +89,36 @@ export interface AmbientDevice {
   timestamp: string;
 }
 
+export interface RfAlertMapEntry {
+  id: number;
+  bandId: string;
+  bandLabel: string;
+  peakDbm: number;
+  peakHz: number;
+  threat: string;
+  timestamp: string;
+  possibleDrones?: string | null;
+  aboveBaselineDb?: number | null;
+}
+
+// Fixed ring radii per band so they don't overlap
+const BAND_RING_RADIUS: Record<string, number> = {
+  rc_433:   80,
+  rc_868:   110,
+  rc_915:   140,
+  dji_2400: 180,
+  dji_5150: 230,
+  dji_5800: 280,
+};
+const DEFAULT_RING_RADIUS = 150;
+
+const THREAT_COLOR: Record<string, string> = {
+  high:   "#ef4444",
+  medium: "#f59e0b",
+  low:    "#a78bfa",
+  info:   "#60a5fa",
+};
+
 function MapViewUpdater({ lat, lng }: { lat: number, lng: number }) {
   const map = useMap();
   useEffect(() => {
@@ -101,9 +131,10 @@ interface RadarMapProps {
   config: HomeConfig;
   activeTracks: DroneTrack[];
   ambientDevices?: AmbientDevice[];
+  rfAlerts?: RfAlertMapEntry[];
 }
 
-export function RadarMap({ config, activeTracks, ambientDevices = [] }: RadarMapProps) {
+export function RadarMap({ config, activeTracks, ambientDevices = [], rfAlerts = [] }: RadarMapProps) {
   const hasAlarm = activeTracks.some(t => t.alarmActive);
   
   return (
@@ -140,6 +171,49 @@ export function RadarMap({ config, activeTracks, ambientDevices = [] }: RadarMap
             weight: 2
           }}
         />
+
+        {/* HackRF RF Alert rings — pulsing circles around home base per active band */}
+        {rfAlerts.map((alert, i) => {
+          const radius = BAND_RING_RADIUS[alert.bandId] ?? DEFAULT_RING_RADIUS + i * 40;
+          const color  = THREAT_COLOR[alert.threat] ?? "#a78bfa";
+          const drones: string[] = (() => {
+            try { return alert.possibleDrones ? JSON.parse(alert.possibleDrones) : []; }
+            catch { return []; }
+          })();
+          return (
+            <Circle
+              key={alert.bandId}
+              center={[config.lat, config.lng]}
+              radius={radius}
+              pathOptions={{
+                color,
+                fillColor: color,
+                fillOpacity: 0.06,
+                weight: 2,
+                dashArray: "6 4",
+                opacity: 0.7,
+              }}
+            >
+              <Tooltip direction="top" permanent={false} opacity={0.95}>
+                <div className="font-mono text-xs space-y-1 min-w-[160px]">
+                  <div className="font-bold" style={{ color }}>⚡ {alert.bandLabel}</div>
+                  <div>{(alert.peakHz / 1e6).toFixed(1)} MHz &nbsp; {alert.peakDbm} dBm</div>
+                  {alert.aboveBaselineDb != null && (
+                    <div className="text-yellow-500">+{alert.aboveBaselineDb} dB над ambient</div>
+                  )}
+                  {drones.length > 0 && (
+                    <div className="mt-1 pt-1 border-t border-gray-500">
+                      <div className="text-gray-400 text-[10px] mb-0.5">Вероятни дронове:</div>
+                      {drones.slice(0, 3).map(d => (
+                        <div key={d} className="text-[10px]">• {d}</div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </Tooltip>
+            </Circle>
+          );
+        })}
 
         {/* Ambient RF devices */}
         {ambientDevices.map(dev => {
