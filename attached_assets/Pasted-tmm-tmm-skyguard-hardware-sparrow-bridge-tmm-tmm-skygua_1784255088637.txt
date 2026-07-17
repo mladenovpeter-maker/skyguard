@@ -1,0 +1,16 @@
+tmm@tmm:~/skyguard/hardware/sparrow-bridge$ 
+tmm@tmm:~/skyguard/hardware/sparrow-bridge$ set -a && source .env && set +a && python3 bridge.py
+2026-07-17 02:24:37,308 [INFO] SkyGuard <-> Sparrow DroneID bridge starting.
+2026-07-17 02:24:37,308 [INFO] Sparrow API: http://192.168.100.237:8097  |  SkyGuard: https://e9757240-fac7-4035-8464-619d8304e04f-00-1ax2l3m8m1z8e.riker.replit.dev/api/detections
+2026-07-17 02:24:37,308 [INFO] Polling every 2.0 s (BLE + WiFi endpoints).
+2026-07-17 02:24:37,373 [WARNING] Sparrow API unreachable at http://192.168.100.237:8097/sparrow/api/v1/bluetooth/devices: Expecting value: line 1 column 1 (char 0)
+2026-07-17 02:24:37,387 [WARNING] Sparrow API unreachable at http://192.168.100.237:8097/sparrow/api/v1/wifi/devices: Expecting value: line 1 column 1 (char 0)
+2026-07-17 02:24:39,407 [WARNING] Sparrow API unreachable at http://192.168.100.237:8097/sparrow/api/v1/bluetooth/devices: Expecting value: line 1 column 1 (char 0)
+2026-07-17 02:24:39,425 [WARNING] Sparrow API unreachable at http://192.168.100.237:8097/sparrow/api/v1/wifi/devices: Expecting value: line 1 column 1 (char 0)
+2026-07-17 02:24:41,445 [WARNING] Sparrow API unreachable at http://192.168.100.237:8097/sparrow/api/v1/bluetooth/devices: Expecting value: line 1 column 1 (char 0)
+2026-07-17 02:24:41,460 [WARNING] Sparrow API unreachable at http://192.168.100.237:8097/sparrow/api/v1/wifi/devices: Expecting value: line 1 column 1 (char 0)
+2026-07-17 02:24:43,477 [WARNING] Sparrow API unreachable at http://192.168.100.237:8097/sparrow/api/v1/bluetooth/devices: Expecting value: line 1 column 1 (char 0)
+2026-07-17 02:24:43,493 [WARNING] Sparrow API unreachable at http://192.168.100.237:8097/sparrow/api/v1/wifi/devices: Expecting value: line 1 column 1 (char 0)
+2026-07-17 02:24:45,514 [WARNING] Sparrow API unreachable at http://192.168.100.237:8097/sparrow/api/v1/bluetooth/devices: Expecting value: line 1 column 1 (char 0)
+2026-07-17 02:24:45,530 [WARNING] Sparrow API unreachable at http://192.168.100.237:8097/sparrow/api/v1/wifi/devices: Expecting value: line 1 column 1 (char 0)
+
