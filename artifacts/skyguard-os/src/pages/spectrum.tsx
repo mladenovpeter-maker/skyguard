@@ -285,11 +285,96 @@ const FREQ_MIN_HZ = 400e6;
 const FREQ_MAX_HZ = 6000e6;
 const MAX_HISTORY = 200;
 
+// ---------------------------------------------------------------------------
+// HackRF live badge — animated equalizer bars
+// ---------------------------------------------------------------------------
+
+const BAR_COUNT = 7;
+const BAR_HEIGHTS = [0.4, 0.7, 0.55, 0.9, 0.65, 0.5, 0.8]; // static base ratios
+
+function HackRFBadge({
+  status,
+  sweepCount,
+  peakDbm,
+}: {
+  status: "connecting" | "connected" | "error";
+  sweepCount: number;
+  peakDbm: number | null;
+}) {
+  const live    = status === "connected";
+  const color   = live ? "#22c55e" : status === "connecting" ? "#f59e0b" : "#ef4444";
+  const shadow  = live ? "0 0 8px #22c55e88" : "none";
+
+  // Derive bar heights from sweepCount so they change each sweep
+  const bars = BAR_HEIGHTS.map((base, i) => {
+    if (!live) return 0.15;
+    // Use a deterministic "random" based on sweepCount + bar index
+    const seed  = ((sweepCount * 37 + i * 13) % 97) / 97;
+    return Math.max(0.2, Math.min(1, base * 0.4 + seed * 0.6));
+  });
+
+  return (
+    <div
+      className="flex items-center gap-2 px-3 py-1.5 rounded border"
+      style={{
+        borderColor: color + "50",
+        backgroundColor: color + "10",
+        boxShadow: shadow,
+        transition: "box-shadow 0.4s ease",
+      }}
+    >
+      {/* Equalizer bars */}
+      <div className="flex items-end gap-[2px]" style={{ height: 16 }}>
+        {bars.map((h, i) => (
+          <div
+            key={i}
+            style={{
+              width: 3,
+              height: Math.round(h * 16),
+              backgroundColor: color,
+              borderRadius: 1,
+              transition: "height 0.5s ease",
+              opacity: live ? 0.9 : 0.3,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Label */}
+      <div className="flex flex-col leading-none">
+        <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color }}>
+          HackRF One
+        </span>
+        {live ? (
+          <span className="text-[8px] text-muted-foreground">
+            {sweepCount} sweeps
+            {peakDbm !== null && ` · ${peakDbm} dBm`}
+          </span>
+        ) : (
+          <span className="text-[8px]" style={{ color }}>
+            {status === "connecting" ? "connecting…" : "offline"}
+          </span>
+        )}
+      </div>
+
+      {/* Status dot */}
+      <div
+        className={live ? "animate-pulse" : ""}
+        style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: color, flexShrink: 0 }}
+      />
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+
 export default function Spectrum() {
   const { t } = useLanguage();
   const [bins, setBins] = useState<SpectrumBin[]>([]);
   const [history, setHistory] = useState<SpectrumBin[][]>([]);
   const [wsStatus, setWsStatus] = useState<"connecting" | "connected" | "error">("connecting");
+  const [sweepCount, setSweepCount] = useState(0);
+  const [peakDbm, setPeakDbm] = useState<number | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
 
   // RF Alerts from API
@@ -323,6 +408,11 @@ export default function Spectrum() {
             const next = [...prev, msg.data];
             return next.length > MAX_HISTORY ? next.slice(-MAX_HISTORY) : next;
           });
+          setSweepCount(c => c + 1);
+          if (msg.data.length > 0) {
+            const peak = msg.data.reduce((a, b) => b.dbm > a.dbm ? b : a);
+            setPeakDbm(Math.round(peak.dbm * 10) / 10);
+          }
         }
       } catch {}
     };
@@ -358,12 +448,7 @@ export default function Spectrum() {
               {highAlerts.length} DRONE FREQ
             </div>
           )}
-          <div className="flex items-center gap-1.5 text-xs">
-            <div className={`w-2 h-2 rounded-full ${wsStatus === "connected" ? "bg-primary animate-pulse" : "bg-destructive"}`} />
-            <span className="text-muted-foreground uppercase">
-              {wsStatus === "connected" ? "HackRF Live" : "Reconnecting…"}
-            </span>
-          </div>
+          <HackRFBadge status={wsStatus} sweepCount={sweepCount} peakDbm={peakDbm} />
         </div>
       </div>
 
