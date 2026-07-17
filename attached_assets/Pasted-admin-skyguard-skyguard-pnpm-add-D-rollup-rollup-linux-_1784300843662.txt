@@ -1,0 +1,54 @@
+admin@skyguard:~/skyguard $ pnpm add -D @rollup/rollup-linux-arm64-gnu -w && pnpm --filter @workspace/skyguard-os build && sudo cp -r artifacts/skyguard-os/dist/* /var/www/skyguard/public/
+artifacts/mockup-sandbox                 |  WARN  deprecated recharts@2.15.4
+Progress: resolved 498, reused 0, downloaded 0, added 0, done
+ WARN  Issues with peer dependencies found
+artifacts/skyguard-os
+├─┬ @clerk/react 6.12.2
+│ ├── ✕ unmet peer react@"^18.0.0 || ~19.0.3 || ~19.1.4 || ~19.2.3 || ~19.3.0-0": found 19.1.0
+│ ├── ✕ unmet peer react-dom@"^18.0.0 || ~19.0.3 || ~19.1.4 || ~19.2.3 || ~19.3.0-0": found 19.1.0
+│ └─┬ @clerk/shared 4.25.2
+│   ├── ✕ unmet peer react@"^18.0.0 || ~19.0.3 || ~19.1.4 || ~19.2.3 || ~19.3.0-0": found 19.1.0
+│   └── ✕ unmet peer react-dom@"^18.0.0 || ~19.0.3 || ~19.1.4 || ~19.2.3 || ~19.3.0-0": found 19.1.0
+└─┬ @clerk/themes 2.4.57
+  └─┬ @clerk/shared 3.47.8
+    ├── ✕ unmet peer react@"^18.0.0 || ~19.0.3 || ~19.1.4 || ~19.2.3 || ~19.3.0-0": found 19.1.0
+    └── ✕ unmet peer react-dom@"^18.0.0 || ~19.0.3 || ~19.1.4 || ~19.2.3 || ~19.3.0-0": found 19.1.0
+
+devDependencies:
++ @rollup/rollup-linux-arm64-gnu ^4.62.2
+
+Packages: +1
++
+. preinstall$ sh -c 'rm -f package-lock.json yarn.lock; case "$npm_config_use…
+└─ Done in 61ms
+╭ Warning ─────────────────────────────────────────────────────────────────────╮
+│                                                                              │
+│   Ignored build scripts: @clerk/shared@3.47.8.                               │
+│   Run "pnpm approve-builds" to pick which dependencies should be allowed     │
+│   to run scripts.                                                            │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+Done in 23.2s using pnpm v10.34.5
+
+> @workspace/skyguard-os@0.0.0 build /home/admin/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+failed to load config from /home/admin/skyguard/artifacts/skyguard-os/vite.config.ts
+error during build:
+Error: Cannot find module '../lightningcss.linux-arm64-gnu.node'
+Require stack:
+- /home/admin/skyguard/node_modules/.pnpm/lightningcss@1.32.0/node_modules/lightningcss/node/index.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Module._load (node:internal/modules/cjs/loader:1038:27)
+    at Module.require (node:internal/modules/cjs/loader:1289:19)
+    at require (node:internal/modules/helpers:182:18)
+    at Object.<anonymous> (/home/admin/skyguard/node_modules/.pnpm/lightningcss@1.32.0/node_modules/lightningcss/node/index.js:20:12)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+    at Module.load (node:internal/modules/cjs/loader:1266:32)
+    at Module._load (node:internal/modules/cjs/loader:1091:12)
+    at cjsLoader (node:internal/modules/esm/translators:298:15)
+/home/admin/skyguard/artifacts/skyguard-os:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/skyguard-os@0.0.0 build: `vite build --config vite.config.ts`
+Exit status 1
+admin@skyguard:~/skyguard $ 
