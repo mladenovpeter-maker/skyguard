@@ -1,0 +1,46 @@
+(venv) admin@skyguard:~/skyguard $ cd ~/skyguard && git pull && \
+  sudo systemctl restart skyguard-hackrf-bridge && \
+  sudo journalctl -u skyguard-hackrf-bridge -f
+remote: Enumerating objects: 47, done.
+remote: Counting objects: 100% (47/47), done.
+remote: Compressing objects: 100% (18/18), done.
+remote: Total 37 (delta 26), reused 30 (delta 19), pack-reused 0 (from 0)
+Unpacking objects: 100% (37/37), 259.95 KiB | 1.64 MiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+   46fab44..8de0584  main       -> origin/main
+Updating 46fab44..8de0584
+Fast-forward
+ artifacts/skyguard-os/src/pages/spectrum.tsx       |   2 +-
+ ...ard-sudo-journalctl-u-skyguar_1784262523003.txt |  22 +++++++++++
+ ...ard-sudo-pip3-install-websock_1784262285008.txt |  36 ++++++++++++++++++
+ ...rd-git-pull-PORT-3000-BASE-PA_1784262770458.txt |  41 +++++++++++++++++++++
+ ...enshot_2026-07-17_at_07.26.29_1784262392288.png | Bin 0 -> 117764 bytes
+ ...enshot_2026-07-17_at_07.27.37_1784262460283.png | Bin 0 -> 107822 bytes
+ ...enshot_2026-07-17_at_07.31.51_1784262714052.png | Bin 0 -> 118759 bytes
+ hardware/hackrf-bridge/frequencies.json            |  10 ++---
+ 8 files changed, 105 insertions(+), 6 deletions(-)
+ create mode 100644 attached_assets/Pasted--venv-admin-skyguard-skyguard-sudo-journalctl-u-skyguar_1784262523003.txt
+ create mode 100644 attached_assets/Pasted--venv-admin-skyguard-skyguard-sudo-pip3-install-websock_1784262285008.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-cd-skyguard-git-pull-PORT-3000-BASE-PA_1784262770458.txt
+ create mode 100644 attached_assets/Screenshot_2026-07-17_at_07.26.29_1784262392288.png
+ create mode 100644 attached_assets/Screenshot_2026-07-17_at_07.27.37_1784262460283.png
+ create mode 100644 attached_assets/Screenshot_2026-07-17_at_07.31.51_1784262714052.png
+Jul 17 07:33:01 skyguard python3[8467]: 2026-07-17 07:33:01,752 [INFO] RF ALERT  Analog FPV 1.2 GHz  -49.8 dBm @ 1225.0 MHz
+Jul 17 07:33:02 skyguard python3[8467]: 2026-07-17 07:33:02,948 [INFO] RF ALERT  RC 433 MHz  -59.5 dBm @ 440.0 MHz
+Jul 17 07:33:03 skyguard python3[8467]: 2026-07-17 07:33:03,131 [INFO] RF ALERT  DJI / FPV 2.4 GHz  -56.9 dBm @ 2475.3 MHz
+Jul 17 07:33:03 skyguard python3[8467]: 2026-07-17 07:33:03,241 [INFO] RF ALERT  DJI O3 Low-band 5.1 GHz  -54.7 dBm @ 5167.9 MHz
+Jul 17 07:33:03 skyguard python3[8467]: 2026-07-17 07:33:03,492 [INFO] RF ALERT  GPS / GNSS L1  -66.3 dBm @ 1560.6 MHz
+Jul 17 07:35:23 skyguard systemd[1]: Stopping skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge...
+Jul 17 07:35:23 skyguard systemd[1]: skyguard-hackrf-bridge.service: Deactivated successfully.
+Jul 17 07:35:23 skyguard systemd[1]: Stopped skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+Jul 17 07:35:23 skyguard systemd[1]: skyguard-hackrf-bridge.service: Consumed 4min 36.999s CPU time.
+Jul 17 07:35:23 skyguard systemd[1]: Started skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+Jul 17 07:35:24 skyguard python3[8911]: 2026-07-17 07:35:24,305 [INFO] Loaded 10 frequency bands from /home/admin/skyguard/hardware/hackrf-bridge/frequencies.json
+Jul 17 07:35:24 skyguard python3[8911]: 2026-07-17 07:35:24,311 [INFO] SkyGuard HackRF Bridge starting.
+Jul 17 07:35:24 skyguard python3[8911]: 2026-07-17 07:35:24,311 [INFO] WebSocket server on ws://0.0.0.0:8765
+Jul 17 07:35:24 skyguard python3[8911]: 2026-07-17 07:35:24,311 [INFO] Posting RF alerts to http://192.168.100.224:3001/api/rf-alerts
+Jul 17 07:35:24 skyguard python3[8911]: 2026-07-17 07:35:24,312 [INFO] Alert threshold: -50 dBm  |  Warning: -60 dBm
+Jul 17 07:35:24 skyguard python3[8911]: 2026-07-17 07:35:24,372 [INFO] server listening on 0.0.0.0:8765
+Jul 17 07:35:24 skyguard python3[8911]: 2026-07-17 07:35:24,373 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz
+Jul 17 07:35:28 skyguard python3[8911]: 2026-07-17 07:35:28,121 [INFO] RF ALERT  DJI O3 Low-band 5.1 GHz  -54.2 dBm @ 5167.9 MHz
+J
