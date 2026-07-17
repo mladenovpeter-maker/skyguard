@@ -1,0 +1,466 @@
+import { useEffect, useRef, useState, useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { AlertTriangle, Radio, Wifi, Activity, ZapOff } from "lucide-react";
+import { useLanguage } from "@/lib/i18n";
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+interface SpectrumBin {
+  hz: number;
+  dbm: number;
+}
+
+interface SpectrumMessage {
+  type: "spectrum";
+  data: SpectrumBin[];
+  ts: string;
+}
+
+interface RfAlert {
+  id: number;
+  bandId: string;
+  bandLabel: string;
+  peakDbm: number;
+  peakHz: number;
+  threat: string;
+  timestamp: string;
+}
+
+interface FreqBand {
+  id: string;
+  label: string;
+  hz_low: number;
+  hz_high: number;
+  color: string;
+  threat: string;
+  description: string;
+}
+
+// ---------------------------------------------------------------------------
+// Known drone frequency bands (mirrors frequencies.json)
+// ---------------------------------------------------------------------------
+
+const DRONE_BANDS: FreqBand[] = [
+  { id: "rc_433",    label: "RC 433",       hz_low: 430e6,  hz_high: 440e6,  color: "#f59e0b", threat: "medium", description: "RC control (ELRS, LoRa)" },
+  { id: "rc_868",    label: "RC 868",       hz_low: 863e6,  hz_high: 870e6,  color: "#f59e0b", threat: "medium", description: "RC control (EU, Crossfire)" },
+  { id: "rc_915",    label: "RC 915",       hz_low: 902e6,  hz_high: 928e6,  color: "#f59e0b", threat: "medium", description: "RC control (US, ELRS)" },
+  { id: "fpv_1200",  label: "FPV 1.2G",     hz_low: 1080e6, hz_high: 1360e6, color: "#a78bfa", threat: "low",    description: "Analog FPV video" },
+  { id: "gps_l1",    label: "GPS L1",       hz_low: 1559e6, hz_high: 1610e6, color: "#60a5fa", threat: "low",    description: "GNSS navigation" },
+  { id: "dji_2400",  label: "DJI 2.4G",     hz_low: 2400e6, hz_high: 2484e6, color: "#ef4444", threat: "high",   description: "DJI OcuSync / Remote ID" },
+  { id: "dji_5150",  label: "DJI O3 5.1G",  hz_low: 5150e6, hz_high: 5250e6, color: "#ef4444", threat: "high",   description: "DJI O3/O4 low band" },
+  { id: "dji_5800",  label: "DJI O3 5.8G",  hz_low: 5725e6, hz_high: 5850e6, color: "#ef4444", threat: "high",   description: "DJI OcuSync 2/3, FPV" },
+];
+
+// ---------------------------------------------------------------------------
+// Waterfall canvas renderer
+// ---------------------------------------------------------------------------
+
+const DB_MIN = -100;
+const DB_MAX = -20;
+
+function dbToColor(dbm: number): [number, number, number] {
+  const t = Math.max(0, Math.min(1, (dbm - DB_MIN) / (DB_MAX - DB_MIN)));
+  if (t < 0.25) {
+    const s = t / 0.25;
+    return [0, Math.round(s * 50), Math.round(20 + s * 80)];
+  } else if (t < 0.5) {
+    const s = (t - 0.25) / 0.25;
+    return [0, Math.round(50 + s * 150), Math.round(100 - s * 100)];
+  } else if (t < 0.75) {
+    const s = (t - 0.5) / 0.25;
+    return [Math.round(s * 255), 200, 0];
+  } else {
+    const s = (t - 0.75) / 0.25;
+    return [255, Math.round(200 - s * 200), 0];
+  }
+}
+
+function WaterfallCanvas({
+  spectrumHistory,
+  freqMin,
+  freqMax,
+}: {
+  spectrumHistory: SpectrumBin[][];
+  freqMin: number;
+  freqMax: number;
+}) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas || spectrumHistory.length === 0) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const W = canvas.width;
+    const H = canvas.height;
+    const rows = Math.min(spectrumHistory.length, H);
+
+    // Shift image down by 1 row
+    const img = ctx.getImageData(0, 0, W, H - 1);
+    ctx.putImageData(img, 0, 1);
+
+    // Draw newest row at top
+    const latest = spectrumHistory[spectrumHistory.length - 1];
+    const freqRange = freqMax - freqMin;
+
+    const row = ctx.createImageData(W, 1);
+    for (let x = 0; x < W; x++) {
+      const hz = freqMin + (x / W) * freqRange;
+      // Find closest bin
+      const bin = latest.reduce((prev, cur) =>
+        Math.abs(cur.hz - hz) < Math.abs(prev.hz - hz) ? cur : prev
+      );
+      const [r, g, b] = dbToColor(bin.dbm);
+      const idx = x * 4;
+      row.data[idx]     = r;
+      row.data[idx + 1] = g;
+      row.data[idx + 2] = b;
+      row.data[idx + 3] = 255;
+    }
+    ctx.putImageData(row, 0, 0);
+  }, [spectrumHistory, freqMin, freqMax]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      width={1200}
+      height={200}
+      className="w-full h-full"
+      style={{ imageRendering: "pixelated" }}
+    />
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Spectrum line chart (latest sweep)
+// ---------------------------------------------------------------------------
+
+function SpectrumLine({
+  bins,
+  freqMin,
+  freqMax,
+  bands,
+}: {
+  bins: SpectrumBin[];
+  freqMin: number;
+  freqMax: number;
+  bands: FreqBand[];
+}) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas || bins.length === 0) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const W = canvas.width;
+    const H = canvas.height;
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Band highlights
+    for (const band of bands) {
+      const x1 = ((band.hz_low - freqMin) / (freqMax - freqMin)) * W;
+      const x2 = ((band.hz_high - freqMin) / (freqMax - freqMin)) * W;
+      if (x2 < 0 || x1 > W) continue;
+      ctx.fillStyle = band.color + "22";
+      ctx.fillRect(Math.max(0, x1), 0, Math.min(W, x2) - Math.max(0, x1), H);
+      ctx.strokeStyle = band.color + "88";
+      ctx.lineWidth = 1;
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath();
+      ctx.moveTo(Math.max(0, x1), 0);
+      ctx.lineTo(Math.max(0, x1), H);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    // Spectrum line
+    const filtered = bins.filter(b => b.hz >= freqMin && b.hz <= freqMax);
+    if (filtered.length < 2) return;
+
+    ctx.beginPath();
+    ctx.strokeStyle = "hsl(210 100% 60%)";
+    ctx.lineWidth = 1.5;
+    filtered.forEach((b, i) => {
+      const x = ((b.hz - freqMin) / (freqMax - freqMin)) * W;
+      const y = H - ((b.dbm - DB_MIN) / (DB_MAX - DB_MIN)) * H;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // Fill under line
+    ctx.lineTo(((filtered[filtered.length - 1].hz - freqMin) / (freqMax - freqMin)) * W, H);
+    ctx.lineTo(((filtered[0].hz - freqMin) / (freqMax - freqMin)) * W, H);
+    ctx.closePath();
+    ctx.fillStyle = "hsla(210,100%,60%,0.08)";
+    ctx.fill();
+
+    // dB grid lines
+    ctx.strokeStyle = "rgba(255,255,255,0.06)";
+    ctx.lineWidth = 1;
+    [-80, -60, -40].forEach(db => {
+      const y = H - ((db - DB_MIN) / (DB_MAX - DB_MIN)) * H;
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(W, y);
+      ctx.stroke();
+      ctx.fillStyle = "rgba(255,255,255,0.3)";
+      ctx.font = "10px monospace";
+      ctx.fillText(`${db}`, 4, y - 2);
+    });
+  }, [bins, freqMin, freqMax, bands]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      width={1200}
+      height={120}
+      className="w-full h-full"
+    />
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Frequency axis
+// ---------------------------------------------------------------------------
+
+function FreqAxis({ freqMin, freqMax }: { freqMin: number; freqMax: number }) {
+  const ticks: number[] = [];
+  const stepHz = freqMax - freqMin > 2e9 ? 500e6 : 200e6;
+  const start = Math.ceil(freqMin / stepHz) * stepHz;
+  for (let hz = start; hz <= freqMax; hz += stepHz) {
+    ticks.push(hz);
+  }
+  return (
+    <div className="relative h-5 text-[10px] font-mono text-muted-foreground">
+      {ticks.map(hz => (
+        <span
+          key={hz}
+          className="absolute -translate-x-1/2"
+          style={{ left: `${((hz - freqMin) / (freqMax - freqMin)) * 100}%` }}
+        >
+          {hz >= 1e9 ? `${(hz / 1e9).toFixed(1)}G` : `${(hz / 1e6).toFixed(0)}M`}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Alert badge
+// ---------------------------------------------------------------------------
+
+function ThreatBadge({ threat }: { threat: string }) {
+  const cls = {
+    high:   "bg-destructive/20 text-destructive border-destructive/40",
+    medium: "bg-yellow-500/20 text-yellow-400 border-yellow-500/40",
+    low:    "bg-violet-500/20 text-violet-400 border-violet-500/40",
+    info:   "bg-blue-500/20 text-blue-400 border-blue-500/40",
+  }[threat] ?? "bg-muted text-muted-foreground border-border";
+  return (
+    <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase border ${cls}`}>
+      {threat}
+    </span>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Main page
+// ---------------------------------------------------------------------------
+
+const WS_URL = `ws://${window.location.hostname}:8765`;
+const FREQ_MIN_HZ = 400e6;
+const FREQ_MAX_HZ = 6000e6;
+const MAX_HISTORY = 200;
+
+export default function Spectrum() {
+  const { t } = useLanguage();
+  const [bins, setBins] = useState<SpectrumBin[]>([]);
+  const [history, setHistory] = useState<SpectrumBin[][]>([]);
+  const [wsStatus, setWsStatus] = useState<"connecting" | "connected" | "error">("connecting");
+  const wsRef = useRef<WebSocket | null>(null);
+
+  // RF Alerts from API
+  const { data: rfAlerts = [] } = useQuery<RfAlert[]>({
+    queryKey: ["rf-alerts-recent"],
+    queryFn: async () => {
+      const res = await fetch(`${import.meta.env.BASE_URL}api/rf-alerts/recent`, {
+        credentials: "include",
+      });
+      if (!res.ok) return [];
+      return res.json();
+    },
+    refetchInterval: 5000,
+  });
+
+  const connect = useCallback(() => {
+    const ws = new WebSocket(WS_URL);
+    wsRef.current = ws;
+
+    ws.onopen = () => {
+      setWsStatus("connected");
+      log.info?.("WS connected");
+    };
+
+    ws.onmessage = (evt) => {
+      try {
+        const msg: SpectrumMessage = JSON.parse(evt.data);
+        if (msg.type === "spectrum") {
+          setBins(msg.data);
+          setHistory(prev => {
+            const next = [...prev, msg.data];
+            return next.length > MAX_HISTORY ? next.slice(-MAX_HISTORY) : next;
+          });
+        }
+      } catch {}
+    };
+
+    ws.onerror = () => setWsStatus("error");
+    ws.onclose = () => {
+      setWsStatus("error");
+      setTimeout(connect, 3000);
+    };
+  }, []);
+
+  useEffect(() => {
+    connect();
+    return () => wsRef.current?.close();
+  }, [connect]);
+
+  const highAlerts = rfAlerts.filter(a => a.threat === "high");
+
+  return (
+    <div className="flex-1 flex flex-col overflow-hidden bg-background text-foreground font-mono">
+      {/* Header bar */}
+      <div className="flex items-center justify-between px-4 py-2 border-b border-border/50 bg-card/30">
+        <div className="flex items-center gap-3">
+          <Radio className="w-4 h-4 text-primary" />
+          <span className="text-xs font-bold uppercase tracking-widest text-primary">
+            RF Spectrum — {(FREQ_MIN_HZ / 1e6).toFixed(0)}–{(FREQ_MAX_HZ / 1e6).toFixed(0)} MHz
+          </span>
+        </div>
+        <div className="flex items-center gap-3">
+          {highAlerts.length > 0 && (
+            <div className="flex items-center gap-1.5 animate-pulse text-destructive text-xs font-bold uppercase">
+              <AlertTriangle className="w-3.5 h-3.5" />
+              {highAlerts.length} DRONE FREQ
+            </div>
+          )}
+          <div className="flex items-center gap-1.5 text-xs">
+            <div className={`w-2 h-2 rounded-full ${wsStatus === "connected" ? "bg-primary animate-pulse" : "bg-destructive"}`} />
+            <span className="text-muted-foreground uppercase">
+              {wsStatus === "connected" ? "HackRF Live" : "Reconnecting…"}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-1 overflow-hidden">
+        {/* Main spectrum area */}
+        <div className="flex-1 flex flex-col p-3 gap-2 min-w-0">
+
+          {/* Band legend */}
+          <div className="flex flex-wrap gap-2">
+            {DRONE_BANDS.filter(b => b.threat !== "low").map(band => (
+              <div
+                key={band.id}
+                className="flex items-center gap-1.5 px-2 py-0.5 rounded border text-[10px]"
+                style={{ borderColor: band.color + "60", backgroundColor: band.color + "10", color: band.color }}
+                title={band.description}
+              >
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: band.color }} />
+                {band.label}
+              </div>
+            ))}
+          </div>
+
+          {/* Spectrum line */}
+          <div className="relative bg-black/40 rounded border border-border/30" style={{ height: 120 }}>
+            {bins.length === 0 ? (
+              <div className="absolute inset-0 flex items-center justify-center text-muted-foreground text-xs uppercase">
+                <ZapOff className="w-4 h-4 mr-2" />
+                {wsStatus === "error" ? `Няма връзка с HackRF bridge (ws://${window.location.hostname}:8765)` : "Изчакване на данни…"}
+              </div>
+            ) : (
+              <SpectrumLine bins={bins} freqMin={FREQ_MIN_HZ} freqMax={FREQ_MAX_HZ} bands={DRONE_BANDS} />
+            )}
+          </div>
+
+          {/* Frequency axis */}
+          <FreqAxis freqMin={FREQ_MIN_HZ} freqMax={FREQ_MAX_HZ} />
+
+          {/* Waterfall */}
+          <div className="flex-1 relative bg-black rounded border border-border/30 overflow-hidden" style={{ minHeight: 150 }}>
+            <div className="absolute top-1 left-2 text-[10px] text-muted-foreground uppercase z-10">Waterfall</div>
+            {history.length === 0 ? (
+              <div className="absolute inset-0 flex items-center justify-center text-muted-foreground text-xs">
+                Waterfall ще се появи при получаване на данни
+              </div>
+            ) : (
+              <WaterfallCanvas spectrumHistory={history} freqMin={FREQ_MIN_HZ} freqMax={FREQ_MAX_HZ} />
+            )}
+          </div>
+        </div>
+
+        {/* Right panel — RF Alerts */}
+        <div className="w-72 border-l border-border/50 flex flex-col bg-card/20">
+          <div className="px-3 py-2 border-b border-border/50 flex items-center gap-2">
+            <AlertTriangle className="w-3.5 h-3.5 text-yellow-400" />
+            <span className="text-xs font-bold uppercase tracking-widest">RF Alerts</span>
+            <span className="ml-auto text-xs text-muted-foreground">последни 10 мин</span>
+          </div>
+          <div className="flex-1 overflow-y-auto">
+            {rfAlerts.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-full text-muted-foreground gap-2 p-4">
+                <Activity className="w-6 h-6 opacity-30" />
+                <span className="text-xs text-center uppercase">Няма засечени сигнали</span>
+              </div>
+            ) : (
+              rfAlerts.map(alert => (
+                <div
+                  key={alert.id}
+                  className="px-3 py-2 border-b border-border/30 hover:bg-secondary/20 transition-colors"
+                >
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <span className="text-xs font-bold" style={{
+                      color: alert.threat === "high" ? "#ef4444" : alert.threat === "medium" ? "#f59e0b" : "#a78bfa"
+                    }}>
+                      {alert.bandLabel}
+                    </span>
+                    <ThreatBadge threat={alert.threat} />
+                  </div>
+                  <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                    <span>{(alert.peakHz / 1e6).toFixed(1)} MHz</span>
+                    <span className={alert.peakDbm > -60 ? "text-destructive" : ""}>{alert.peakDbm} dBm</span>
+                    <span>{new Date(alert.timestamp).toLocaleTimeString()}</span>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Band reference */}
+          <div className="border-t border-border/50 p-2">
+            <div className="text-[10px] text-muted-foreground uppercase mb-1.5">Drone честоти</div>
+            {DRONE_BANDS.filter(b => b.threat === "high" || b.threat === "medium").map(band => (
+              <div key={band.id} className="flex items-center gap-1.5 mb-1">
+                <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: band.color }} />
+                <span className="text-[10px] text-muted-foreground flex-1 truncate">{band.label}</span>
+                <span className="text-[10px] text-muted-foreground/60">
+                  {(band.hz_low / 1e6).toFixed(0)}–{(band.hz_high / 1e6).toFixed(0)}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Suppress undefined log in browser
+const log = { info: console.log };

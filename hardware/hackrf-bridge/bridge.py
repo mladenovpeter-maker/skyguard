@@ -1,50 +1,49 @@
 #!/usr/bin/env python3
 """
-SkyGuard OS <-> HackRF / gr-DroneID bridge.
+SkyGuard OS — HackRF Sweep Bridge
 
-Subscribes to the ZMQ PUB socket that gr-DroneID publishes decoded DJI
-DroneID frames on, and forwards each detection to SkyGuard OS via
-POST /api/detections.
+Runs hackrf_sweep, streams spectrum data to connected browsers via WebSocket,
+and posts RF alerts to the SkyGuard API when signals are detected in known
+drone frequency bands.
 
-gr-DroneID: https://github.com/bkerler/gr-DroneID
-  Decodes DJI OcuSync 1/2 DroneID bursts from a HackRF One (or any other
-  SDR supported by gr-osmosdr). Gives you GPS position, altitude, speed,
-  heading, and serial number for DJI Mavic 2, Mini 2, Air 2, Phantom 4, etc.
-  Does NOT decode encrypted O4 signals (Mini 4 Pro, Air 3, Mavic 3 Pro).
+Architecture:
+  hackrf_sweep subprocess → parser → asyncio queue
+                                   ├─ WebSocket broadcast  (spectrum waterfall)
+                                   └─ Band detector        → POST /api/rf-alerts
 
-Setup on the SDR host:
-  1. Install GNU Radio 3.10+ and gr-DroneID:
-       sudo apt install gnuradio gnuradio-dev cmake libboost-all-dev libzmq3-dev
-       git clone https://github.com/bkerler/gr-DroneID && cd gr-DroneID
-       mkdir build && cd build && cmake .. && make -j4 && sudo make install
-       sudo ldconfig
+Configuration (.env):
+  HACKRF_FREQ_START_MHZ   Start frequency in MHz. Default: 400
+  HACKRF_FREQ_END_MHZ     End frequency in MHz. Default: 6000
+  HACKRF_BIN_WIDTH_KHZ    Bin width in kHz. Default: 100
+  HACKRF_LNA_GAIN         LNA gain 0-40 dB. Default: 16
+  HACKRF_VGA_GAIN         VGA gain 0-62 dB. Default: 20
+  WS_PORT                 WebSocket server port. Default: 8765
+  SKYGUARD_API_BASE       e.g. http://192.168.100.224:3001
+  SKYGUARD_DEVICE_KEY     Device API key (sg_...)
+  ALERT_COOLDOWN_S        Min seconds between alerts per band. Default: 30
+  FREQUENCIES_JSON        Path to frequencies.json. Default: ./frequencies.json
 
-  2. Start the gr-DroneID flowgraph (use hackrf_droneid.py or the GRC file):
-       python3 hackrf_droneid.py --freq 2.4e9 --zmq-port 4224
-     The script publishes decoded JSON frames on tcp://127.0.0.1:4224.
+Install:
+  pip3 install websockets requests
+  sudo apt install -y hackrf
 
-  3. Run this bridge (after sourcing .env):
-       source .env && python3 bridge.py
+Run:
+  source .env && python3 bridge.py
 
-Configuration (environment variables — see .env.example):
-  ZMQ_ENDPOINT         ZMQ PUB address gr-DroneID binds to.
-                       Default: tcp://127.0.0.1:4224
-  SKYGUARD_API_BASE    SkyGuard API base URL.
-  SKYGUARD_DEVICE_KEY  Device API key (sg_...).
-  MIN_POST_INTERVAL_S  Throttle per drone serial. Default: 2
-
-Always-on:
-  sudo systemctl enable --now skyguard-hackrf-bridge.service
+Systemd service: skyguard-hackrf-bridge.service
 """
 
+import asyncio
 import json
 import logging
 import os
+import subprocess
 import sys
 import time
+from datetime import datetime, timezone
+from pathlib import Path
 
 import requests
-import zmq
 
 logging.basicConfig(
     level=os.environ.get("LOG_LEVEL", "INFO"),
@@ -52,141 +51,273 @@ logging.basicConfig(
 )
 log = logging.getLogger("skyguard-hackrf")
 
-ZMQ_ENDPOINT = os.environ.get("ZMQ_ENDPOINT", "tcp://127.0.0.1:4224")
+# ---------------------------------------------------------------------------
+# Config
+# ---------------------------------------------------------------------------
 
-API_BASE = os.environ.get("SKYGUARD_API_BASE", "").rstrip("/")
-DEVICE_KEY = os.environ.get("SKYGUARD_DEVICE_KEY", "")
-MIN_POST_INTERVAL_S = float(os.environ.get("MIN_POST_INTERVAL_S", "2"))
+FREQ_START_MHZ   = int(os.environ.get("HACKRF_FREQ_START_MHZ", "400"))
+FREQ_END_MHZ     = int(os.environ.get("HACKRF_FREQ_END_MHZ", "6000"))
+BIN_WIDTH_KHZ    = int(os.environ.get("HACKRF_BIN_WIDTH_KHZ", "100"))
+LNA_GAIN         = int(os.environ.get("HACKRF_LNA_GAIN", "16"))
+VGA_GAIN         = int(os.environ.get("HACKRF_VGA_GAIN", "20"))
+WS_PORT          = int(os.environ.get("WS_PORT", "8765"))
+
+API_BASE     = os.environ.get("SKYGUARD_API_BASE", "").rstrip("/")
+DEVICE_KEY   = os.environ.get("SKYGUARD_DEVICE_KEY", "")
+ALERT_COOLDOWN_S = float(os.environ.get("ALERT_COOLDOWN_S", "30"))
+FREQ_JSON    = os.environ.get("FREQUENCIES_JSON", str(Path(__file__).parent / "frequencies.json"))
 
 if not API_BASE or not DEVICE_KEY:
-    log.error(
-        "SKYGUARD_API_BASE and SKYGUARD_DEVICE_KEY must be set.\n"
-        "Copy .env.example to .env, fill in the values, and `source .env`."
-    )
+    log.error("SKYGUARD_API_BASE and SKYGUARD_DEVICE_KEY must be set.")
     sys.exit(1)
 
-DETECTIONS_URL = f"{API_BASE}/api/detections"
+AUTH_HEADERS = {
+    "Authorization": f"Bearer {DEVICE_KEY}",
+    "Content-Type": "application/json",
+}
 
-_last_sent: dict[str, float] = {}
+# ---------------------------------------------------------------------------
+# Load frequency database
+# ---------------------------------------------------------------------------
 
-
-def _clean(value):
-    if value in (None, 0, 0.0, ""):
-        return None
-    return value
-
-
-def map_frame(frame: dict) -> dict | None:
-    """
-    Map a gr-DroneID decoded frame to SkyGuard's IngestDetectionBody.
-
-    gr-DroneID JSON fields (may vary by version/commit):
-      serial_number, lat, lon, alt, speed, direction, height,
-      home_lat, home_lon, rssi, timestamp
-    """
-    lat = _clean(frame.get("lat"))
-    lng = _clean(frame.get("lon"))
-    if lat is None or lng is None:
-        return None
-
-    serial = frame.get("serial_number") or frame.get("serial") or "UNKNOWN"
-    speed_ms = frame.get("speed")
-    speed_kmh = round(float(speed_ms) * 3.6, 1) if speed_ms else None
-
-    # gr-DroneID reports home coords (take-off point) rather than pilot coords.
-    home_lat = _clean(frame.get("home_lat"))
-    home_lng = _clean(frame.get("home_lon"))
-
-    return {
-        "droneId": serial,
-        "model": f"DJI (HackRF OcuSync) [{serial}]",
-        "signalType": "OcuSync_HackRF",
-        "lat": float(lat),
-        "lng": float(lng),
-        "altitudeM": _clean(frame.get("alt")),
-        "speedKmh": speed_kmh,
-        "headingDeg": _clean(frame.get("direction")),
-        "rssiDbm": frame.get("rssi"),
-        # Home/take-off point as proxy for pilot location
-        "pilotLat": home_lat,
-        "pilotLng": home_lng,
-    }
-
-
-def post_detection(body: dict) -> None:
+def load_bands() -> list[dict]:
     try:
-        resp = requests.post(
-            DETECTIONS_URL,
-            json=body,
-            headers={"Authorization": f"Bearer {DEVICE_KEY}"},
-            timeout=5,
-        )
-        if resp.status_code == 201:
-            log.info(
-                "Forwarded %s @ (%.5f, %.5f) alt %.0fm spd %.1f km/h",
-                body["droneId"], body["lat"], body["lng"],
-                body.get("altitudeM") or 0, body.get("speedKmh") or 0,
+        with open(FREQ_JSON) as f:
+            data = json.load(f)
+        bands = data.get("bands", [])
+        thresholds = data.get("thresholds", {})
+        log.info("Loaded %d frequency bands from %s", len(bands), FREQ_JSON)
+        return bands, thresholds
+    except Exception as exc:
+        log.error("Failed to load frequencies.json: %s", exc)
+        return [], {}
+
+
+BANDS, THRESHOLDS = load_bands()
+ALERT_DBM   = THRESHOLDS.get("alert_dbm", -60)
+WARNING_DBM = THRESHOLDS.get("warning_dbm", -75)
+
+# ---------------------------------------------------------------------------
+# Shared state
+# ---------------------------------------------------------------------------
+
+connected_clients: set = set()
+# Latest full spectrum snapshot: list of {"hz": float, "dbm": float}
+latest_spectrum: list[dict] = []
+# Cooldown tracker per band: band_id -> last_alert_monotonic
+_last_alert: dict[str, float] = {}
+
+# ---------------------------------------------------------------------------
+# hackrf_sweep parser
+# ---------------------------------------------------------------------------
+
+def parse_sweep_line(line: str) -> list[dict] | None:
+    """
+    hackrf_sweep CSV format:
+    date, time, hz_low, hz_high, hz_bin_width, num_samples, db[0], db[1], ...
+    """
+    parts = line.strip().split(",")
+    if len(parts) < 7:
+        return None
+    try:
+        hz_low   = float(parts[2])
+        hz_high  = float(parts[3])
+        hz_step  = float(parts[4])
+        samples  = parts[6:]
+        bins = []
+        for i, s in enumerate(samples):
+            hz = hz_low + i * hz_step
+            if hz > hz_high:
+                break
+            dbm = float(s)
+            bins.append({"hz": hz, "dbm": dbm})
+        return bins
+    except (ValueError, IndexError):
+        return None
+
+
+# ---------------------------------------------------------------------------
+# Band detection & alerting
+# ---------------------------------------------------------------------------
+
+def check_bands(bins: list[dict]) -> None:
+    """Check if any bin falls in a drone band above threshold; post alert."""
+    now = time.monotonic()
+
+    for band in BANDS:
+        if band["threat"] in ("info",):
+            continue  # skip informational bands (general WiFi etc.)
+
+        band_bins = [b for b in bins if band["hz_low"] <= b["hz"] <= band["hz_high"]]
+        if not band_bins:
+            continue
+
+        peak = max(band_bins, key=lambda b: b["dbm"])
+        if peak["dbm"] < WARNING_DBM:
+            continue  # below threshold — ignore
+
+        # Cooldown check
+        if now - _last_alert.get(band["id"], 0) < ALERT_COOLDOWN_S:
+            continue
+
+        _last_alert[band["id"]] = now
+
+        payload = {
+            "bandId":    band["id"],
+            "bandLabel": band["label"],
+            "peakDbm":   round(peak["dbm"], 1),
+            "peakHz":    peak["hz"],
+            "threat":    band["threat"],
+        }
+        try:
+            resp = requests.post(
+                f"{API_BASE}/api/rf-alerts",
+                json=payload,
+                headers=AUTH_HEADERS,
+                timeout=4,
             )
-        elif resp.status_code == 401:
-            log.error("SkyGuard rejected device key (401). Check SKYGUARD_DEVICE_KEY.")
-        else:
-            log.warning("SkyGuard %s for %s: %s", resp.status_code, body["droneId"], resp.text[:200])
-    except requests.RequestException as exc:
-        log.warning("Failed to reach SkyGuard at %s: %s", DETECTIONS_URL, exc)
+            if resp.status_code == 201:
+                log.info("RF ALERT  %s  %.1f dBm @ %.1f MHz",
+                         band["label"], peak["dbm"], peak["hz"] / 1e6)
+            else:
+                log.warning("Alert POST %s: %s", resp.status_code, resp.text[:80])
+        except requests.RequestException as exc:
+            log.warning("Alert POST failed: %s", exc)
 
 
-def main() -> None:
-    log.info("SkyGuard <-> HackRF/gr-DroneID bridge starting.")
-    log.info("Subscribing to ZMQ PUB at %s", ZMQ_ENDPOINT)
-    log.info("Forwarding detections to %s", DETECTIONS_URL)
+# ---------------------------------------------------------------------------
+# WebSocket server
+# ---------------------------------------------------------------------------
 
-    ctx = zmq.Context()
+async def ws_handler(websocket) -> None:
+    connected_clients.add(websocket)
+    log.info("WS client connected  (total: %d)", len(connected_clients))
+    try:
+        # Send the latest snapshot immediately on connect
+        if latest_spectrum:
+            await websocket.send(json.dumps({
+                "type": "spectrum",
+                "data": latest_spectrum,
+                "ts":   datetime.now(timezone.utc).isoformat(),
+            }))
+        await websocket.wait_closed()
+    finally:
+        connected_clients.discard(websocket)
+        log.info("WS client disconnected (total: %d)", len(connected_clients))
+
+
+async def broadcast(message: str) -> None:
+    if not connected_clients:
+        return
+    await asyncio.gather(
+        *[ws.send(message) for ws in list(connected_clients)],
+        return_exceptions=True,
+    )
+
+
+# ---------------------------------------------------------------------------
+# hackrf_sweep subprocess reader
+# ---------------------------------------------------------------------------
+
+async def run_sweep(queue: asyncio.Queue) -> None:
+    cmd = [
+        "hackrf_sweep",
+        "-f", f"{FREQ_START_MHZ}:{FREQ_END_MHZ}",
+        "-B",  # binary output? no — use default CSV
+        "-w", str(BIN_WIDTH_KHZ * 1000),
+        "-l", str(LNA_GAIN),
+        "-g", str(VGA_GAIN),
+        "-1",  # one-shot per sweep? no — continuous
+    ]
+    # Remove -1 (not a valid flag); hackrf_sweep runs continuously by default
+    cmd = [
+        "hackrf_sweep",
+        "-f", f"{FREQ_START_MHZ}:{FREQ_END_MHZ}",
+        "-w", str(BIN_WIDTH_KHZ * 1000),
+        "-l", str(LNA_GAIN),
+        "-g", str(VGA_GAIN),
+    ]
+
+    log.info("Starting hackrf_sweep %d–%d MHz  bin=%.0f kHz",
+             FREQ_START_MHZ, FREQ_END_MHZ, BIN_WIDTH_KHZ)
+    try:
+        proc = await asyncio.create_subprocess_exec(
+            *cmd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.DEVNULL,
+        )
+        assert proc.stdout
+        async for raw_line in proc.stdout:
+            line = raw_line.decode(errors="ignore")
+            bins = parse_sweep_line(line)
+            if bins:
+                await queue.put(bins)
+    except FileNotFoundError:
+        log.error("hackrf_sweep not found. Install: sudo apt install hackrf")
+        sys.exit(1)
+    except Exception as exc:
+        log.error("hackrf_sweep error: %s", exc)
+
+
+# ---------------------------------------------------------------------------
+# Accumulator — collects bins into a full sweep, then broadcasts
+# ---------------------------------------------------------------------------
+
+async def process_queue(queue: asyncio.Queue) -> None:
+    global latest_spectrum
+    sweep_bins: dict[float, float] = {}  # hz -> dbm
+    last_broadcast = time.monotonic()
 
     while True:
-        sock = ctx.socket(zmq.SUB)
-        sock.setsockopt_string(zmq.SUBSCRIBE, "")  # subscribe to all topics
-        sock.setsockopt(zmq.RCVTIMEO, 5000)         # 5 s receive timeout
+        bins = await queue.get()
+        for b in bins:
+            sweep_bins[b["hz"]] = b["dbm"]
 
-        try:
-            sock.connect(ZMQ_ENDPOINT)
-            log.info("Connected to gr-DroneID ZMQ socket.")
+        # Broadcast every ~0.5 s to avoid flooding
+        now = time.monotonic()
+        if now - last_broadcast >= 0.5:
+            sorted_bins = [{"hz": hz, "dbm": dbm}
+                           for hz, dbm in sorted(sweep_bins.items())]
+            latest_spectrum = sorted_bins
 
-            while True:
-                try:
-                    raw = sock.recv()
-                except zmq.Again:
-                    # No frame in 5 s — gr-DroneID running but no drones in range.
-                    log.debug("No frame received in 5 s (no drones in range, or flowgraph paused).")
-                    continue
+            msg = json.dumps({
+                "type": "spectrum",
+                "data": sorted_bins,
+                "ts": datetime.now(timezone.utc).isoformat(),
+            })
+            await broadcast(msg)
+            check_bands(sorted_bins)
+            last_broadcast = now
+            sweep_bins = {}
 
-                # gr-DroneID sends either a raw JSON string or a multipart message.
-                # Handle both.
-                try:
-                    text = raw.decode("utf-8")
-                    frame = json.loads(text)
-                except (UnicodeDecodeError, json.JSONDecodeError):
-                    log.debug("Non-JSON ZMQ frame, skipping.")
-                    continue
 
-                serial = frame.get("serial_number") or frame.get("serial") or "UNKNOWN"
-                now = time.monotonic()
-                if now - _last_sent.get(serial, 0) < MIN_POST_INTERVAL_S:
-                    continue
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
 
-                body = map_frame(frame)
-                if body is None:
-                    log.debug("Skipping %s: no GPS fix.", serial)
-                    continue
+async def main() -> None:
+    try:
+        import websockets
+    except ImportError:
+        log.error("websockets not installed. Run: pip3 install websockets")
+        sys.exit(1)
 
-                _last_sent[serial] = now
-                post_detection(body)
+    queue: asyncio.Queue = asyncio.Queue(maxsize=1000)
 
-        except zmq.ZMQError as exc:
-            log.warning("ZMQ error (%s), reconnecting in 5 s...", exc)
-        finally:
-            sock.close()
-            time.sleep(5)
+    log.info("SkyGuard HackRF Bridge starting.")
+    log.info("WebSocket server on ws://0.0.0.0:%d", WS_PORT)
+    log.info("Posting RF alerts to %s/api/rf-alerts", API_BASE)
+    log.info("Alert threshold: %.0f dBm  |  Warning: %.0f dBm", ALERT_DBM, WARNING_DBM)
+
+    ws_server = await websockets.serve(ws_handler, "0.0.0.0", WS_PORT)
+
+    await asyncio.gather(
+        run_sweep(queue),
+        process_queue(queue),
+    )
+
+    ws_server.close()
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

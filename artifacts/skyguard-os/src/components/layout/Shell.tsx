@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { useGetIngestStatus, getGetIngestStatusQueryKey } from "@workspace/api-client-react";
-import { Activity, Settings, History, Radar, AlertTriangle, ShieldCheck, Languages, Cpu, LogOut } from "lucide-react";
+import { Activity, Settings, History, Radar, AlertTriangle, ShieldCheck, Languages, Cpu, LogOut, RadioTower } from "lucide-react";
 import { ReactNode } from "react";
 import { useClerk, useUser } from "@clerk/react";
 import { cn } from "@/lib/utils";
@@ -85,6 +85,7 @@ export function Shell({ children }: { children: ReactNode }) {
 
   const links = [
     { href: "/", label: t("nav.radar"), icon: Radar },
+    { href: "/spectrum", label: t("nav.spectrum"), icon: RadioTower },
     { href: "/history", label: t("nav.history"), icon: History },
     { href: "/settings", label: t("nav.settings"), icon: Settings },
     { href: "/admin", label: t("nav.admin"), icon: Cpu },

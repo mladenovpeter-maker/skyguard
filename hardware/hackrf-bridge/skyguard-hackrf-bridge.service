@@ -1,15 +1,13 @@
 [Unit]
-Description=SkyGuard OS – HackRF / gr-DroneID Bridge
-Documentation=https://github.com/bkerler/gr-DroneID
-After=network-online.target
-Wants=network-online.target
+Description=SkyGuard OS HackRF Sweep Bridge
+After=network.target
 
 [Service]
 Type=simple
-User=pi
-WorkingDirectory=/home/pi/skyguard/hardware/hackrf-bridge
-EnvironmentFile=/home/pi/skyguard/hardware/hackrf-bridge/.env
-ExecStart=/usr/bin/python3 /home/pi/skyguard/hardware/hackrf-bridge/bridge.py
+User=root
+WorkingDirectory=/home/admin/skyguard/hardware/hackrf-bridge
+EnvironmentFile=/home/admin/skyguard/hardware/hackrf-bridge/.env
+ExecStart=/usr/bin/python3 /home/admin/skyguard/hardware/hackrf-bridge/bridge.py
 Restart=always
 RestartSec=5
 StandardOutput=journal

@@ -1,0 +1,110 @@
+{
+  "_comment": "Drone & RC RF frequency database. Sources: DJI specs, FCC Part 107, OpenDroneID spec, FPV community.",
+  "bands": [
+    {
+      "id": "rc_433",
+      "label": "RC 433 MHz",
+      "hz_low": 430000000,
+      "hz_high": 440000000,
+      "color": "#f59e0b",
+      "threat": "medium",
+      "description": "RC control link — older drones, LoRa telemetry, ELRS 433",
+      "protocols": ["PPM", "SBUS", "ELRS", "LoRa"]
+    },
+    {
+      "id": "rc_868",
+      "label": "RC 868 MHz",
+      "hz_low": 863000000,
+      "hz_high": 870000000,
+      "color": "#f59e0b",
+      "threat": "medium",
+      "description": "RC control link — EU ISM band, ExpressLRS 868, TBS Crossfire",
+      "protocols": ["ELRS", "Crossfire", "FrSky"]
+    },
+    {
+      "id": "rc_915",
+      "label": "RC 915 MHz",
+      "hz_low": 902000000,
+      "hz_high": 928000000,
+      "color": "#f59e0b",
+      "threat": "medium",
+      "description": "RC control link — US ISM band, ExpressLRS 915, TBS Crossfire US",
+      "protocols": ["ELRS", "Crossfire", "FrSky"]
+    },
+    {
+      "id": "dji_2400",
+      "label": "DJI / FPV 2.4 GHz",
+      "hz_low": 2400000000,
+      "hz_high": 2483500000,
+      "color": "#ef4444",
+      "threat": "high",
+      "description": "DJI OcuSync 1.0, DJI Mini 2/3, WiFi RC, FPV video 2.4G, Remote ID",
+      "protocols": ["OcuSync 1.0", "WiFi", "O3 fallback", "Remote ID BLE/WiFi"]
+    },
+    {
+      "id": "dji_5800",
+      "label": "DJI O3 / FPV 5.8 GHz",
+      "hz_low": 5725000000,
+      "hz_high": 5850000000,
+      "color": "#ef4444",
+      "threat": "high",
+      "description": "DJI OcuSync 2.0/3.0, O3, DJI FPV, Avata, Mini 4 Pro, FPV video 5.8G",
+      "protocols": ["OcuSync 2.0", "OcuSync 3.0", "O3", "O4"]
+    },
+    {
+      "id": "dji_5150",
+      "label": "DJI O3 Low-band 5.1 GHz",
+      "hz_low": 5150000000,
+      "hz_high": 5250000000,
+      "color": "#ef4444",
+      "threat": "high",
+      "description": "DJI O3/O4 extended band (Mavic 3, Mini 4 Pro, Avata 2)",
+      "protocols": ["O3", "O4"]
+    },
+    {
+      "id": "fpv_1200",
+      "label": "Analog FPV 1.2 GHz",
+      "hz_low": 1080000000,
+      "hz_high": 1360000000,
+      "color": "#a78bfa",
+      "threat": "low",
+      "description": "Analog FPV video — long range / fixed wing",
+      "protocols": ["Analog video"]
+    },
+    {
+      "id": "glonass_l1",
+      "label": "GPS / GNSS L1",
+      "hz_low": 1559000000,
+      "hz_high": 1610000000,
+      "color": "#60a5fa",
+      "threat": "low",
+      "description": "GPS L1 (1575.42 MHz), GLONASS L1 — drone navigation. Spoofing here disables GPS.",
+      "protocols": ["GPS", "GLONASS", "BeiDou", "Galileo"]
+    },
+    {
+      "id": "wifi_24_channels",
+      "label": "WiFi 2.4 GHz (ch 1-14)",
+      "hz_low": 2412000000,
+      "hz_high": 2484000000,
+      "color": "#34d399",
+      "threat": "info",
+      "description": "Standard WiFi — also used by drone Remote ID (IEEE 802.11) and some RC links",
+      "protocols": ["802.11b/g/n", "Remote ID"]
+    },
+    {
+      "id": "wifi_58_channels",
+      "label": "WiFi 5 GHz (ch 36-165)",
+      "hz_low": 5170000000,
+      "hz_high": 5835000000,
+      "color": "#34d399",
+      "threat": "info",
+      "description": "Standard WiFi 5 GHz — also used by DJI OcuSync video links",
+      "protocols": ["802.11a/n/ac", "OcuSync"]
+    }
+  ],
+  "thresholds": {
+    "alert_dbm": -60,
+    "warning_dbm": -75,
+    "note_dbm": -85
+  }
+}

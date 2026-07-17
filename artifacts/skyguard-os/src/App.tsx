@@ -12,6 +12,7 @@ import Home from '@/pages/home';
 import History from '@/pages/history';
 import Settings from '@/pages/settings';
 import Admin from '@/pages/admin';
+import Spectrum from '@/pages/spectrum';
 import SignInPage from '@/pages/sign-in';
 import SignUpPage from '@/pages/sign-up';
 import { LanguageProvider } from '@/lib/i18n';
@@ -115,6 +116,9 @@ function ClerkProviderWithRoutes() {
               </Route>
               <Route path="/admin">
                 <ProtectedPage component={Admin} />
+              </Route>
+              <Route path="/spectrum">
+                <ProtectedPage component={Spectrum} />
               </Route>
               <Route component={NotFound} />
             </Switch>
