@@ -1,0 +1,79 @@
+admin@skyguard:~/skyguard $ pnpm install && pnpm --filter @workspace/skyguard-os build && sudo cp -r artifacts/skyguard-os/dist/* /var/www/skyguard/public/
+Scope: all 9 workspace projects
+Lockfile is up to date, resolution step is skipped
+Packages: +491
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+   ╭──────────────────────────────────────────╮
+   │                                          │
+   │   Update available! 10.34.5 → 11.13.1.   │
+   │   Changelog: https://pnpm.io/v/11.13.1   │
+   │     To update, run: pnpm add -g pnpm     │
+   │                                          │
+   ╰──────────────────────────────────────────╯
+
+ WARN  Tarball download average speed 36 KiB/s (size 50 KiB) is below 50 KiB/s: https://registry.npmjs.org/fast-equals/-/fast-equals-5.4.1.tgz (GET)
+ WARN  Tarball download average speed 42 KiB/s (size 53 KiB) is below 50 KiB/s: https://registry.npmjs.org/react-smooth/-/react-smooth-4.0.4.tgz (GET)
+Downloading react-icons@5.7.0: 22.77 MB/22.77 MB, done
+Progress: resolved 491, reused 0, downloaded 491, added 491, done
+node_modules/.pnpm/esbuild@0.27.3/node_modules/esbuild: Running postinstall scrinode_modules/.pnpm/esbuild@0.27.3/node_modules/esbuild: Running postinstall script, done in 9.7s
+
+dependencies:
++ @replit/connectors-sdk 0.4.1
+
+devDependencies:
++ prettier 3.9.5
++ typescript 5.9.3
+
+. preinstall$ sh -c 'rm -f package-lock.json yarn.lock; case "$npm_config_use…
+└─ Done in 264ms
+╭ Warning ─────────────────────────────────────────────────────────────────────╮
+│                                                                              │
+│   Ignored build scripts: @clerk/shared@3.47.8.                               │
+│   Run "pnpm approve-builds" to pick which dependencies should be allowed     │
+│   to run scripts.                                                            │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+Done in 1m 30.5s using pnpm v10.34.5
+
+> @workspace/skyguard-os@0.0.0 build /home/admin/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+/home/admin/skyguard/node_modules/.pnpm/rollup@4.62.2/node_modules/rollup/dist/native.js:121
+		throw new Error(
+		      ^
+
+Error: Cannot find module @rollup/rollup-linux-arm64-gnu. npm has a bug related to optional dependencies (https://github.com/npm/cli/issues/4828). Please try `npm i` again after removing both package-lock.json and node_modules directory.
+    at requireWithFriendlyError (/home/admin/skyguard/node_modules/.pnpm/rollup@4.62.2/node_modules/rollup/dist/native.js:121:9)
+    at Object.<anonymous> (/home/admin/skyguard/node_modules/.pnpm/rollup@4.62.2/node_modules/rollup/dist/native.js:130:76)
+    ... 3 lines matching cause stack trace ...
+    at Module._load (node:internal/modules/cjs/loader:1091:12)
+    at cjsLoader (node:internal/modules/esm/translators:298:15)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:240:7)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24) {
+  [cause]: Error: Cannot find module '@rollup/rollup-linux-arm64-gnu'
+  Require stack:
+  - /home/admin/skyguard/node_modules/.pnpm/rollup@4.62.2/node_modules/rollup/dist/native.js
+      at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+      at Module._load (node:internal/modules/cjs/loader:1038:27)
+      at Module.require (node:internal/modules/cjs/loader:1289:19)
+      at require (node:internal/modules/helpers:182:18)
+      at requireWithFriendlyError (/home/admin/skyguard/node_modules/.pnpm/rollup@4.62.2/node_modules/rollup/dist/native.js:103:10)
+      at Object.<anonymous> (/home/admin/skyguard/node_modules/.pnpm/rollup@4.62.2/node_modules/rollup/dist/native.js:130:76)
+      at Module._compile (node:internal/modules/cjs/loader:1521:14)
+      at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+      at Module.load (node:internal/modules/cjs/loader:1266:32)
+      at Module._load (node:internal/modules/cjs/loader:1091:12) {
+    code: 'MODULE_NOT_FOUND',
+    requireStack: [
+      '/home/admin/skyguard/node_modules/.pnpm/rollup@4.62.2/node_modules/rollup/dist/native.js'
+    ]
+  }
+}
+
+Node.js v20.20.2
+/home/admin/skyguard/artifacts/skyguard-os:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/skyguard-os@0.0.0 build: `vite build --config vite.config.ts`
+Exit status 1
+admin@skyguard:~/skyguard $ 
