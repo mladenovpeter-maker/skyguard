@@ -190,8 +190,10 @@ def check_bands(bins: list[dict]) -> None:
 # ---------------------------------------------------------------------------
 
 async def ws_handler(websocket) -> None:
+    # websockets 16.x: path is a property, not a parameter
+    remote = getattr(websocket, "remote_address", "unknown")
     connected_clients.add(websocket)
-    log.info("WS client connected  (total: %d)", len(connected_clients))
+    log.info("WS client connected from %s  (total: %d)", remote, len(connected_clients))
     try:
         # Send the latest snapshot immediately on connect
         if latest_spectrum:
@@ -200,7 +202,11 @@ async def ws_handler(websocket) -> None:
                 "data": latest_spectrum,
                 "ts":   datetime.now(timezone.utc).isoformat(),
             }))
-        await websocket.wait_closed()
+        # Keep connection alive — recv() raises ConnectionClosed on disconnect
+        async for _ in websocket:
+            pass
+    except Exception as exc:
+        log.debug("WS client error: %s", exc)
     finally:
         connected_clients.discard(websocket)
         log.info("WS client disconnected (total: %d)", len(connected_clients))
@@ -209,10 +215,13 @@ async def ws_handler(websocket) -> None:
 async def broadcast(message: str) -> None:
     if not connected_clients:
         return
-    await asyncio.gather(
-        *[ws.send(message) for ws in list(connected_clients)],
-        return_exceptions=True,
-    )
+    dead = set()
+    for ws in list(connected_clients):
+        try:
+            await ws.send(message)
+        except Exception:
+            dead.add(ws)
+    connected_clients.difference_update(dead)
 
 
 # ---------------------------------------------------------------------------
