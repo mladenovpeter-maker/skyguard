@@ -14,6 +14,8 @@ interface RfAlertPayload {
   peakDbm: number;
   peakHz: number;
   threat: string;
+  possibleDrones?: string;
+  aboveBaselineDb?: number;
 }
 
 function parseRfAlert(body: unknown): RfAlertPayload | null {
@@ -25,11 +27,13 @@ function parseRfAlert(body: unknown): RfAlertPayload | null {
   if (typeof d["peakHz"] !== "number") return null;
   const threat = typeof d["threat"] === "string" ? d["threat"] : "info";
   return {
-    bandId:    d["bandId"] as string,
-    bandLabel: d["bandLabel"] as string,
-    peakDbm:   d["peakDbm"] as number,
-    peakHz:    d["peakHz"] as number,
+    bandId:          d["bandId"] as string,
+    bandLabel:       d["bandLabel"] as string,
+    peakDbm:         d["peakDbm"] as number,
+    peakHz:          d["peakHz"] as number,
     threat,
+    possibleDrones:  typeof d["possibleDrones"] === "string" ? d["possibleDrones"] : undefined,
+    aboveBaselineDb: typeof d["aboveBaselineDb"] === "number" ? d["aboveBaselineDb"] : undefined,
   };
 }
 

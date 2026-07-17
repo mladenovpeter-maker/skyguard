@@ -26,6 +26,8 @@ interface RfAlert {
   peakHz: number;
   threat: string;
   timestamp: string;
+  possibleDrones?: string | null;   // JSON array string e.g. '["DJI Mini 3 Pro","DJI Mavic 3"]'
+  aboveBaselineDb?: number | null;  // dB above ambient baseline
 }
 
 interface FreqBand {
@@ -422,7 +424,12 @@ export default function Spectrum() {
                 <span className="text-xs text-center uppercase">Няма засечени сигнали</span>
               </div>
             ) : (
-              rfAlerts.map(alert => (
+              rfAlerts.map(alert => {
+                const drones: string[] = (() => {
+                  try { return alert.possibleDrones ? JSON.parse(alert.possibleDrones) : []; }
+                  catch { return []; }
+                })();
+                return (
                 <div
                   key={alert.id}
                   className="px-3 py-2 border-b border-border/30 hover:bg-secondary/20 transition-colors"
@@ -437,11 +444,26 @@ export default function Spectrum() {
                   </div>
                   <div className="flex items-center justify-between text-[10px] text-muted-foreground">
                     <span>{(alert.peakHz / 1e6).toFixed(1)} MHz</span>
-                    <span className={alert.peakDbm > -60 ? "text-destructive" : ""}>{alert.peakDbm} dBm</span>
+                    <span className={alert.peakDbm > -50 ? "text-destructive" : ""}>{alert.peakDbm} dBm</span>
                     <span>{new Date(alert.timestamp).toLocaleTimeString()}</span>
                   </div>
+                  {alert.aboveBaselineDb != null && (
+                    <div className="text-[10px] text-yellow-500/80 mt-0.5">
+                      +{alert.aboveBaselineDb} dB над ambient
+                    </div>
+                  )}
+                  {drones.length > 0 && (
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {drones.slice(0, 3).map(d => (
+                        <span key={d} className="text-[9px] px-1.5 py-0.5 rounded bg-secondary/40 text-muted-foreground border border-border/40">
+                          {d}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              ))
+                );
+              })
             )}
           </div>
 

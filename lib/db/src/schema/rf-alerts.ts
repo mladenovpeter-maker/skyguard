@@ -5,14 +5,16 @@ import { pgTable, serial, text, timestamp, real, integer } from "drizzle-orm/pg-
  * in known drone frequency bands above the configured threshold.
  */
 export const rfAlertsTable = pgTable("rf_alerts", {
-  id:          serial("id").primaryKey(),
-  bandId:      text("band_id").notNull(),          // e.g. "dji_5800"
-  bandLabel:   text("band_label").notNull(),        // e.g. "DJI O3 / FPV 5.8 GHz"
-  peakDbm:     real("peak_dbm").notNull(),          // strongest bin in band
-  peakHz:      real("peak_hz").notNull(),           // frequency of peak
-  threat:      text("threat").notNull(),            // "high" | "medium" | "low" | "info"
-  deviceId:    integer("device_id"),                // which hardware reported it
-  timestamp:   timestamp("timestamp", { withTimezone: true }).notNull().defaultNow(),
+  id:              serial("id").primaryKey(),
+  bandId:          text("band_id").notNull(),          // e.g. "dji_5800"
+  bandLabel:       text("band_label").notNull(),        // e.g. "DJI O3 / FPV 5.8 GHz"
+  peakDbm:         real("peak_dbm").notNull(),          // strongest bin in band
+  peakHz:          real("peak_hz").notNull(),           // frequency of peak
+  threat:          text("threat").notNull(),            // "high" | "medium" | "low" | "info"
+  deviceId:        integer("device_id"),                // which hardware reported it
+  possibleDrones:  text("possible_drones"),             // JSON array of matched drone model labels
+  aboveBaselineDb: real("above_baseline_db"),           // how many dB above ambient baseline
+  timestamp:       timestamp("timestamp", { withTimezone: true }).notNull().defaultNow(),
 });
 
 export type RfAlertRow = typeof rfAlertsTable.$inferSelect;

@@ -37,9 +37,11 @@ import asyncio
 import json
 import logging
 import os
+import statistics
 import subprocess
 import sys
 import time
+from collections import deque
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -65,7 +67,8 @@ WS_PORT          = int(os.environ.get("WS_PORT", "8765"))
 API_BASE     = os.environ.get("SKYGUARD_API_BASE", "").rstrip("/")
 DEVICE_KEY   = os.environ.get("SKYGUARD_DEVICE_KEY", "")
 ALERT_COOLDOWN_S = float(os.environ.get("ALERT_COOLDOWN_S", "30"))
-FREQ_JSON    = os.environ.get("FREQUENCIES_JSON", str(Path(__file__).parent / "frequencies.json"))
+FREQ_JSON        = os.environ.get("FREQUENCIES_JSON", str(Path(__file__).parent / "frequencies.json"))
+SIGNATURES_JSON  = os.environ.get("SIGNATURES_JSON",  str(Path(__file__).parent / "drone_signatures.json"))
 
 if not API_BASE or not DEVICE_KEY:
     log.error("SKYGUARD_API_BASE and SKYGUARD_DEVICE_KEY must be set.")
@@ -98,6 +101,31 @@ ALERT_DBM   = THRESHOLDS.get("alert_dbm", -60)
 WARNING_DBM = THRESHOLDS.get("warning_dbm", -75)
 
 # ---------------------------------------------------------------------------
+# Load drone signature library
+# ---------------------------------------------------------------------------
+
+def load_signatures() -> dict:
+    try:
+        with open(SIGNATURES_JSON) as f:
+            data = json.load(f)
+        sig_map  = {s["id"]: s for s in data.get("signatures", [])}
+        band_map = data.get("band_to_signatures", {})
+        baseline_sweeps = int(data.get("BASELINE_SWEEPS", 30))
+        baseline_margin = float(data.get("BASELINE_MARGIN_DB", 12))
+        log.info("Loaded %d drone signatures from %s", len(sig_map), SIGNATURES_JSON)
+        return sig_map, band_map, baseline_sweeps, baseline_margin
+    except Exception as exc:
+        log.warning("Could not load drone_signatures.json: %s", exc)
+        return {}, {}, 30, 12
+
+SIGNATURE_MAP, BAND_SIGNATURE_MAP, BASELINE_SWEEPS, BASELINE_MARGIN_DB = load_signatures()
+
+def match_signatures(band_id: str) -> list[str]:
+    """Return list of possible drone labels for a detected band."""
+    sig_ids = BAND_SIGNATURE_MAP.get(band_id, [])
+    return [SIGNATURE_MAP[s]["label"] for s in sig_ids if s in SIGNATURE_MAP]
+
+# ---------------------------------------------------------------------------
 # Shared state
 # ---------------------------------------------------------------------------
 
@@ -106,6 +134,10 @@ connected_clients: set = set()
 latest_spectrum: list[dict] = []
 # Cooldown tracker per band: band_id -> last_alert_monotonic
 _last_alert: dict[str, float] = {}
+# Rolling peak history per band for baseline calculation
+_band_peaks: dict[str, deque] = {b["id"]: deque(maxlen=BASELINE_SWEEPS) for b in BANDS}
+# Computed baseline dBm per band (None = not yet established)
+_baseline: dict[str, float] = {}
 
 # ---------------------------------------------------------------------------
 # hackrf_sweep parser
@@ -140,6 +172,17 @@ def parse_sweep_line(line: str) -> list[dict] | None:
 # Band detection & alerting
 # ---------------------------------------------------------------------------
 
+def update_baseline(band_id: str, peak_dbm: float) -> float | None:
+    """Record peak for band; return current baseline or None if not ready."""
+    _band_peaks[band_id].append(peak_dbm)
+    peaks = list(_band_peaks[band_id])
+    if len(peaks) < max(5, BASELINE_SWEEPS // 3):
+        return None  # not enough data yet
+    baseline = statistics.median(peaks)
+    _baseline[band_id] = baseline
+    return baseline
+
+
 def check_bands(bins: list[dict]) -> None:
     """Check if any bin falls in a drone band above threshold; post alert."""
     now = time.monotonic()
@@ -153,8 +196,20 @@ def check_bands(bins: list[dict]) -> None:
             continue
 
         peak = max(band_bins, key=lambda b: b["dbm"])
-        band_threshold = band.get("alert_dbm", ALERT_DBM)
-        if peak["dbm"] < band_threshold:
+
+        # Update rolling baseline
+        baseline = update_baseline(band["id"], peak["dbm"])
+
+        # Determine effective alert threshold
+        band_static_threshold = band.get("alert_dbm", ALERT_DBM)
+        if baseline is not None:
+            # Alert when signal is significantly above ambient baseline
+            dynamic_threshold = baseline + BASELINE_MARGIN_DB
+            effective_threshold = max(band_static_threshold, dynamic_threshold)
+        else:
+            effective_threshold = band_static_threshold
+
+        if peak["dbm"] < effective_threshold:
             continue  # below threshold — ignore
 
         # Cooldown check
@@ -163,12 +218,17 @@ def check_bands(bins: list[dict]) -> None:
 
         _last_alert[band["id"]] = now
 
+        above_baseline = round(peak["dbm"] - baseline, 1) if baseline is not None else None
+        possible_drones = match_signatures(band["id"])
+
         payload = {
-            "bandId":    band["id"],
-            "bandLabel": band["label"],
-            "peakDbm":   round(peak["dbm"], 1),
-            "peakHz":    peak["hz"],
-            "threat":    band["threat"],
+            "bandId":          band["id"],
+            "bandLabel":       band["label"],
+            "peakDbm":         round(peak["dbm"], 1),
+            "peakHz":          peak["hz"],
+            "threat":          band["threat"],
+            "possibleDrones":  json.dumps(possible_drones),
+            "aboveBaselineDb": above_baseline,
         }
         try:
             resp = requests.post(
@@ -178,8 +238,10 @@ def check_bands(bins: list[dict]) -> None:
                 timeout=4,
             )
             if resp.status_code == 201:
-                log.info("RF ALERT  %s  %.1f dBm @ %.1f MHz",
-                         band["label"], peak["dbm"], peak["hz"] / 1e6)
+                drones_str = ", ".join(possible_drones[:2]) or "unknown"
+                log.info("RF ALERT  %s  %.1f dBm @ %.1f MHz  (+%.1f dB baseline)  [%s]",
+                         band["label"], peak["dbm"], peak["hz"] / 1e6,
+                         above_baseline or 0, drones_str)
             else:
                 log.warning("Alert POST %s: %s", resp.status_code, resp.text[:80])
         except requests.RequestException as exc:

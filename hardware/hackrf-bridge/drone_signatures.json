@@ -1,0 +1,120 @@
+{
+  "_comment": "Known drone RF signatures mapped to frequency bands. Used by bridge.py for classification.",
+  "BASELINE_SWEEPS": 30,
+  "BASELINE_MARGIN_DB": 12,
+  "signatures": [
+    {
+      "id": "dji_mini_2",
+      "label": "DJI Mini 2 / Mini SE",
+      "manufacturer": "DJI",
+      "bands": ["dji_2400", "dji_5800"],
+      "notes": "OcuSync 2.0. Hops between 2.4 GHz and 5.8 GHz automatically. Remote ID via WiFi Beacon."
+    },
+    {
+      "id": "dji_mini_3",
+      "label": "DJI Mini 3 / Mini 3 Pro",
+      "manufacturer": "DJI",
+      "bands": ["dji_2400", "dji_5800"],
+      "notes": "O3 (OcuSync 3.0). Adaptive freq hopping. Remote ID broadcast at 2.4 GHz."
+    },
+    {
+      "id": "dji_mini_4",
+      "label": "DJI Mini 4 Pro",
+      "manufacturer": "DJI",
+      "bands": ["dji_2400", "dji_5150", "dji_5800"],
+      "notes": "O4. Uses all three bands. 20 km range. Remote ID compliant."
+    },
+    {
+      "id": "dji_mavic_3",
+      "label": "DJI Mavic 3 / Mavic 3 Classic",
+      "manufacturer": "DJI",
+      "bands": ["dji_2400", "dji_5150", "dji_5800"],
+      "notes": "O3+. Triple-band. Up to 15 km. Used in professional cinematography."
+    },
+    {
+      "id": "dji_air_3",
+      "label": "DJI Air 3 / Air 3S",
+      "manufacturer": "DJI",
+      "bands": ["dji_2400", "dji_5150", "dji_5800"],
+      "notes": "O4. All bands active. Remote ID via WiFi at 2.4 GHz."
+    },
+    {
+      "id": "dji_avata",
+      "label": "DJI Avata / Avata 2",
+      "manufacturer": "DJI",
+      "bands": ["dji_2400", "dji_5150", "dji_5800"],
+      "notes": "O3 / O4 FPV. Very high signal due to proximity flying style."
+    },
+    {
+      "id": "dji_fpv",
+      "label": "DJI FPV (1st gen)",
+      "manufacturer": "DJI",
+      "bands": ["dji_2400", "dji_5800"],
+      "notes": "OcuSync 3.0. High-speed racing drone. Often flown at very low altitude."
+    },
+    {
+      "id": "autel_evo_2",
+      "label": "Autel EVO II / EVO Lite",
+      "manufacturer": "Autel Robotics",
+      "bands": ["dji_2400", "dji_5800"],
+      "notes": "SkyLink 2.0 / SkyLink 3.0. Similar freq usage to DJI OcuSync."
+    },
+    {
+      "id": "skydio_2",
+      "label": "Skydio 2 / Skydio X2",
+      "manufacturer": "Skydio",
+      "bands": ["dji_2400", "dji_5800"],
+      "notes": "WiFi-based (802.11ac). Uses 2.4 GHz and 5 GHz. US military variant."
+    },
+    {
+      "id": "fpv_racing_elrs",
+      "label": "FPV Racing (ExpressLRS)",
+      "manufacturer": "Various",
+      "bands": ["rc_433", "rc_868", "rc_915"],
+      "notes": "ELRS 433/868/915 MHz control link. High update rate (500Hz+). Short to medium range."
+    },
+    {
+      "id": "fpv_racing_crossfire",
+      "label": "FPV Racing (TBS Crossfire)",
+      "manufacturer": "Team BlackSheep",
+      "bands": ["rc_868", "rc_915"],
+      "notes": "Crossfire 868 MHz (EU) / 915 MHz (US). Long range RC link. Popular with FPV pilots."
+    },
+    {
+      "id": "fpv_racing_analog",
+      "label": "FPV Racing (Analog 5.8 GHz)",
+      "manufacturer": "Various",
+      "bands": ["dji_5800", "rc_433", "rc_868", "rc_915"],
+      "notes": "Analog video at 5.8 GHz + ELRS/Crossfire RC. Common in racing and freestyle FPV."
+    },
+    {
+      "id": "parrot_anafi",
+      "label": "Parrot ANAFI / ANAFI Ai",
+      "manufacturer": "Parrot",
+      "bands": ["dji_2400", "dji_5800"],
+      "notes": "WiFi 802.11a/g/n/ac. 2.4 GHz and 5.8 GHz. Used by emergency services in EU."
+    },
+    {
+      "id": "generic_rc_433",
+      "label": "Неизвестен RC дрон (433 MHz)",
+      "manufacturer": "Unknown",
+      "bands": ["rc_433"],
+      "notes": "Generic RC or hobby drone using 433 MHz ISM band for control."
+    },
+    {
+      "id": "generic_rc_868",
+      "label": "Неизвестен RC дрон (868 MHz)",
+      "manufacturer": "Unknown",
+      "bands": ["rc_868"],
+      "notes": "Generic RC or hobby drone using 868 MHz EU ISM band for control."
+    }
+  ],
+  "band_to_signatures": {
+    "rc_433":   ["fpv_racing_elrs", "fpv_racing_analog", "generic_rc_433"],
+    "rc_868":   ["fpv_racing_elrs", "fpv_racing_crossfire", "fpv_racing_analog", "generic_rc_868"],
+    "rc_915":   ["fpv_racing_elrs", "fpv_racing_crossfire", "fpv_racing_analog"],
+    "dji_2400": ["dji_mini_2", "dji_mini_3", "dji_mini_4", "dji_mavic_3", "dji_air_3", "dji_avata", "dji_fpv", "autel_evo_2", "skydio_2", "parrot_anafi"],
+    "dji_5150": ["dji_mini_4", "dji_mavic_3", "dji_air_3", "dji_avata"],
+    "dji_5800": ["dji_mini_2", "dji_mini_3", "dji_mini_4", "dji_mavic_3", "dji_air_3", "dji_avata", "dji_fpv", "autel_evo_2", "skydio_2", "parrot_anafi", "fpv_racing_analog"]
+  }
+}
