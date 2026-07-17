@@ -1,0 +1,25 @@
+(venv) admin@skyguard:~/skyguard/hardware/ambient-scanner $ sed -i 's|/home/pi/|/home/admin/|g' ~/skyguard/hardware/ambient-scanner/skyguard-ambient-scanner.service && \
+sudo cp ~/skyguard/hardware/ambient-scanner/skyguard-ambient-scanner.service /etc/systemd/system/ && \
+sudo systemctl daemon-reload && \
+sudo systemctl enable --now skyguard-ambient-scanner.service && \
+sudo journalctl -u skyguard-ambient-scanner -f
+Created symlink '/etc/systemd/system/multi-user.target.wants/skyguard-ambient-scanner.service' → '/etc/systemd/system/skyguard-ambient-scanner.service'.
+Jul 17 07:00:32 skyguard systemd[1]: Started skyguard-ambient-scanner.service - SkyGuard OS Ambient RF Scanner.
+Jul 17 07:00:33 skyguard python3[5611]: 2026-07-17 07:00:33,265 [INFO] SkyGuard Ambient Scanner starting.
+Jul 17 07:00:33 skyguard python3[5611]: 2026-07-17 07:00:33,266 [INFO] API: http://192.168.100.224:3001/api/ambient  |  BLE scan: 6s  |  Cycle: 15s
+Jul 17 07:00:33 skyguard python3[5611]: 2026-07-17 07:00:33,271 [INFO] Bluetooth adapter found ✓
+Jul 17 07:00:33 skyguard sudo[5617]:     root : PWD=/home/admin/skyguard/hardware/ambient-scanner ; USER=root ; COMMAND=/usr/bin/hcitool lescan --duplicates
+Jul 17 07:00:33 skyguard sudo[5617]: pam_unix(sudo:session): session opened for user root(uid=0) by (uid=0)
+Jul 17 07:00:33 skyguard sudo[5617]: pam_unix(sudo:session): session closed for user root
+Jul 17 07:00:33 skyguard sudo[5620]:     root : PWD=/home/admin/skyguard/hardware/ambient-scanner ; USER=root ; COMMAND=/usr/sbin/iwlist wlan0 scan
+Jul 17 07:00:33 skyguard sudo[5620]: pam_unix(sudo:session): session opened for user root(uid=0) by (uid=0)
+Jul 17 07:00:37 skyguard sudo[5620]: pam_unix(sudo:session): session closed for user root
+Jul 17 07:00:37 skyguard python3[5611]: 2026-07-17 07:00:37,161 [INFO] Posted 24 device(s)  [BLE: 0  WiFi: 24]
+Jul 17 07:00:48 skyguard sudo[5630]:     root : PWD=/home/admin/skyguard/hardware/ambient-scanner ; USER=root ; COMMAND=/usr/bin/hcitool lescan --duplicates
+Jul 17 07:00:48 skyguard sudo[5630]: pam_unix(sudo:session): session opened for user root(uid=0) by (uid=0)
+Jul 17 07:00:48 skyguard sudo[5630]: pam_unix(sudo:session): session closed for user root
+Jul 17 07:00:48 skyguard sudo[5633]:     root : PWD=/home/admin/skyguard/hardware/ambient-scanner ; USER=root ; COMMAND=/usr/sbin/iwlist wlan0 scan
+Jul 17 07:00:48 skyguard sudo[5633]: pam_unix(sudo:session): session opened for user root(uid=0) by (uid=0)
+Jul 17 07:00:52 skyguard sudo[5633]: pam_unix(sudo:session): session closed for user root
+Jul 17 07:00:52 skyguard python3[5611]: 2026-07-17 07:00:52,111 [INFO] Posted 22 device(s)  [BLE: 0  WiFi: 22]
+
