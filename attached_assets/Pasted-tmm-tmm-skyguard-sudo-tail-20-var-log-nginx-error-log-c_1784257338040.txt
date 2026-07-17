@@ -1,0 +1,43 @@
+tmm@tmm:~/skyguard$ sudo tail -20 /var/log/nginx/error.log
+curl -v http://localhost:8082/ 2>&1 | head -20
+2026/07/17 03:00:03 [crit] 3574736#3574736: *2 stat() "/home/tmm/skyguard/artifacts/skyguard-os/dist/index.html" failed (13: Permission denied), client: 192.168.100.66, server: _, request: "GET /favicon.ico HTTP/1.1", host: "192.168.100.224", referrer: "http://192.168.100.224/"
+2026/07/17 03:00:03 [crit] 3574736#3574736: *2 stat() "/home/tmm/skyguard/artifacts/skyguard-os/dist/index.html" failed (13: Permission denied), client: 192.168.100.66, server: _, request: "GET /favicon.ico HTTP/1.1", host: "192.168.100.224", referrer: "http://192.168.100.224/"
+2026/07/17 03:00:03 [crit] 3574736#3574736: *2 stat() "/home/tmm/skyguard/artifacts/skyguard-os/dist/index.html" failed (13: Permission denied), client: 192.168.100.66, server: _, request: "GET /favicon.ico HTTP/1.1", host: "192.168.100.224", referrer: "http://192.168.100.224/"
+2026/07/17 03:00:03 [crit] 3574736#3574736: *2 stat() "/home/tmm/skyguard/artifacts/skyguard-os/dist/index.html" failed (13: Permission denied), client: 192.168.100.66, server: _, request: "GET /favicon.ico HTTP/1.1", host: "192.168.100.224", referrer: "http://192.168.100.224/"
+2026/07/17 03:00:03 [crit] 3574736#3574736: *2 stat() "/home/tmm/skyguard/artifacts/skyguard-os/dist/index.html" failed (13: Permission denied), client: 192.168.100.66, server: _, request: "GET /favicon.ico HTTP/1.1", host: "192.168.100.224", referrer: "http://192.168.100.224/"
+2026/07/17 03:00:03 [crit] 3574736#3574736: *2 stat() "/home/tmm/skyguard/artifacts/skyguard-os/dist/index.html" failed (13: Permission denied), client: 192.168.100.66, server: _, request: "GET /favicon.ico HTTP/1.1", host: "192.168.100.224", referrer: "http://192.168.100.224/"
+2026/07/17 03:00:03 [crit] 3574736#3574736: *2 stat() "/home/tmm/skyguard/artifacts/skyguard-os/dist/index.html" failed (13: Permission denied), client: 192.168.100.66, server: _, request: "GET /favicon.ico HTTP/1.1", host: "192.168.100.224", referrer: "http://192.168.100.224/"
+2026/07/17 03:00:03 [crit] 3574736#3574736: *2 stat() "/home/tmm/skyguard/artifacts/skyguard-os/dist/index.html" failed (13: Permission denied), client: 192.168.100.66, server: _, request: "GET /favicon.ico HTTP/1.1", host: "192.168.100.224", referrer: "http://192.168.100.224/"
+2026/07/17 03:00:03 [crit] 3574736#3574736: *2 stat() "/home/tmm/skyguard/artifacts/skyguard-os/dist/index.html" failed (13: Permission denied), client: 192.168.100.66, server: _, request: "GET /favicon.ico HTTP/1.1", host: "192.168.100.224", referrer: "http://192.168.100.224/"
+2026/07/17 03:00:03 [crit] 3574736#3574736: *2 stat() "/home/tmm/skyguard/artifacts/skyguard-os/dist/index.html" failed (13: Permission denied), client: 192.168.100.66, server: _, request: "GET /favicon.ico HTTP/1.1", host: "192.168.100.224", referrer: "http://192.168.100.224/"
+2026/07/17 03:00:03 [crit] 3574736#3574736: *2 stat() "/home/tmm/skyguard/artifacts/skyguard-os/dist/index.html" failed (13: Permission denied), client: 192.168.100.66, server: _, request: "GET /favicon.ico HTTP/1.1", host: "192.168.100.224", referrer: "http://192.168.100.224/"
+2026/07/17 03:00:03 [crit] 3574736#3574736: *2 stat() "/home/tmm/skyguard/artifacts/skyguard-os/dist/index.html" failed (13: Permission denied), client: 192.168.100.66, server: _, request: "GET /favicon.ico HTTP/1.1", host: "192.168.100.224", referrer: "http://192.168.100.224/"
+2026/07/17 03:00:03 [crit] 3574736#3574736: *2 stat() "/home/tmm/skyguard/artifacts/skyguard-os/dist/index.html" failed (13: Permission denied), client: 192.168.100.66, server: _, request: "GET /favicon.ico HTTP/1.1", host: "192.168.100.224", referrer: "http://192.168.100.224/"
+2026/07/17 03:00:03 [error] 3574736#3574736: *2 rewrite or internal redirection cycle while internally redirecting to "/index.html", client: 192.168.100.66, server: _, request: "GET /favicon.ico HTTP/1.1", host: "192.168.100.224", referrer: "http://192.168.100.224/"
+2026/07/17 03:01:06 [emerg] 3574734#3574734: bind() to 0.0.0.0:8082 failed (98: Address already in use)
+2026/07/17 03:01:06 [emerg] 3574734#3574734: bind() to 0.0.0.0:8082 failed (98: Address already in use)
+2026/07/17 03:01:06 [emerg] 3574734#3574734: bind() to 0.0.0.0:8082 failed (98: Address already in use)
+2026/07/17 03:01:06 [emerg] 3574734#3574734: bind() to 0.0.0.0:8082 failed (98: Address already in use)
+2026/07/17 03:01:06 [emerg] 3574734#3574734: bind() to 0.0.0.0:8082 failed (98: Address already in use)
+2026/07/17 03:01:06 [emerg] 3574734#3574734: still could not bind()
+* Host localhost:8082 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying [::1]:8082...
+* connect to ::1 port 8082 from ::1 port 57274 failed: Connection refused
+*   Trying 127.0.0.1:8082...
+* Connected to localhost (127.0.0.1) port 8082
+> GET / HTTP/1.1
+> Host: localhost:8082
+> User-Agent: curl/8.5.0
+> Accept: */*
+> 
+< HTTP/1.1 500 Internal Server Error
+< Date: Fri, 17 Jul 2026 03:02:09 GMT
+< Content-Type: text/plain
+* no chunk, no close, no size. Assume close to signal end
+< 
+{ [59 bytes data]
+tmm@tmm:~/skyguard$ 
