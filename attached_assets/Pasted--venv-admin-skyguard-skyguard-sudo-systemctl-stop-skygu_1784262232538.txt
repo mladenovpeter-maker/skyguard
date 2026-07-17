@@ -1,0 +1,23 @@
+(venv) admin@skyguard:~/skyguard $ sudo systemctl stop skyguard-hackrf-bridge && \
+  cd ~/skyguard && git pull && \
+  sudo cp hardware/hackrf-bridge/skyguard-hackrf-bridge.service /etc/systemd/system/ && \
+  sudo systemctl daemon-reload && \
+  sudo systemctl start skyguard-hackrf-bridge && \
+  sudo journalctl -u skyguard-hackrf-bridge -f
+Already up to date.
+Jul 17 07:23:36 skyguard systemd[1]: skyguard-hackrf-bridge.service: Scheduled restart job, restart counter is at 10.
+Jul 17 07:23:36 skyguard systemd[1]: Started skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+Jul 17 07:23:37 skyguard python3[7982]: 2026-07-17 07:23:37,898 [INFO] Loaded 10 frequency bands from /home/admin/skyguard/hardware/hackrf-bridge/frequencies.json
+Jul 17 07:23:37 skyguard python3[7982]: 2026-07-17 07:23:37,901 [ERROR] websockets not installed. Run: pip3 install websockets
+Jul 17 07:23:38 skyguard systemd[1]: skyguard-hackrf-bridge.service: Main process exited, code=exited, status=1/FAILURE
+Jul 17 07:23:38 skyguard systemd[1]: skyguard-hackrf-bridge.service: Failed with result 'exit-code'.
+Jul 17 07:23:38 skyguard systemd[1]: skyguard-hackrf-bridge.service: Consumed 1.347s CPU time.
+Jul 17 07:23:41 skyguard systemd[1]: Stopped skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+Jul 17 07:23:41 skyguard systemd[1]: skyguard-hackrf-bridge.service: Consumed 1.347s CPU time.
+Jul 17 07:23:43 skyguard systemd[1]: Started skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+Jul 17 07:23:44 skyguard python3[8117]: 2026-07-17 07:23:44,945 [INFO] Loaded 10 frequency bands from /home/admin/skyguard/hardware/hackrf-bridge/frequencies.json
+Jul 17 07:23:44 skyguard python3[8117]: 2026-07-17 07:23:44,947 [ERROR] websockets not installed. Run: pip3 install websockets
+Jul 17 07:23:45 skyguard systemd[1]: skyguard-hackrf-bridge.service: Main process exited, code=exited, status=1/FAILURE
+Jul 17 07:23:45 skyguard systemd[1]: skyguard-hackrf-bridge.service: Failed with result 'exit-code'.
+Jul 17 07:23:45 skyguard systemd[1]: skyguard-hackrf-bridge.service: Consumed 1.191s CPU time.
+
