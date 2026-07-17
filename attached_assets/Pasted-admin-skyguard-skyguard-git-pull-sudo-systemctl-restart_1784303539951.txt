@@ -1,0 +1,47 @@
+admin@skyguard:~/skyguard $ git pull && sudo systemctl restart skyguard-ambient-scanner 2>/dev/null || (pkill -f "ambient.*scanner" 2>/dev/null; cd ~/skyguard && set -a && source hardware/ambient-scanner/.env && set +a && python3 hardware/ambient-scanner/scanner.py &)
+remote: Enumerating objects: 67, done.
+remote: Counting objects: 100% (67/67), done.
+remote: Compressing objects: 100% (25/25), done.
+remote: Total 51 (delta 27), reused 49 (delta 25), pack-reused 0 (from 0)
+Unpacking objects: 100% (51/51), 2.89 MiB | 2.10 MiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+   e4f4588..72fd430  main       -> origin/main
+Updating e4f4588..72fd430
+Fast-forward
+ artifacts/api-server/dist/index.mjs                | 71294 +++++++++++++++++++
+ artifacts/api-server/dist/index.mjs.map            |     7 +
+ artifacts/api-server/dist/pino-file.mjs            |  4350 ++
+ artifacts/api-server/dist/pino-file.mjs.map        |     7 +
+ artifacts/api-server/dist/pino-pretty.mjs          |  3306 +
+ artifacts/api-server/dist/pino-pretty.mjs.map      |     7 +
+ artifacts/api-server/dist/pino-worker.mjs          |  4706 ++
+ artifacts/api-server/dist/pino-worker.mjs.map      |     7 +
+ artifacts/api-server/dist/thread-stream-worker.mjs |   228 +
+ .../api-server/dist/thread-stream-worker.mjs.map   |     7 +
+ .../{index-CvZg1eGS.js => index-DF1kR8Ql.js}       |     2 +-
+ artifacts/skyguard-os/dist/public/index.html       |     2 +-
+ .../skyguard-os/src/components/radar/RadarMap.tsx  |     1 +
+ ...t-pull-set-a-source-hardware-_1784301632648.txt |    36 +
+ ...sudo-systemctl-restart-skygua_1784301923933.txt |    38 +
+ ...enshot_2026-07-17_at_18.21.32_1784301696225.png |   Bin 0 -> 748695 bytes
+ ...enshot_2026-07-17_at_18.27.36_1784302059436.png |   Bin 0 -> 147375 bytes
+ ...enshot_2026-07-17_at_18.33.04_1784302388670.png |   Bin 0 -> 147674 bytes
+ hardware/ambient-scanner/scanner.py                |    39 +-
+ 19 files changed, 84034 insertions(+), 3 deletions(-)
+ create mode 100644 artifacts/api-server/dist/index.mjs
+ create mode 100644 artifacts/api-server/dist/index.mjs.map
+ create mode 100644 artifacts/api-server/dist/pino-file.mjs
+ create mode 100644 artifacts/api-server/dist/pino-file.mjs.map
+ create mode 100644 artifacts/api-server/dist/pino-pretty.mjs
+ create mode 100644 artifacts/api-server/dist/pino-pretty.mjs.map
+ create mode 100644 artifacts/api-server/dist/pino-worker.mjs
+ create mode 100644 artifacts/api-server/dist/pino-worker.mjs.map
+ create mode 100644 artifacts/api-server/dist/thread-stream-worker.mjs
+ create mode 100644 artifacts/api-server/dist/thread-stream-worker.mjs.map
+ rename artifacts/skyguard-os/dist/public/assets/{index-CvZg1eGS.js => index-DF1kR8Ql.js} (80%)
+ create mode 100644 attached_assets/Pasted-admin-skyguard-skyguard-git-pull-set-a-source-hardware-_1784301632648.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-git-pull-sudo-systemctl-restart-skygua_1784301923933.txt
+ create mode 100644 attached_assets/Screenshot_2026-07-17_at_18.21.32_1784301696225.png
+ create mode 100644 attached_assets/Screenshot_2026-07-17_at_18.27.36_1784302059436.png
+ create mode 100644 attached_assets/Screenshot_2026-07-17_at_18.33.04_1784302388670.png
+admin@skyguard:~/skyguard $ 
