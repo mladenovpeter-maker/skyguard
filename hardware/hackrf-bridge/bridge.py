@@ -47,6 +47,70 @@ from pathlib import Path
 
 import requests
 
+# ---------------------------------------------------------------------------
+# Pi system info helpers
+# ---------------------------------------------------------------------------
+
+_last_cpu_stat: tuple | None = None
+
+def _read_cpu_stat() -> tuple:
+    """Read /proc/stat first line → (user, nice, system, idle, ...)"""
+    with open("/proc/stat") as f:
+        parts = f.readline().split()[1:]
+    return tuple(int(x) for x in parts)
+
+def get_cpu_percent() -> float:
+    global _last_cpu_stat
+    cur = _read_cpu_stat()
+    if _last_cpu_stat is None:
+        _last_cpu_stat = cur
+        return 0.0
+    prev = _last_cpu_stat
+    _last_cpu_stat = cur
+    idle_delta  = cur[3] - prev[3]
+    total_delta = sum(c - p for c, p in zip(cur, prev))
+    if total_delta == 0:
+        return 0.0
+    return round(100.0 * (1 - idle_delta / total_delta), 1)
+
+def get_cpu_temp() -> float | None:
+    try:
+        val = float(Path("/sys/class/thermal/thermal_zone0/temp").read_text())
+        return round(val / 1000, 1)
+    except Exception:
+        return None
+
+def get_mem_percent() -> float:
+    info: dict[str, int] = {}
+    with open("/proc/meminfo") as f:
+        for line in f:
+            k, v = line.split(":")
+            info[k.strip()] = int(v.split()[0])
+    total = info.get("MemTotal", 1)
+    avail = info.get("MemAvailable", total)
+    return round(100.0 * (1 - avail / total), 1)
+
+def get_uptime_s() -> int:
+    return int(float(Path("/proc/uptime").read_text().split()[0]))
+
+def get_disk_percent() -> float:
+    st = os.statvfs("/")
+    total = st.f_blocks * st.f_frsize
+    free  = st.f_bfree  * st.f_frsize
+    return round(100.0 * (1 - free / total), 1) if total else 0.0
+
+def collect_sysinfo() -> dict:
+    return {
+        "cpuPercent":  get_cpu_percent(),
+        "cpuTempC":    get_cpu_temp(),
+        "memPercent":  get_mem_percent(),
+        "diskPercent": get_disk_percent(),
+        "uptimeS":     get_uptime_s(),
+        "ts":          datetime.now(timezone.utc).isoformat(),
+    }
+
+SYSINFO_INTERVAL_S = 30  # report every 30 seconds
+
 logging.basicConfig(
     level=os.environ.get("LOG_LEVEL", "INFO"),
     format="%(asctime)s [%(levelname)s] %(message)s",
@@ -395,6 +459,27 @@ async def process_queue(queue: asyncio.Queue) -> None:
 # Main
 # ---------------------------------------------------------------------------
 
+async def report_sysinfo_loop() -> None:
+    """Periodically collect Pi system stats and POST to API."""
+    while True:
+        await asyncio.sleep(SYSINFO_INTERVAL_S)
+        try:
+            info = collect_sysinfo()
+            resp = requests.post(
+                f"{API_BASE}/api/pi-status",
+                json=info,
+                headers=AUTH_HEADERS,
+                timeout=4,
+            )
+            if resp.status_code == 204:
+                log.debug("Sysinfo posted: CPU %.1f%%  %.1f°C  RAM %.1f%%",
+                          info["cpuPercent"], info.get("cpuTempC") or 0, info["memPercent"])
+            else:
+                log.warning("Sysinfo POST %s", resp.status_code)
+        except Exception as exc:
+            log.debug("Sysinfo POST failed: %s", exc)
+
+
 async def main() -> None:
     try:
         import websockets
@@ -414,6 +499,7 @@ async def main() -> None:
     await asyncio.gather(
         run_sweep(queue),
         process_queue(queue),
+        report_sysinfo_loop(),
     )
 
     ws_server.close()

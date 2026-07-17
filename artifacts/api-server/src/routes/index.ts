@@ -8,6 +8,7 @@ import heartbeatRouter from "./heartbeat";
 import ambientRouter from "./ambient";
 import rfAlertsRouter from "./rf-alerts";
 import knownRfSourcesRouter from "./known-rf-sources";
+import piStatusRouter from "./pi-status";
 
 const router: IRouter = Router();
 
@@ -20,5 +21,6 @@ router.use(heartbeatRouter);
 router.use(ambientRouter);
 router.use(rfAlertsRouter);
 router.use(knownRfSourcesRouter);
+router.use(piStatusRouter);
 
 export default router;

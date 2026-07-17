@@ -1,10 +1,11 @@
 import { Link, useLocation } from "wouter";
 import { useGetIngestStatus, getGetIngestStatusQueryKey } from "@workspace/api-client-react";
-import { Activity, Settings, History, Radar, AlertTriangle, ShieldCheck, Languages, Cpu, LogOut, RadioTower } from "lucide-react";
+import { Settings, History, Radar, ShieldCheck, Languages, Cpu, LogOut, RadioTower } from "lucide-react";
 import { ReactNode } from "react";
 import { useClerk, useUser } from "@clerk/react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n";
+import { useQuery } from "@tanstack/react-query";
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
@@ -52,6 +53,73 @@ function LanguageToggle() {
       <Languages className="h-3.5 w-3.5" />
       {language === "en" ? "BG" : "EN"}
     </button>
+  );
+}
+
+interface PiStatusData {
+  cpuPercent: number;
+  cpuTempC: number | null;
+  memPercent: number;
+  diskPercent: number;
+  uptimeS: number;
+  receivedAt: string;
+}
+
+function usePiStatus() {
+  return useQuery<PiStatusData | null>({
+    queryKey: ["pi-status"],
+    queryFn: async () => {
+      const res = await fetch(`${import.meta.env.BASE_URL}api/pi-status`, { credentials: "include" });
+      if (res.status === 204) return null;
+      return res.ok ? res.json() : null;
+    },
+    refetchInterval: 30_000,
+    staleTime: 29_000,
+  });
+}
+
+function bar(pct: number, warn = 70, danger = 90) {
+  const color = pct >= danger ? "#ef4444" : pct >= warn ? "#f59e0b" : "#22c55e";
+  return (
+    <div className="flex items-center gap-1">
+      <div className="w-10 h-1.5 rounded-full bg-muted overflow-hidden">
+        <div style={{ width: `${Math.min(100, pct)}%`, backgroundColor: color, height: "100%", borderRadius: 9999, transition: "width 0.5s" }} />
+      </div>
+      <span style={{ color }} className="text-[9px] font-mono w-7 text-right">{pct.toFixed(0)}%</span>
+    </div>
+  );
+}
+
+function PiMonitor() {
+  const { data: pi } = usePiStatus();
+  if (!pi) return null;
+
+  // Stale if older than 90s
+  const stale = Date.now() - new Date(pi.receivedAt).getTime() > 90_000;
+  if (stale) return null;
+
+  const upH = Math.floor(pi.uptimeS / 3600);
+  const upM = Math.floor((pi.uptimeS % 3600) / 60);
+  const tempColor = pi.cpuTempC == null ? "#888" : pi.cpuTempC >= 75 ? "#ef4444" : pi.cpuTempC >= 60 ? "#f59e0b" : "#22c55e";
+
+  return (
+    <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-md bg-card/50 border shadow-sm" title={`Pi uptime: ${upH}h ${upM}m`}>
+      <Cpu className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+      <div className="flex flex-col gap-0.5">
+        <div className="flex items-center gap-2">
+          {bar(pi.cpuPercent)}
+          {pi.cpuTempC != null && (
+            <span className="text-[9px] font-mono" style={{ color: tempColor }}>
+              {pi.cpuTempC.toFixed(0)}°C
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          {bar(pi.memPercent, 75, 90)}
+          <span className="text-[9px] font-mono text-muted-foreground">{upH}h{upM}m</span>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -123,6 +191,7 @@ export function Shell({ children }: { children: ReactNode }) {
         </div>
         <div className="flex items-center gap-3">
           <LanguageToggle />
+          <PiMonitor />
           <ConnectionBadge />
           <UserMenu />
         </div>
