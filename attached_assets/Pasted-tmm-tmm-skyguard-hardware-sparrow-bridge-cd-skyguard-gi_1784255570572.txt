@@ -1,0 +1,29 @@
+tmm@tmm:~/skyguard/hardware/sparrow-bridge$ cd ~/skyguard && git pull && cd hardware/sparrow-bridge && set -a && source .env && set +a && python3 bridge.py
+remote: Enumerating objects: 14, done.
+remote: Counting objects: 100% (14/14), done.
+remote: Compressing objects: 100% (6/6), done.
+remote: Total 12 (delta 6), reused 12 (delta 6), pack-reused 0 (from 0)
+Unpacking objects: 100% (12/12), 421.70 KiB | 2.47 MiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+   ddb3683..27e557d  main       -> origin/main
+Updating ddb3683..27e557d
+Fast-forward
+ ...sparrow-bridge-curl-http-192-_1784255133739.txt | 405 +++++++++++++++++++++
+ ...sparrow-bridge-tmm-tmm-skygua_1784255088637.txt |  16 +
+ ...enshot_2026-07-17_at_05.20.23_1784254825593.png | Bin 0 -> 431558 bytes
+ 3 files changed, 421 insertions(+)
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-hardware-sparrow-bridge-curl-http-192-_1784255133739.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-hardware-sparrow-bridge-tmm-tmm-skygua_1784255088637.txt
+ create mode 100644 attached_assets/Screenshot_2026-07-17_at_05.20.23_1784254825593.png
+2026-07-17 02:32:40,326 [INFO] SkyGuard <-> Sparrow DroneID bridge starting.
+2026-07-17 02:32:40,326 [INFO] Sparrow API: http://192.168.100.237:8097  |  SkyGuard: https://e9757240-fac7-4035-8464-619d8304e04f-00-1ax2l3m8m1z8e.riker.replit.dev/api/detections
+2026-07-17 02:32:40,326 [INFO] Polling every 2.0 s (BLE + WiFi endpoints).
+2026-07-17 02:32:40,558 [WARNING] Sparrow API unreachable at http://192.168.100.237:8097/sparrow/api/v1/bluetooth/devices: Expecting value: line 1 column 1 (char 0)
+2026-07-17 02:32:40,575 [WARNING] Sparrow API unreachable at http://192.168.100.237:8097/sparrow/api/v1/wifi/devices: Expecting value: line 1 column 1 (char 0)
+2026-07-17 02:32:42,596 [WARNING] Sparrow API unreachable at http://192.168.100.237:8097/sparrow/api/v1/bluetooth/devices: Expecting value: line 1 column 1 (char 0)
+2026-07-17 02:32:42,612 [WARNING] Sparrow API unreachable at http://192.168.100.237:8097/sparrow/api/v1/wifi/devices: Expecting value: line 1 column 1 (char 0)
+2026-07-17 02:32:44,640 [WARNING] Sparrow API unreachable at http://192.168.100.237:8097/sparrow/api/v1/bluetooth/devices: Expecting value: line 1 column 1 (char 0)
+2026-07-17 02:32:44,657 [WARNING] Sparrow API unreachable at http://192.168.100.237:8097/sparrow/api/v1/wifi/devices: Expecting value: line 1 column 1 (char 0)
+2026-07-17 02:32:46,678 [WARNING] Sparrow API unreachable at http://192.168.100.237:8097/sparrow/api/v1/bluetooth/devices: Expecting value: line 1 column 1 (char 0)
+2026-07-17 02:32:46,696 [WARNING] Sparrow API unreachable at http://192.168.100.237:8097/sparrow/api/v1/wifi/devices: Expecting value: line 1 column 1 (char 0)
+2
