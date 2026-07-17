@@ -383,7 +383,7 @@ export default function Spectrum() {
             {bins.length === 0 ? (
               <div className="absolute inset-0 flex items-center justify-center text-muted-foreground text-xs uppercase">
                 <ZapOff className="w-4 h-4 mr-2" />
-                {wsStatus === "error" ? `Няма връзка с HackRF bridge (ws://${window.location.hostname}:8765)` : "Изчакване на данни…"}
+                {wsStatus === "error" ? `Няма връзка с HackRF bridge (${WS_URL})` : "Изчакване на данни…"}
               </div>
             ) : (
               <SpectrumLine bins={bins} freqMin={FREQ_MIN_HZ} freqMax={FREQ_MAX_HZ} bands={DRONE_BANDS} />
