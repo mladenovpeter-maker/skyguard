@@ -272,7 +272,7 @@ function ThreatBadge({ threat }: { threat: string }) {
 // Main page
 // ---------------------------------------------------------------------------
 
-const WS_URL = `ws://${window.location.hostname}:8765`;
+const WS_URL = import.meta.env.VITE_HACKRF_WS_URL || `ws://${window.location.hostname}:8765`;
 const FREQ_MIN_HZ = 400e6;
 const FREQ_MAX_HZ = 6000e6;
 const MAX_HISTORY = 200;

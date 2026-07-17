@@ -1,0 +1,36 @@
+(venv) admin@skyguard:~/skyguard $ sudo pip3 install websockets --break-system-packages && \
+  sudo systemctl restart skyguard-hackrf-bridge && \
+  sudo journalctl -u skyguard-hackrf-bridge -f
+Looking in indexes: https://pypi.org/simple, https://www.piwheels.org/simple
+Collecting websockets
+  Downloading websockets-16.1-cp313-cp313-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl.metadata (6.8 kB)
+Downloading websockets-16.1-cp313-cp313-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (188 kB)
+Installing collected packages: websockets
+Successfully installed websockets-16.1
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+Jul 17 07:24:35 skyguard python3[8206]: 2026-07-17 07:24:35,800 [INFO] WebSocket server on ws://0.0.0.0:8765
+Jul 17 07:24:35 skyguard python3[8206]: 2026-07-17 07:24:35,801 [INFO] Posting RF alerts to http://192.168.100.224:3001/api/rf-alerts
+Jul 17 07:24:35 skyguard python3[8206]: 2026-07-17 07:24:35,801 [INFO] Alert threshold: -60 dBm  |  Warning: -75 dBm
+Jul 17 07:24:35 skyguard python3[8206]: 2026-07-17 07:24:35,881 [INFO] server listening on 0.0.0.0:8765
+Jul 17 07:24:35 skyguard python3[8206]: 2026-07-17 07:24:35,882 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz
+Jul 17 07:24:35 skyguard systemd[1]: Stopping skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge...
+Jul 17 07:24:36 skyguard systemd[1]: skyguard-hackrf-bridge.service: Deactivated successfully.
+Jul 17 07:24:36 skyguard systemd[1]: Stopped skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+Jul 17 07:24:36 skyguard systemd[1]: skyguard-hackrf-bridge.service: Consumed 1.267s CPU time.
+Jul 17 07:24:36 skyguard systemd[1]: Started skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+Jul 17 07:24:36 skyguard python3[8215]: 2026-07-17 07:24:36,989 [INFO] Loaded 10 frequency bands from /home/admin/skyguard/hardware/hackrf-bridge/frequencies.json
+Jul 17 07:24:36 skyguard python3[8215]: 2026-07-17 07:24:36,994 [INFO] SkyGuard HackRF Bridge starting.
+Jul 17 07:24:36 skyguard python3[8215]: 2026-07-17 07:24:36,995 [INFO] WebSocket server on ws://0.0.0.0:8765
+Jul 17 07:24:36 skyguard python3[8215]: 2026-07-17 07:24:36,995 [INFO] Posting RF alerts to http://192.168.100.224:3001/api/rf-alerts
+Jul 17 07:24:36 skyguard python3[8215]: 2026-07-17 07:24:36,995 [INFO] Alert threshold: -60 dBm  |  Warning: -75 dBm
+Jul 17 07:24:37 skyguard python3[8215]: 2026-07-17 07:24:37,060 [INFO] server listening on 0.0.0.0:8765
+Jul 17 07:24:37 skyguard python3[8215]: 2026-07-17 07:24:37,060 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz
+Jul 17 07:24:39 skyguard python3[8215]: 2026-07-17 07:24:39,327 [INFO] RF ALERT  RC 433 MHz  -65.9 dBm @ 439.9 MHz
+Jul 17 07:24:39 skyguard python3[8215]: 2026-07-17 07:24:39,400 [INFO] RF ALERT  RC 868 MHz  -66.6 dBm @ 866.9 MHz
+Jul 17 07:24:39 skyguard python3[8215]: 2026-07-17 07:24:39,471 [INFO] RF ALERT  RC 915 MHz  -66.2 dBm @ 902.5 MHz
+Jul 17 07:24:39 skyguard python3[8215]: 2026-07-17 07:24:39,539 [INFO] RF ALERT  DJI / FPV 2.4 GHz  -60.8 dBm @ 2412.6 MHz
+Jul 17 07:24:39 skyguard python3[8215]: 2026-07-17 07:24:39,691 [INFO] RF ALERT  Analog FPV 1.2 GHz  -49.6 dBm @ 1225.0 MHz
+Jul 17 07:24:39 skyguard python3[8215]: 2026-07-17 07:24:39,764 [INFO] RF ALERT  GPS / GNSS L1  -66.7 dBm @ 1605.8 MHz
+Jul 17 07:24:41 skyguard python3[8215]: 2026-07-17 07:24:41,060 [INFO] RF ALERT  DJI O3 / FPV 5.8 GHz  -64.3 dBm @ 5785.1 MHz
+Jul 17 07:24:41 skyguard python3[8215]: 2026-07-17 07:24:41,134 [INFO] RF ALERT  DJI O3 Low-band 5.1 GHz  -53.7 dBm @ 5167.9 MHz
+

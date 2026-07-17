@@ -67,7 +67,7 @@
       "hz_low": 1080000000,
       "hz_high": 1360000000,
       "color": "#a78bfa",
-      "threat": "low",
+      "threat": "info",
       "description": "Analog FPV video — long range / fixed wing",
       "protocols": ["Analog video"]
     },
@@ -77,7 +77,7 @@
       "hz_low": 1559000000,
       "hz_high": 1610000000,
       "color": "#60a5fa",
-      "threat": "low",
+      "threat": "info",
       "description": "GPS L1 (1575.42 MHz), GLONASS L1 — drone navigation. Spoofing here disables GPS.",
       "protocols": ["GPS", "GLONASS", "BeiDou", "Galileo"]
     },
@@ -103,8 +103,8 @@
     }
   ],
   "thresholds": {
-    "alert_dbm": -60,
-    "warning_dbm": -75,
-    "note_dbm": -85
+    "alert_dbm": -50,
+    "warning_dbm": -60,
+    "note_dbm": -75
   }
 }
