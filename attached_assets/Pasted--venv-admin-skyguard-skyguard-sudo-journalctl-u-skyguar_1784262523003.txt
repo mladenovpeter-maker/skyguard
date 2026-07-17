@@ -1,0 +1,22 @@
+(venv) admin@skyguard:~/skyguard $ sudo journalctl -u skyguard-hackrf-bridge -n 20 --no-pager
+Jul 17 07:28:16 skyguard systemd[1]: Stopping skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge...
+Jul 17 07:28:16 skyguard systemd[1]: skyguard-hackrf-bridge.service: Deactivated successfully.
+Jul 17 07:28:16 skyguard systemd[1]: Stopped skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+Jul 17 07:28:16 skyguard systemd[1]: skyguard-hackrf-bridge.service: Consumed 2min 1.514s CPU time.
+Jul 17 07:28:16 skyguard systemd[1]: Started skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+Jul 17 07:28:17 skyguard python3[8467]: 2026-07-17 07:28:17,750 [INFO] Loaded 10 frequency bands from /home/admin/skyguard/hardware/hackrf-bridge/frequencies.json
+Jul 17 07:28:17 skyguard python3[8467]: 2026-07-17 07:28:17,755 [INFO] SkyGuard HackRF Bridge starting.
+Jul 17 07:28:17 skyguard python3[8467]: 2026-07-17 07:28:17,755 [INFO] WebSocket server on ws://0.0.0.0:8765
+Jul 17 07:28:17 skyguard python3[8467]: 2026-07-17 07:28:17,755 [INFO] Posting RF alerts to http://192.168.100.224:3001/api/rf-alerts
+Jul 17 07:28:17 skyguard python3[8467]: 2026-07-17 07:28:17,756 [INFO] Alert threshold: -60 dBm  |  Warning: -75 dBm
+Jul 17 07:28:17 skyguard python3[8467]: 2026-07-17 07:28:17,817 [INFO] server listening on 0.0.0.0:8765
+Jul 17 07:28:17 skyguard python3[8467]: 2026-07-17 07:28:17,817 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz
+Jul 17 07:28:20 skyguard python3[8467]: 2026-07-17 07:28:20,016 [INFO] RF ALERT  RC 433 MHz  -60.5 dBm @ 440.0 MHz
+Jul 17 07:28:20 skyguard python3[8467]: 2026-07-17 07:28:20,186 [INFO] RF ALERT  RC 868 MHz  -68.7 dBm @ 863.4 MHz
+Jul 17 07:28:20 skyguard python3[8467]: 2026-07-17 07:28:20,355 [INFO] RF ALERT  RC 915 MHz  -66.2 dBm @ 919.1 MHz
+Jul 17 07:28:20 skyguard python3[8467]: 2026-07-17 07:28:20,519 [INFO] RF ALERT  DJI / FPV 2.4 GHz  -23.6 dBm @ 2472.9 MHz
+Jul 17 07:28:20 skyguard python3[8467]: 2026-07-17 07:28:20,691 [INFO] RF ALERT  Analog FPV 1.2 GHz  -50.4 dBm @ 1225.0 MHz
+Jul 17 07:28:20 skyguard python3[8467]: 2026-07-17 07:28:20,861 [INFO] RF ALERT  GPS / GNSS L1  -65.0 dBm @ 1579.7 MHz
+Jul 17 07:28:22 skyguard python3[8467]: 2026-07-17 07:28:22,147 [INFO] RF ALERT  DJI O3 / FPV 5.8 GHz  -64.3 dBm @ 5760.2 MHz
+Jul 17 07:28:22 skyguard python3[8467]: 2026-07-17 07:28:22,213 [INFO] RF ALERT  DJI O3 Low-band 5.1 GHz  -54.3 dBm @ 5167.9 MHz
+(venv) admin@skyguard:~/skyguard $ 
