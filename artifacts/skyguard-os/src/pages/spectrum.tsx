@@ -59,23 +59,27 @@ const DRONE_BANDS: FreqBand[] = [
 // Waterfall canvas renderer
 // ---------------------------------------------------------------------------
 
-const DB_MIN = -90;   // noise floor in most environments
-const DB_MAX = -30;   // strong local signal
+const DB_MIN = -95;   // near noise floor — keep visible even at floor
+const DB_MAX = -35;   // strong local signal (WiFi / LTE)
 
+/**
+ * Palette: dark-violet → blue → cyan → green → yellow → red
+ * Starts from a VISIBLE dark colour so the waterfall is never all-black.
+ */
 function dbToColor(dbm: number): [number, number, number] {
   const t = Math.max(0, Math.min(1, (dbm - DB_MIN) / (DB_MAX - DB_MIN)));
-  if (t < 0.25) {
-    const s = t / 0.25;
-    return [0, Math.round(s * 50), Math.round(20 + s * 80)];
-  } else if (t < 0.5) {
-    const s = (t - 0.25) / 0.25;
-    return [0, Math.round(50 + s * 150), Math.round(100 - s * 100)];
-  } else if (t < 0.75) {
-    const s = (t - 0.5) / 0.25;
-    return [Math.round(s * 255), 200, 0];
+  if (t < 0.2) {
+    const s = t / 0.2;
+    return [Math.round(40 - s * 40), 0, Math.round(60 + s * 155)]; // violet → blue
+  } else if (t < 0.45) {
+    const s = (t - 0.2) / 0.25;
+    return [0, Math.round(s * 220), 215];                           // blue → cyan
+  } else if (t < 0.7) {
+    const s = (t - 0.45) / 0.25;
+    return [Math.round(s * 255), 220, Math.round(215 - s * 215)];  // cyan → yellow
   } else {
-    const s = (t - 0.75) / 0.25;
-    return [255, Math.round(200 - s * 200), 0];
+    const s = (t - 0.7) / 0.3;
+    return [255, Math.round(220 - s * 220), 0];                    // yellow → red
   }
 }
 
