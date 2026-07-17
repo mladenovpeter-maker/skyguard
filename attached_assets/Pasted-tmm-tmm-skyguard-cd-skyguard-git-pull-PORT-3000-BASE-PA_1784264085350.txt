@@ -1,0 +1,37 @@
+tmm@tmm:~/skyguard$ cd ~/skyguard && git pull && \
+  PORT=3000 BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build && \
+  sudo cp -r artifacts/skyguard-os/dist/public/* /var/www/skyguard/public/
+remote: Enumerating objects: 38, done.
+remote: Counting objects: 100% (38/38), done.
+remote: Compressing objects: 100% (4/4), done.
+remote: Total 20 (delta 16), reused 20 (delta 16), pack-reused 0 (from 0)
+Unpacking objects: 100% (20/20), 4.68 KiB | 684.00 KiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+   1d1d40a..f9c30e9  main       -> origin/main
+Updating 1d1d40a..f9c30e9
+Fast-forward
+ artifacts/api-server/src/routes/rf-alerts.ts |  12 ++-
+ artifacts/skyguard-os/src/pages/spectrum.tsx |  28 ++++++-
+ hardware/hackrf-bridge/bridge.py             |  82 +++++++++++++++---
+ hardware/hackrf-bridge/drone_signatures.json | 120 +++++++++++++++++++++++++++
+ lib/db/src/schema/rf-alerts.ts               |  18 ++--
+ 5 files changed, 235 insertions(+), 25 deletions(-)
+ create mode 100644 hardware/hackrf-bridge/drone_signatures.json
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2779 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.54 kB
+dist/public/assets/index-BY6tX3bd.css  131.62 kB │ gzip:  28.07 kB
+dist/public/assets/index-DHaAXN8d.js   808.36 kB │ gzip: 245.82 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 4.89s
+tmm@tmm:~/skyguard$ 
