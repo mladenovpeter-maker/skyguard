@@ -452,9 +452,9 @@ export default function Spectrum() {
         </div>
       </div>
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
         {/* Main spectrum area */}
-        <div className="flex-1 flex flex-col p-3 gap-2 min-w-0">
+        <div className="flex-1 flex flex-col p-3 gap-2 min-w-0 min-h-0">
 
           {/* Band legend */}
           <div className="flex flex-wrap gap-2">
@@ -499,8 +499,8 @@ export default function Spectrum() {
           </div>
         </div>
 
-        {/* Right panel — RF Alerts */}
-        <div className="w-72 border-l border-border/50 flex flex-col bg-card/20">
+        {/* RF Alerts panel — right on desktop, bottom on mobile */}
+        <div className="w-full lg:w-72 border-t lg:border-t-0 lg:border-l border-border/50 flex flex-col bg-card/20 max-h-64 lg:max-h-none">
           <div className="px-3 py-2 border-b border-border/50 flex items-center gap-2">
             <AlertTriangle className="w-3.5 h-3.5 text-yellow-400" />
             <span className="text-xs font-bold uppercase tracking-widest">RF Alerts</span>

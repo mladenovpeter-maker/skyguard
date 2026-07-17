@@ -17,7 +17,7 @@ export function TelemetryPanel({ tracks, rfAlerts = [] }: TelemetryPanelProps) {
   const dateLocale = language === "bg" ? bg : enUS;
 
   return (
-    <div className="w-80 h-full border-l border-border bg-card/80 backdrop-blur-md flex flex-col relative z-10">
+    <div className="w-full md:w-80 h-48 md:h-full border-t md:border-t-0 md:border-l border-border bg-card/80 backdrop-blur-md flex flex-col relative z-10 flex-shrink-0">
       <div className="p-4 border-b border-border/50">
         <h2 className="font-mono text-sm font-bold text-primary uppercase tracking-wider flex items-center gap-2">
           <Activity className="w-4 h-4" />

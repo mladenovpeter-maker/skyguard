@@ -80,11 +80,11 @@ export default function Home() {
   }
 
   return (
-    <div className="flex-1 flex overflow-hidden">
+    <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
       <AudioAlarm active={hasAlarm} />
       
       {/* Map View */}
-      <div className="flex-1 relative">
+      <div className="flex-1 relative min-h-[50vh] md:min-h-0">
         <RadarMap config={config} activeTracks={tracks} ambientDevices={ambientDevices} rfAlerts={latestRfAlerts} />
         
         {hasAlarm && (
