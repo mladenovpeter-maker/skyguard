@@ -1,0 +1,16 @@
+tmm@tmm:~/skyguard$ sudo journalctl -u skyguard-api -n 10 --no-pager
+curl -s -X POST http://localhost:3001/api/detections \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $(grep DEVICE_KEY ~/skyguard/hardware/sparrow-bridge/.env | cut -d= -f2)" \
+  -d '{"droneId":"TEST","lat":42.6,"lng":23.3,"signalType":"TEST"}'
+Jul 17 03:13:15 tmm node[3574856]: {"level":30,"time":1784257995612,"pid":3574856,"hostname":"tmm","req":{"id":149,"method":"GET","url":"/api/status"},"res":{"statusCode":304},"responseTime":7,"msg":"request completed"}
+Jul 17 03:13:37 tmm node[3574856]: {"level":30,"time":1784258017163,"pid":3574856,"hostname":"tmm","req":{"id":150,"method":"GET","url":"/api/home"},"res":{"statusCode":304},"responseTime":27,"msg":"request completed"}
+Jul 17 03:13:37 tmm node[3574856]: {"level":30,"time":1784258017165,"pid":3574856,"hostname":"tmm","req":{"id":152,"method":"GET","url":"/api/detections/active"},"res":{"statusCode":304},"responseTime":21,"msg":"request completed"}
+Jul 17 03:13:37 tmm node[3574856]: {"level":30,"time":1784258017166,"pid":3574856,"hostname":"tmm","req":{"id":151,"method":"GET","url":"/api/status"},"res":{"statusCode":304},"responseTime":28,"msg":"request completed"}
+Jul 17 03:13:39 tmm node[3574856]: {"level":30,"time":1784258019195,"pid":3574856,"hostname":"tmm","req":{"id":154,"method":"GET","url":"/api/home"},"res":{"statusCode":304},"responseTime":20,"msg":"request completed"}
+Jul 17 03:13:39 tmm node[3574856]: {"level":30,"time":1784258019199,"pid":3574856,"hostname":"tmm","req":{"id":153,"method":"GET","url":"/api/status"},"res":{"statusCode":304},"responseTime":26,"msg":"request completed"}
+Jul 17 03:13:39 tmm node[3574856]: {"level":30,"time":1784258019200,"pid":3574856,"hostname":"tmm","req":{"id":155,"method":"GET","url":"/api/detections/active"},"res":{"statusCode":304},"responseTime":21,"msg":"request completed"}
+Jul 17 03:13:40 tmm node[3574856]: {"level":30,"time":1784258020027,"pid":3574856,"hostname":"tmm","req":{"id":156,"method":"GET","url":"/api/status"},"res":{"statusCode":304},"responseTime":9,"msg":"request completed"}
+Jul 17 03:13:40 tmm node[3574856]: {"level":30,"time":1784258020028,"pid":3574856,"hostname":"tmm","req":{"id":157,"method":"GET","url":"/api/devices"},"res":{"statusCode":304},"responseTime":9,"msg":"request completed"}
+Jul 17 03:13:43 tmm node[3574856]: {"level":30,"time":1784258023054,"pid":3574856,"hostname":"tmm","req":{"id":158,"method":"GET","url":"/api/status"},"res":{"statusCode":304},"responseTime":12,"msg":"request completed"}
+{"id":1,"droneId":"TEST","model":null,"signalType":"TEST","lat":42.6,"lng":23.3,"altitudeM":null,"speedKmh":null,"headingDeg":null,"rssiDbm":null,"pilotLat":null,"pilotLng":null,"distanceFromHomeM":6415.51334489233,"timestamp":"2026-07-17T03:14:58.443Z","createdAt":"2026-07-17T03:14:58.445Z"}tmm@tmm:~/skyguard$ 
