@@ -1,0 +1,18 @@
+[Unit]
+Description=SkyGuard OS Ambient RF Scanner
+After=network.target bluetooth.target
+Wants=bluetooth.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/home/pi/skyguard/hardware/ambient-scanner
+EnvironmentFile=/home/pi/skyguard/hardware/ambient-scanner/.env
+ExecStart=/usr/bin/python3 /home/pi/skyguard/hardware/ambient-scanner/scanner.py
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
