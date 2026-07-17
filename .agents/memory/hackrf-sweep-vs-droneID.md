@@ -18,3 +18,20 @@ HackRF е half-duplex, един процес в даден момент. hackrf_
 
 **How to apply:**
 Ако потребителят пита за "засичане на DroneID" — уточни че сега засичаме RF енергия, не декодираме протокол. За истинско DroneID декодиране трябва второ HackRF + gr-DroneID.
+
+---
+
+## RF Fingerprinting — Следваща Стъпка
+
+Има публични dataset-и, не започваме от нулата:
+- **AirID** (genesys-lab.org/airid) — raw IQ, свободен
+- **Hovering UAVs** (genesys-lab.org/hovering-uavs) — 4.5 GB, свободен
+- **CardRF** (IEEE DataPort) — UAV + BLE + WiFi, на открито
+- **DRFF-R1** (github.com/zz-zz-cyber/DRFF-R1) — Apache 2.0, Python/MATLAB
+- **UAVSig** (UCLA) — дронове + контролери
+
+Pipeline за адаптиране: **rameyjm7/rf-signal-intelligence** (GitHub) — real-time SDR класификация, ONNX export, self-learning готов.
+
+**Архитектура:** Dataset → базов модел → интеграция в SkyGuard → Remote ID лабелва RF записи автоматично → self-learning.
+
+**Storage:** Dataset-ите (4.5GB+) да се пазят на Linux сървъра (192.168.100.224), не на Pi — Pi има ограничен SD storage. Pi чете/праща към Linux сървъра.
