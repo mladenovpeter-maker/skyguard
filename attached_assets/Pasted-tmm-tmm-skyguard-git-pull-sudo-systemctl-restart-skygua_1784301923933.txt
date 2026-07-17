@@ -1,0 +1,38 @@
+tmm@tmm:~/skyguard$ git pull && sudo systemctl restart skyguard-api
+remote: Enumerating objects: 23, done.
+remote: Counting objects: 100% (23/23), done.
+remote: Compressing objects: 100% (10/10), done.
+remote: Total 19 (delta 9), reused 19 (delta 9), pack-reused 0 (from 0)
+Unpacking objects: 100% (19/19), 1.67 MiB | 3.58 MiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+   e4f4588..287b362  main       -> origin/main
+Updating e4f4588..287b362
+Fast-forward
+ artifacts/api-server/dist/index.mjs                | 71294 +++++++++++++++++++
+ artifacts/api-server/dist/index.mjs.map            |     7 +
+ artifacts/api-server/dist/pino-file.mjs            |  4350 ++
+ artifacts/api-server/dist/pino-file.mjs.map        |     7 +
+ artifacts/api-server/dist/pino-pretty.mjs          |  3306 +
+ artifacts/api-server/dist/pino-pretty.mjs.map      |     7 +
+ artifacts/api-server/dist/pino-worker.mjs          |  4706 ++
+ artifacts/api-server/dist/pino-worker.mjs.map      |     7 +
+ artifacts/api-server/dist/thread-stream-worker.mjs |   228 +
+ .../api-server/dist/thread-stream-worker.mjs.map   |     7 +
+ ...t-pull-set-a-source-hardware-_1784301632648.txt |    36 +
+ 11 files changed, 83955 insertions(+)
+ create mode 100644 artifacts/api-server/dist/index.mjs
+ create mode 100644 artifacts/api-server/dist/index.mjs.map
+ create mode 100644 artifacts/api-server/dist/pino-file.mjs
+ create mode 100644 artifacts/api-server/dist/pino-file.mjs.map
+ create mode 100644 artifacts/api-server/dist/pino-pretty.mjs
+ create mode 100644 artifacts/api-server/dist/pino-pretty.mjs.map
+ create mode 100644 artifacts/api-server/dist/pino-worker.mjs
+ create mode 100644 artifacts/api-server/dist/pino-worker.mjs.map
+ create mode 100644 artifacts/api-server/dist/thread-stream-worker.mjs
+ create mode 100644 artifacts/api-server/dist/thread-stream-worker.mjs.map
+ create mode 100644 attached_assets/Pasted-admin-skyguard-skyguard-git-pull-set-a-source-hardware-_1784301632648.txt
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ curl -s http://localhost:3001/api/ble-status
+tmm@tmm:~/skyguard$ 
