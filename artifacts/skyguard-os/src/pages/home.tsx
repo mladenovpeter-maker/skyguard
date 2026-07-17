@@ -1,9 +1,25 @@
 import { useGetHomeConfig, useListActiveDroneTracks, getListActiveDroneTracksQueryKey } from "@workspace/api-client-react";
-import { RadarMap } from "@/components/radar/RadarMap";
+import { RadarMap, type AmbientDevice } from "@/components/radar/RadarMap";
 import { TelemetryPanel } from "@/components/radar/TelemetryPanel";
 import { AudioAlarm } from "@/components/radar/AudioAlarm";
-import { AlertTriangle, Loader2 } from "lucide-react";
+import { AlertTriangle, Loader2, Radio, Wifi } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
+import { useQuery } from "@tanstack/react-query";
+
+function useAmbientDevices() {
+  return useQuery<AmbientDevice[]>({
+    queryKey: ["ambient-active"],
+    queryFn: async () => {
+      const res = await fetch(`${import.meta.env.BASE_URL}api/ambient/active`, {
+        credentials: "include",
+      });
+      if (!res.ok) return [];
+      return res.json();
+    },
+    refetchInterval: 10_000,
+    staleTime: 9_000,
+  });
+}
 
 export default function Home() {
   const { t } = useLanguage();
@@ -11,8 +27,11 @@ export default function Home() {
   const { data: tracks = [] } = useListActiveDroneTracks({
     query: { refetchInterval: 2000, queryKey: getListActiveDroneTracksQueryKey() }
   });
+  const { data: ambientDevices = [] } = useAmbientDevices();
 
   const hasAlarm = tracks.some(t => t.alarmActive);
+  const bleCount = ambientDevices.filter(d => d.signalType === "BLE").length;
+  const wifiCount = ambientDevices.filter(d => d.signalType === "WIFI").length;
 
   if (configLoading) {
     return (
@@ -40,12 +59,30 @@ export default function Home() {
       
       {/* Map View */}
       <div className="flex-1 relative">
-        <RadarMap config={config} activeTracks={tracks} />
+        <RadarMap config={config} activeTracks={tracks} ambientDevices={ambientDevices} />
         
         {hasAlarm && (
           <div className="absolute top-4 left-4 z-[400] bg-destructive text-destructive-foreground px-4 py-2 rounded-md font-mono font-bold text-sm uppercase tracking-widest shadow-[0_0_20px_rgba(255,0,0,0.5)] animate-pulse flex items-center gap-2 border border-destructive-foreground/20">
             <AlertTriangle className="w-4 h-4" />
             {t("home.breach")}
+          </div>
+        )}
+
+        {/* Ambient RF badge */}
+        {(bleCount > 0 || wifiCount > 0) && (
+          <div className="absolute bottom-6 left-4 z-[400] flex gap-2">
+            {bleCount > 0 && (
+              <div className="flex items-center gap-1.5 bg-black/60 border border-blue-400/30 text-blue-400 px-2.5 py-1 rounded font-mono text-xs backdrop-blur-sm">
+                <Radio className="w-3 h-3" />
+                BLE {bleCount}
+              </div>
+            )}
+            {wifiCount > 0 && (
+              <div className="flex items-center gap-1.5 bg-black/60 border border-violet-400/30 text-violet-400 px-2.5 py-1 rounded font-mono text-xs backdrop-blur-sm">
+                <Wifi className="w-3 h-3" />
+                WiFi {wifiCount}
+              </div>
+            )}
           </div>
         )}
       </div>
