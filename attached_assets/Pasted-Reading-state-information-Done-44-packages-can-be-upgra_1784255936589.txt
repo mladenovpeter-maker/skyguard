@@ -1,0 +1,56 @@
+Reading state information... Done
+44 packages can be upgraded. Run 'apt list --upgradable' to see them.
+2026-07-17 02:38:30 - Repository configured successfully.
+2026-07-17 02:38:30 - To install Node.js, run: apt install nodejs -y
+2026-07-17 02:38:30 - You can use N|solid Runtime as a node.js alternative
+2026-07-17 02:38:30 - To install N|solid Runtime, run: apt install nsolid -y 
+
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+The following NEW packages will be installed:
+  nodejs
+0 upgraded, 1 newly installed, 0 to remove and 44 not upgraded.
+Need to get 32.2 MB of archives.
+After this operation, 196 MB of additional disk space will be used.
+Get:1 https://deb.nodesource.com/node_20.x nodistro/main amd64 nodejs amd64 20.20.2-1nodesource1 [32.2 MB]
+Fetched 32.2 MB in 3s (11.2 MB/s)  
+Selecting previously unselected package nodejs.
+(Reading database ... 88767 files and directories currently installed.)
+Preparing to unpack .../nodejs_20.20.2-1nodesource1_amd64.deb ...
+Unpacking nodejs (20.20.2-1nodesource1) ...
+Setting up nodejs (20.20.2-1nodesource1) ...
+Processing triggers for man-db (2.12.0-4build2) ...
+Scanning processes...                                                           
+Scanning processor microcode...                                                 
+Scanning linux images...                                                        
+
+Running kernel seems to be up-to-date.
+
+The processor microcode seems to be up-to-date.
+
+No services need to be restarted.
+
+No containers need to be restarted.
+
+No user sessions are running outdated binaries.
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
+
+added 1 package in 1s
+
+1 package is looking for funding
+  run `npm fund` for details
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 12.0.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.1
+npm notice To update run: npm install -g npm@12.0.1
+npm notice
+v20.20.2
+10.34.5
+tmm@tmm:~/skyguard/hardware/sparrow-bridge$ 
+tmm@tmm:~/skyguard/hardware/sparrow-bridge$ 
+tmm@tmm:~/skyguard/hardware/sparrow-bridge$ 
+tmm@tmm:~/skyguard/hardware/sparrow-bridge$ psql --version 2>/dev/null || echo "няма"
+няма
+tmm@tmm:~/skyguard/hardware/sparrow-bridge$ 
