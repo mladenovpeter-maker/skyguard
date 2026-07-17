@@ -1,0 +1,46 @@
+tmm@tmm:~/skyguard$ # 1. Rebuild фронтенда с новия Radar код
+cd ~/skyguard && git pull && \
+  PORT=3000 BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build && \
+  sudo cp -r artifacts/skyguard-os/dist/public/* /var/www/skyguard/public/
+
+# 2. DB миграция (ако още не е направена)
+psql $(grep DATABASE_URL ~/skyguard/.env | cut -d= -f2-) -c "
+  ALTER TABLE rf_alerts 
+    ADD COLUMN IF NOT EXISTS possible_drones text,
+    ADD COLUMN IF NOT EXISTS above_baseline_db real;"
+
+# 3. Рестарт API сървър (за новата схема)
+pm2 restart skyguard-api || sudo systemctl restart skyguard-api
+Already up to date.
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2779 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.54 kB
+dist/public/assets/index-BY6tX3bd.css  131.62 kB │ gzip:  28.07 kB
+dist/public/assets/index-DHaAXN8d.js   808.36 kB │ gzip: 245.82 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.01s
+NOTICE:  column "possible_drones" of relation "rf_alerts" already exists, skipping
+NOTICE:  column "above_baseline_db" of relation "rf_alerts" already exists, skipping
+ALTER TABLE
+Command 'pm2' not found, did you mean:
+  command 'tpm2' from deb tpm2-tools (5.4-1)
+  command 'pmc' from deb linuxptp (4.0-1ubuntu1.1)
+  command 'wm2' from deb wm2 (4+svn20090216-4build1)
+  command 'pm' from deb powerman (2.3.27-4)
+  command 'pom2' from deb libpod-pom-perl (2.01-4)
+  command 'pmg' from deb python3-pymatgen (2023.06.23+dfsg1-2build1)
+  command 'pmw' from deb pmw (1:5.22-1)
+  command 'gm2' from deb gm2 (4:13.2.0-2ubuntu1)
+  command 'pms' from deb pms (0.42-1.1)
+Try: sudo apt install <deb name>
+tmm@tmm:~/skyguard$ 

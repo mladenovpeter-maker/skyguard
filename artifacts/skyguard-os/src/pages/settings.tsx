@@ -1,10 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useGetHomeConfig, useUpdateHomeConfig, getGetHomeConfigQueryKey } from "@workspace/api-client-react";
-import { useQueryClient } from "@tanstack/react-query";
-import { Settings as SettingsIcon, Save, MapPin, Shield, Map as MapIcon } from "lucide-react";
+import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
+import { Settings as SettingsIcon, Save, MapPin, Shield, Map as MapIcon, Radio, Plus, Trash2, Eye, EyeOff } from "lucide-react";
 
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,151 @@ import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage } from "@/lib/i18n";
 import { LocationPicker } from "@/components/settings/LocationPicker";
+
+// ---- Known RF bands (mirrors frequencies.json) ----
+const RF_BANDS = [
+  { id: "rc_433",   label: "RC 433 MHz",        color: "#f59e0b" },
+  { id: "rc_868",   label: "RC 868 MHz",         color: "#f59e0b" },
+  { id: "rc_915",   label: "RC 915 MHz",         color: "#f59e0b" },
+  { id: "dji_2400", label: "DJI / FPV 2.4 GHz", color: "#ef4444" },
+  { id: "dji_5150", label: "DJI O3 5.1 GHz",    color: "#ef4444" },
+  { id: "dji_5800", label: "DJI O3 / FPV 5.8 GHz", color: "#ef4444" },
+];
+
+interface KnownRfSource { id: number; bandId: string; label: string; suppress: boolean; }
+
+function useKnownRfSources() {
+  return useQuery<KnownRfSource[]>({
+    queryKey: ["known-rf-sources"],
+    queryFn: async () => {
+      const res = await fetch(`${import.meta.env.BASE_URL}api/known-rf-sources`, { credentials: "include" });
+      return res.ok ? res.json() : [];
+    },
+  });
+}
+
+function KnownRfSourcesSection() {
+  const { data: sources = [], refetch } = useKnownRfSources();
+  const { toast } = useToast();
+  const [addingBand, setAddingBand] = useState<string | null>(null);
+  const [labelInput, setLabelInput] = useState("");
+
+  const suppressed = new Set(sources.filter(s => s.suppress).map(s => s.bandId));
+  const existing   = new Set(sources.map(s => s.bandId));
+  const available  = RF_BANDS.filter(b => !existing.has(b.id));
+
+  async function addSource(bandId: string, label: string) {
+    await fetch(`${import.meta.env.BASE_URL}api/known-rf-sources`, {
+      method: "POST", credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ bandId, label, suppress: true }),
+    });
+    refetch();
+    setAddingBand(null);
+    setLabelInput("");
+    toast({ title: "Запазено", description: `${label} добавен като ваш` });
+  }
+
+  async function toggleSuppress(source: KnownRfSource) {
+    await fetch(`${import.meta.env.BASE_URL}api/known-rf-sources`, {
+      method: "POST", credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ bandId: source.bandId, label: source.label, suppress: !source.suppress }),
+    });
+    refetch();
+  }
+
+  async function removeSource(bandId: string) {
+    await fetch(`${import.meta.env.BASE_URL}api/known-rf-sources/${bandId}`, {
+      method: "DELETE", credentials: "include",
+    });
+    refetch();
+    toast({ title: "Премахнато" });
+  }
+
+  return (
+    <div className="space-y-4 pt-4">
+      <h3 className="text-lg font-mono font-bold text-foreground border-b border-border pb-2 flex items-center gap-2">
+        <Radio className="w-4 h-4 text-primary" /> Наши RF устройства
+      </h3>
+      <p className="text-xs text-muted-foreground font-mono">
+        Маркирай честотни bands принадлежащи на твоите устройства (рутер, RC контролер...). Bridge-ът ще ги пропуска при засичане.
+      </p>
+
+      {/* Existing entries */}
+      <div className="space-y-2">
+        {sources.length === 0 && (
+          <div className="text-xs text-muted-foreground font-mono py-2 border border-dashed border-border rounded px-3">
+            Няма добавени устройства
+          </div>
+        )}
+        {sources.map(src => {
+          const band = RF_BANDS.find(b => b.id === src.bandId);
+          return (
+            <div key={src.id} className="flex items-center gap-3 p-2.5 rounded border border-border bg-background/50">
+              <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: band?.color ?? "#888" }} />
+              <div className="flex-1 min-w-0">
+                <div className="text-xs font-mono font-bold truncate">{src.label}</div>
+                <div className="text-[10px] text-muted-foreground font-mono">{band?.label ?? src.bandId}</div>
+              </div>
+              <button
+                onClick={() => toggleSuppress(src)}
+                className={`text-[10px] font-mono px-2 py-1 rounded border ${src.suppress ? "border-green-500/40 text-green-400 bg-green-500/10" : "border-border text-muted-foreground"}`}
+                title={src.suppress ? "Потисна алерти (кликни за включване)" : "Алертите активни (кликни за потискане)"}
+              >
+                {src.suppress ? <><EyeOff className="w-3 h-3 inline mr-1" />ИГНОРИРАН</> : <><Eye className="w-3 h-3 inline mr-1" />АКТИВЕН</>}
+              </button>
+              <button onClick={() => removeSource(src.bandId)} className="text-muted-foreground hover:text-destructive transition-colors">
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Add new */}
+      {addingBand ? (
+        <div className="flex items-center gap-2 p-3 rounded border border-primary/30 bg-primary/5">
+          <div className="flex-1">
+            <div className="text-xs font-mono text-muted-foreground mb-1">
+              {RF_BANDS.find(b => b.id === addingBand)?.label}
+            </div>
+            <Input
+              placeholder="Например: Домашен WiFi рутер"
+              value={labelInput}
+              onChange={e => setLabelInput(e.target.value)}
+              className="font-mono text-xs h-8 bg-background"
+              autoFocus
+              onKeyDown={e => { if (e.key === "Enter" && labelInput.trim()) addSource(addingBand, labelInput.trim()); }}
+            />
+          </div>
+          <Button size="sm" onClick={() => addSource(addingBand, labelInput.trim())} disabled={!labelInput.trim()} className="font-mono text-xs">
+            <Save className="w-3 h-3 mr-1" /> Запази
+          </Button>
+          <Button size="sm" variant="ghost" onClick={() => { setAddingBand(null); setLabelInput(""); }} className="font-mono text-xs">
+            Отказ
+          </Button>
+        </div>
+      ) : available.length > 0 ? (
+        <div className="flex flex-wrap gap-2">
+          {available.map(b => (
+            <button
+              key={b.id}
+              onClick={() => setAddingBand(b.id)}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded border border-dashed border-border text-[10px] font-mono text-muted-foreground hover:border-primary/50 hover:text-primary transition-colors"
+            >
+              <Plus className="w-3 h-3" />
+              <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: b.color }} />
+              {b.label}
+            </button>
+          ))}
+        </div>
+      ) : (
+        <div className="text-xs text-muted-foreground font-mono">Всички bands са добавени.</div>
+      )}
+    </div>
+  );
+}
 
 export default function Settings() {
   const { data: config, isLoading } = useGetHomeConfig();
@@ -189,6 +334,8 @@ export default function Settings() {
                   )}
                 />
               </div>
+
+              <KnownRfSourcesSection />
 
               <div className="pt-6 border-t border-border flex justify-end">
                 <Button 

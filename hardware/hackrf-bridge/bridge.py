@@ -138,6 +138,28 @@ _last_alert: dict[str, float] = {}
 _band_peaks: dict[str, deque] = {b["id"]: deque(maxlen=BASELINE_SWEEPS) for b in BANDS}
 # Computed baseline dBm per band (None = not yet established)
 _baseline: dict[str, float] = {}
+# Suppressed bands (user-defined "own" devices) — refreshed periodically
+_suppressed_bands: set[str] = set()
+_last_suppressed_refresh: float = 0
+SUPPRESSED_REFRESH_S = 60  # refresh every 60 seconds
+
+
+def refresh_suppressed_bands() -> None:
+    """Fetch user-defined own RF sources from API and update suppressed set."""
+    global _suppressed_bands, _last_suppressed_refresh
+    try:
+        resp = requests.get(
+            f"{API_BASE}/api/known-rf-sources",
+            headers=AUTH_HEADERS,
+            timeout=4,
+        )
+        if resp.status_code == 200:
+            sources = resp.json()
+            _suppressed_bands = {s["bandId"] for s in sources if s.get("suppress")}
+            log.info("Suppressed bands: %s", _suppressed_bands or "none")
+    except Exception as exc:
+        log.debug("Could not fetch known-rf-sources: %s", exc)
+    _last_suppressed_refresh = time.monotonic()
 
 # ---------------------------------------------------------------------------
 # hackrf_sweep parser
@@ -187,9 +209,15 @@ def check_bands(bins: list[dict]) -> None:
     """Check if any bin falls in a drone band above threshold; post alert."""
     now = time.monotonic()
 
+    # Refresh suppressed bands periodically
+    if now - _last_suppressed_refresh > SUPPRESSED_REFRESH_S:
+        refresh_suppressed_bands()
+
     for band in BANDS:
         if band["threat"] in ("info",):
             continue  # skip informational bands (general WiFi etc.)
+        if band["id"] in _suppressed_bands:
+            continue  # user marked as own device — skip
 
         band_bins = [b for b in bins if band["hz_low"] <= b["hz"] <= band["hz_high"]]
         if not band_bins:

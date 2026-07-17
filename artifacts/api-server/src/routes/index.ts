@@ -7,6 +7,7 @@ import devicesRouter from "./devices";
 import heartbeatRouter from "./heartbeat";
 import ambientRouter from "./ambient";
 import rfAlertsRouter from "./rf-alerts";
+import knownRfSourcesRouter from "./known-rf-sources";
 
 const router: IRouter = Router();
 
@@ -18,5 +19,6 @@ router.use(devicesRouter);
 router.use(heartbeatRouter);
 router.use(ambientRouter);
 router.use(rfAlertsRouter);
+router.use(knownRfSourcesRouter);
 
 export default router;
