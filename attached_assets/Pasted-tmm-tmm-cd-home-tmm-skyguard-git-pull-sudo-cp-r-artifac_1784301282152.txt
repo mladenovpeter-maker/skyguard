@@ -1,0 +1,44 @@
+tmm@tmm:~$ cd /home/tmm/skyguard && git pull && sudo cp -r artifacts/skyguard-os/dist/public/* /var/www/skyguard/public/
+remote: Enumerating objects: 72, done.
+remote: Counting objects: 100% (72/72), done.
+remote: Compressing objects: 100% (33/33), done.
+remote: Total 59 (delta 31), reused 51 (delta 23), pack-reused 0 (from 0)
+Unpacking objects: 100% (59/59), 516.55 KiB | 3.77 MiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+   57c5e04..4f88760  main       -> origin/main
+Updating 57c5e04..4f88760
+Fast-forward
+ .../dist/public/assets/index-DV9G6XfG.js           |  68 +++++
+ .../dist/public/assets/index-DZXwkPQf.css          |   1 +
+ artifacts/skyguard-os/dist/public/favicon.svg      |   3 +
+ artifacts/skyguard-os/dist/public/index.html       |  25 ++
+ artifacts/skyguard-os/dist/public/logo.svg         |   8 +
+ artifacts/skyguard-os/dist/public/robots.txt       |   2 +
+ .../skyguard-os/src/components/radar/RadarMap.tsx  |  68 +----
+ artifacts/skyguard-os/src/pages/home.tsx           |  39 +--
+ ...rl-fsSL-https-deb-nodesource-_1784300586731.txt | 101 +++++++
+ ...pm-install-pnpm-filter-worksp_1784300750192.txt |  79 ++++++
+ ...enshot_2026-07-17_at_17.47.29_1784299651543.png | Bin 0 -> 304564 bytes
+ hardware/ambient-scanner/scanner.py                |  86 +-----
+ hardware/droneID-scanner/.env.example              |   6 +
+ hardware/droneID-scanner/SETUP.md                  |  92 +++++++
+ hardware/droneID-scanner/requirements.txt          |   2 +
+ hardware/droneID-scanner/scanner.py                | 291 +++++++++++++++++++++
+ .../skyguard-droneID-scanner.service               |  18 ++
+ 17 files changed, 714 insertions(+), 175 deletions(-)
+ create mode 100644 artifacts/skyguard-os/dist/public/assets/index-DV9G6XfG.js
+ create mode 100644 artifacts/skyguard-os/dist/public/assets/index-DZXwkPQf.css
+ create mode 100644 artifacts/skyguard-os/dist/public/favicon.svg
+ create mode 100644 artifacts/skyguard-os/dist/public/index.html
+ create mode 100644 artifacts/skyguard-os/dist/public/logo.svg
+ create mode 100644 artifacts/skyguard-os/dist/public/robots.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-skyguard-curl-fsSL-https-deb-nodesource-_1784300586731.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-skyguard-pnpm-install-pnpm-filter-worksp_1784300750192.txt
+ create mode 100644 attached_assets/Screenshot_2026-07-17_at_17.47.29_1784299651543.png
+ create mode 100644 hardware/droneID-scanner/.env.example
+ create mode 100644 hardware/droneID-scanner/SETUP.md
+ create mode 100644 hardware/droneID-scanner/requirements.txt
+ create mode 100644 hardware/droneID-scanner/scanner.py
+ create mode 100644 hardware/droneID-scanner/skyguard-droneID-scanner.service
+[sudo] password for tmm: 
+tmm@tmm:~/skyguard$ 
