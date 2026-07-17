@@ -8,6 +8,7 @@
       "hz_high": 440000000,
       "color": "#f59e0b",
       "threat": "medium",
+      "alert_dbm": -45,
       "description": "RC control link — older drones, LoRa telemetry, ELRS 433",
       "protocols": ["PPM", "SBUS", "ELRS", "LoRa"]
     },
@@ -18,6 +19,7 @@
       "hz_high": 870000000,
       "color": "#f59e0b",
       "threat": "medium",
+      "alert_dbm": -45,
       "description": "RC control link — EU ISM band, ExpressLRS 868, TBS Crossfire",
       "protocols": ["ELRS", "Crossfire", "FrSky"]
     },
@@ -28,6 +30,7 @@
       "hz_high": 928000000,
       "color": "#f59e0b",
       "threat": "medium",
+      "alert_dbm": -45,
       "description": "RC control link — US ISM band, ExpressLRS 915, TBS Crossfire US",
       "protocols": ["ELRS", "Crossfire", "FrSky"]
     },
@@ -38,6 +41,8 @@
       "hz_high": 2483500000,
       "color": "#ef4444",
       "threat": "high",
+      "alert_dbm": -30,
+      "_note": "High threshold — home WiFi routers sit at -40 to -60 dBm. -30 dBm = drone nearby.",
       "description": "DJI OcuSync 1.0, DJI Mini 2/3, WiFi RC, FPV video 2.4G, Remote ID",
       "protocols": ["OcuSync 1.0", "WiFi", "O3 fallback", "Remote ID BLE/WiFi"]
     },
@@ -48,6 +53,7 @@
       "hz_high": 5850000000,
       "color": "#ef4444",
       "threat": "high",
+      "alert_dbm": -40,
       "description": "DJI OcuSync 2.0/3.0, O3, DJI FPV, Avata, Mini 4 Pro, FPV video 5.8G",
       "protocols": ["OcuSync 2.0", "OcuSync 3.0", "O3", "O4"]
     },
@@ -58,6 +64,7 @@
       "hz_high": 5250000000,
       "color": "#ef4444",
       "threat": "high",
+      "alert_dbm": -40,
       "description": "DJI O3/O4 extended band (Mavic 3, Mini 4 Pro, Avata 2)",
       "protocols": ["O3", "O4"]
     },

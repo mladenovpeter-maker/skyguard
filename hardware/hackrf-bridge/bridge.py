@@ -153,7 +153,8 @@ def check_bands(bins: list[dict]) -> None:
             continue
 
         peak = max(band_bins, key=lambda b: b["dbm"])
-        if peak["dbm"] < WARNING_DBM:
+        band_threshold = band.get("alert_dbm", ALERT_DBM)
+        if peak["dbm"] < band_threshold:
             continue  # below threshold — ignore
 
         # Cooldown check
