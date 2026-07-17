@@ -69,63 +69,60 @@ def _clean(value, zero_is_null: bool = True):
     return value
 
 
-def _fetch_devices(path: str) -> list[dict]:
-    """GET one Sparrow endpoint and return the device list (empty on error)."""
-    url = f"{SPARROW_API_BASE}{path}"
+def fetch_drones() -> list[dict]:
+    """GET /api/drones — returns all active drones (BLE + WiFi unified)."""
+    url = f"{SPARROW_API_BASE}/api/drones"
     try:
         resp = SPARROW_SESSION.get(url)
         resp.raise_for_status()
         data = resp.json()
-        # Sparrow wraps results: {"devices": [...]} or just a list
-        if isinstance(data, list):
-            return data
-        return data.get("devices", [])
+        if data.get("errcode", 0) != 0:
+            log.warning("Sparrow API error %s: %s", data.get("errcode"), data.get("errmsg"))
+            return []
+        return data.get("drones", [])
     except requests.RequestException as exc:
         log.warning("Sparrow API unreachable at %s: %s", url, exc)
         return []
     except ValueError as exc:
-        log.warning("Non-JSON response from Sparrow at %s: %s", url, exc)
+        log.warning("Non-JSON response from Sparrow: %s", exc)
         return []
 
 
-def map_device(device: dict, signal_type: str) -> dict | None:
+def map_drone(drone: dict) -> dict | None:
     """
-    Map a Sparrow device record to SkyGuard's IngestDetectionBody.
+    Map a Sparrow DroneID /api/drones entry to SkyGuard's IngestDetectionBody.
 
-    Sparrow Remote ID fields (both BLE and WiFi share the same schema):
-      macaddr, name/ssid, lat, lon, altitude, speed, heading, rssi,
-      pilotlat, pilotlon, vendor, type, lastseen
+    Key fields (sparrow-droneid API v1.0.0):
+      serial_number, ua_type_name, drone_lat, drone_lon, drone_alt_geo,
+      drone_height_agl, speed (m/s), direction, rssi, protocol,
+      operator_lat, operator_lon
     """
-    lat = _clean(device.get("lat"))
-    lng = _clean(device.get("lon"))
+    lat = _clean(drone.get("drone_lat"))
+    lng = _clean(drone.get("drone_lon"))
     if lat is None or lng is None:
-        # No Remote ID position data yet.
         return None
 
-    mac = device.get("macaddr", "").upper()
-    if not mac:
-        return None
+    serial = drone.get("serial_number") or drone.get("mac_address") or "UNKNOWN"
+    ua_type = drone.get("ua_type_name") or "Unknown UA"
+    protocol = drone.get("protocol") or "RID"
+    model = f"{ua_type} [{serial}]"
 
-    # Sparrow sometimes also exposes a human-readable name (SSID or BT name).
-    name = device.get("name") or device.get("ssid") or None
-    model = f"{name} ({mac})" if name else mac
-
-    speed_ms = device.get("speed")
+    speed_ms = drone.get("speed")
     speed_kmh = round(float(speed_ms) * 3.6, 1) if speed_ms else None
 
-    pilot_lat = _clean(device.get("pilotlat"))
-    pilot_lng = _clean(device.get("pilotlon"))
+    pilot_lat = _clean(drone.get("operator_lat"))
+    pilot_lng = _clean(drone.get("operator_lon"))
 
     return {
-        "droneId": mac,
+        "droneId": serial,
         "model": model,
-        "signalType": signal_type,
-        "lat": lat,
-        "lng": lng,
-        "altitudeM": _clean(device.get("altitude")),
+        "signalType": protocol,
+        "lat": float(lat),
+        "lng": float(lng),
+        "altitudeM": _clean(drone.get("drone_alt_geo") or drone.get("drone_height_agl")),
         "speedKmh": speed_kmh,
-        "headingDeg": _clean(device.get("heading")),
-        "rssiDbm": device.get("rssi"),
+        "headingDeg": _clean(drone.get("direction")),
+        "rssiDbm": drone.get("rssi"),
         "pilotLat": pilot_lat,
         "pilotLng": pilot_lng,
     }
@@ -152,38 +149,36 @@ def post_detection(body: dict) -> None:
         log.warning("Failed to reach SkyGuard at %s: %s", DETECTIONS_URL, exc)
 
 
-def process_devices(devices: list[dict], signal_type: str) -> None:
+def process_drones(drones: list[dict]) -> None:
     now = time.monotonic()
-    for dev in devices:
-        mac = (dev.get("macaddr") or "").upper()
-        if not mac:
+    for drone in drones:
+        drone_id = drone.get("serial_number") or drone.get("mac_address") or ""
+        if not drone_id:
             continue
 
-        last = _last_sent.get(mac, 0)
+        last = _last_sent.get(drone_id, 0)
         if now - last < MIN_POST_INTERVAL_S:
             continue
 
-        body = map_device(dev, signal_type)
+        body = map_drone(drone)
         if body is None:
-            log.debug("Skipping %s (%s): no Remote ID position", mac, signal_type)
+            log.debug("Skipping %s: no GPS fix", drone_id)
             continue
 
-        _last_sent[mac] = now
+        _last_sent[drone_id] = now
         post_detection(body)
 
 
 def main() -> None:
     log.info("SkyGuard <-> Sparrow DroneID bridge starting.")
-    log.info("Sparrow API: %s  |  SkyGuard: %s", SPARROW_API_BASE, DETECTIONS_URL)
-    log.info("Polling every %.1f s (BLE + WiFi endpoints).", POLL_INTERVAL_S)
+    log.info("Sparrow API: %s/api/drones  |  SkyGuard: %s", SPARROW_API_BASE, DETECTIONS_URL)
+    log.info("Polling every %.1f s.", POLL_INTERVAL_S)
 
     while True:
-        ble_devices = _fetch_devices("/sparrow/api/v1/bluetooth/devices")
-        wifi_devices = _fetch_devices("/sparrow/api/v1/wifi/devices")
-
-        process_devices(ble_devices, "BT_RID")
-        process_devices(wifi_devices, "WIFI_RID")
-
+        drones = fetch_drones()
+        if drones:
+            log.debug("Sparrow reports %d active drone(s).", len(drones))
+        process_drones(drones)
         time.sleep(POLL_INTERVAL_S)
 
 
