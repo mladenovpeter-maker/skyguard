@@ -2,7 +2,7 @@ import { useGetHomeConfig, useListActiveDroneTracks, getListActiveDroneTracksQue
 import { RadarMap, type AmbientDevice, type RfAlertMapEntry } from "@/components/radar/RadarMap";
 import { TelemetryPanel } from "@/components/radar/TelemetryPanel";
 import { AudioAlarm } from "@/components/radar/AudioAlarm";
-import { AlertTriangle, Loader2, Radio, Wifi, Zap } from "lucide-react";
+import { AlertTriangle, Loader2, Wifi, Zap } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
 import { useQuery } from "@tanstack/react-query";
 
@@ -46,7 +46,6 @@ export default function Home() {
   const { data: rfAlerts = [] } = useRecentRfAlerts();
 
   const hasAlarm = tracks.some(t => t.alarmActive);
-  const bleCount = ambientDevices.filter(d => d.signalType === "BLE").length;
   const wifiCount = ambientDevices.filter(d => d.signalType === "WIFI").length;
 
   // Deduplicate by bandId — keep latest per band
@@ -96,12 +95,6 @@ export default function Home() {
 
         {/* Ambient RF badge */}
         <div className="absolute bottom-6 left-4 z-[400] flex gap-2 flex-wrap">
-          {bleCount > 0 && (
-            <div className="flex items-center gap-1.5 bg-black/60 border border-blue-400/30 text-blue-400 px-2.5 py-1 rounded font-mono text-xs backdrop-blur-sm">
-              <Radio className="w-3 h-3" />
-              BLE {bleCount}
-            </div>
-          )}
           {wifiCount > 0 && (
             <div className="flex items-center gap-1.5 bg-black/60 border border-violet-400/30 text-violet-400 px-2.5 py-1 rounded font-mono text-xs backdrop-blur-sm">
               <Wifi className="w-3 h-3" />

@@ -2,22 +2,23 @@
 """
 SkyGuard OS — Ambient RF Scanner (runs on the Raspberry Pi)
 
-Continuously scans for nearby BLE and WiFi devices and posts them to the
-SkyGuard API so the dashboard can display non-drone RF activity on the map.
+Scans for nearby WiFi access points and posts them to the SkyGuard API
+so the dashboard can display non-drone RF activity on the map.
+
+NOTE: BLE scanning has been moved to the dedicated DroneID scanner
+(hardware/droneID-scanner/scanner.py) which uses the nRF52840 USB dongle.
 
 Requires:
-  - bluez (hcitool / bluetoothctl) for BLE scanning
   - wireless-tools (iwlist) or iw for WiFi scanning
   - requests  →  pip3 install requests
 
 Install on Pi:
-  sudo apt install -y bluez wireless-tools python3-requests
+  sudo apt install -y wireless-tools python3-requests
 
 Configure (environment variables, or copy .env.example → .env):
   SKYGUARD_API_BASE     SkyGuard API base URL, e.g. http://192.168.100.224:3001
   SKYGUARD_DEVICE_KEY   Device API key from SkyGuard Admin panel (sg_...)
-  BLE_SCAN_DURATION_S   Seconds per BLE scan window. Default: 6
-  SCAN_INTERVAL_S       Seconds between full scan cycles. Default: 15
+  SCAN_INTERVAL_S       Seconds between full scan cycles. Default: 30
   WIFI_IFACE            WiFi interface to scan. Default: wlan0
 
 Run:
@@ -45,8 +46,7 @@ log = logging.getLogger("skyguard-ambient")
 
 API_BASE        = os.environ.get("SKYGUARD_API_BASE", "").rstrip("/")
 DEVICE_KEY      = os.environ.get("SKYGUARD_DEVICE_KEY", "")
-BLE_DURATION_S  = float(os.environ.get("BLE_SCAN_DURATION_S", "6"))
-SCAN_INTERVAL_S = float(os.environ.get("SCAN_INTERVAL_S", "15"))
+SCAN_INTERVAL_S = float(os.environ.get("SCAN_INTERVAL_S", "30"))
 WIFI_IFACE      = os.environ.get("WIFI_IFACE", "wlan0")
 
 if not API_BASE or not DEVICE_KEY:
@@ -58,55 +58,6 @@ AUTH_HEADERS = {
     "Authorization": f"Bearer {DEVICE_KEY}",
     "Content-Type": "application/json",
 }
-
-
-# ---------------------------------------------------------------------------
-# BLE scan via hcitool lescan
-# ---------------------------------------------------------------------------
-
-def _has_bt() -> bool:
-    try:
-        out = subprocess.run(["hcitool", "dev"], capture_output=True, text=True, timeout=3).stdout
-        return "hci" in out
-    except Exception:
-        return False
-
-
-def scan_ble() -> list[dict]:
-    """Run a passive BLE scan for BLE_DURATION_S seconds; return list of devices."""
-    items: dict[str, dict] = {}
-    try:
-        proc = subprocess.Popen(
-            ["sudo", "hcitool", "lescan", "--duplicates"],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.DEVNULL,
-            text=True,
-        )
-        assert proc.stdout
-        deadline = time.monotonic() + BLE_DURATION_S
-        while time.monotonic() < deadline:
-            line = proc.stdout.readline()
-            if not line:
-                break
-            parts = line.strip().split(None, 1)
-            if len(parts) == 2:
-                mac, name = parts
-                if re.fullmatch(r"([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}", mac):
-                    mac = mac.upper()
-                    display = name.strip() if name.strip() not in ("(unknown)", "") else None
-                    if mac not in items:
-                        items[mac] = {
-                            "mac": mac,
-                            "name": display,
-                            "signalType": "BLE",
-                            "rssiDbm": None,
-                            "vendor": None,
-                        }
-        proc.terminate()
-        proc.wait(timeout=2)
-    except Exception as exc:
-        log.warning("BLE scan error: %s", exc)
-    return list(items.values())
 
 
 # ---------------------------------------------------------------------------
@@ -179,29 +130,16 @@ def post_ambient(items: list[dict]) -> None:
 # ---------------------------------------------------------------------------
 
 def main() -> None:
-    log.info("SkyGuard Ambient Scanner starting.")
-    log.info("API: %s  |  BLE scan: %.0fs  |  Cycle: %.0fs", AMBIENT_URL, BLE_DURATION_S, SCAN_INTERVAL_S)
-
-    bt_ok = _has_bt()
-    if bt_ok:
-        log.info("Bluetooth adapter found ✓")
-    else:
-        log.warning("No Bluetooth adapter — BLE scan disabled.")
+    log.info("SkyGuard Ambient Scanner starting (WiFi only).")
+    log.info("API: %s  |  Cycle: %.0fs  |  Iface: %s", AMBIENT_URL, SCAN_INTERVAL_S, WIFI_IFACE)
+    log.info("BLE scanning → see hardware/droneID-scanner/ (nRF52840 dongle)")
 
     while True:
         cycle_start = time.monotonic()
-        items: list[dict] = []
-
-        if bt_ok:
-            ble = scan_ble()
-            log.debug("BLE found %d device(s)", len(ble))
-            items.extend(ble)
 
         wifi = scan_wifi()
         log.debug("WiFi found %d AP(s)", len(wifi))
-        items.extend(wifi)
-
-        post_ambient(items)
+        post_ambient(wifi)
 
         elapsed = time.monotonic() - cycle_start
         sleep_s = max(0, SCAN_INTERVAL_S - elapsed)

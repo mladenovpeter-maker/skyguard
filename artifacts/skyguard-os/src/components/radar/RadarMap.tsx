@@ -40,13 +40,13 @@ const createPilotIcon = () => {
   });
 };
 
-const createAmbientIcon = (signalType: string) => {
-  const color = signalType === "BLE" ? "#60a5fa" : "#a78bfa"; // blue vs violet
+const createAmbientIcon = () => {
+  const color = "#a78bfa"; // violet for WiFi APs
   return new DivIcon({
     className: "bg-transparent",
     html: `<div class="relative w-4 h-4 flex items-center justify-center">
-      <div class="absolute w-4 h-4 rounded-full border opacity-40 animate-ping" style="border-color:${color}"></div>
-      <div class="w-2 h-2 rounded-full opacity-70" style="background:${color}"></div>
+      <div class="absolute w-4 h-4 rounded-full border opacity-30 animate-ping" style="border-color:${color}"></div>
+      <div class="w-2 h-2 rounded-full opacity-60" style="background:${color}"></div>
     </div>`,
     iconSize: [16, 16],
     iconAnchor: [8, 8]
@@ -215,16 +215,16 @@ export function RadarMap({ config, activeTracks, ambientDevices = [], rfAlerts =
           );
         })}
 
-        {/* Ambient RF devices */}
-        {ambientDevices.map(dev => {
+        {/* Ambient WiFi APs (BLE handled by nRF52840 DroneID scanner) */}
+        {ambientDevices.filter(dev => dev.signalType === "WIFI").map(dev => {
           const pos = ambientPosition(config.lat, config.lng, dev.mac, dev.rssiDbm);
           const label = dev.name || dev.vendor || dev.mac;
           const rssiStr = dev.rssiDbm != null ? `${dev.rssiDbm} dBm` : "?";
           return (
-            <Marker key={dev.mac} position={pos} icon={createAmbientIcon(dev.signalType)}>
+            <Marker key={dev.mac} position={pos} icon={createAmbientIcon()}>
               <Tooltip direction="top" offset={[0, -8]} opacity={0.9}>
                 <div className="font-mono text-xs space-y-0.5">
-                  <div className="font-bold">{dev.signalType} — {label}</div>
+                  <div className="font-bold">WiFi — {label}</div>
                   <div className="text-muted-foreground">{dev.mac}</div>
                   <div>RSSI: {rssiStr}</div>
                 </div>
