@@ -59,8 +59,8 @@ const DRONE_BANDS: FreqBand[] = [
 // Waterfall canvas renderer
 // ---------------------------------------------------------------------------
 
-const DB_MIN = -100;
-const DB_MAX = -20;
+const DB_MIN = -90;   // noise floor in most environments
+const DB_MAX = -30;   // strong local signal
 
 function dbToColor(dbm: number): [number, number, number] {
   const t = Math.max(0, Math.min(1, (dbm - DB_MIN) / (DB_MAX - DB_MIN)));
