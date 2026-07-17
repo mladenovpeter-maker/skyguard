@@ -1,0 +1,24 @@
+(venv) admin@skyguard:~/skyguard $ cd ~/skyguard && git pull && \
+  sudo systemctl restart skyguard-hackrf-bridge && \
+  sudo journalctl -u skyguard-hackrf-bridge -f
+Already up to date.
+Jul 17 07:35:28 skyguard python3[8911]: 2026-07-17 07:35:28,121 [INFO] RF ALERT  DJI O3 Low-band 5.1 GHz  -54.2 dBm @ 5167.9 MHz
+Jul 17 07:35:30 skyguard python3[8911]: 2026-07-17 07:35:30,626 [INFO] RF ALERT  RC 868 MHz  -43.8 dBm @ 868.0 MHz
+Jul 17 07:35:38 skyguard python3[8911]: 2026-07-17 07:35:38,609 [INFO] RF ALERT  DJI / FPV 2.4 GHz  -58.7 dBm @ 2413.3 MHz
+Jul 17 07:35:54 skyguard python3[8911]: 2026-07-17 07:35:54,298 [INFO] RF ALERT  RC 433 MHz  -58.7 dBm @ 439.9 MHz
+Jul 17 07:35:58 skyguard python3[8911]: 2026-07-17 07:35:58,546 [INFO] RF ALERT  DJI O3 Low-band 5.1 GHz  -55.3 dBm @ 5167.9 MHz
+Jul 17 07:36:09 skyguard systemd[1]: Stopping skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge...
+Jul 17 07:36:09 skyguard systemd[1]: skyguard-hackrf-bridge.service: Deactivated successfully.
+Jul 17 07:36:09 skyguard systemd[1]: Stopped skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+Jul 17 07:36:09 skyguard systemd[1]: skyguard-hackrf-bridge.service: Consumed 44.605s CPU time.
+Jul 17 07:36:09 skyguard systemd[1]: Started skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+Jul 17 07:36:10 skyguard python3[8976]: 2026-07-17 07:36:10,553 [INFO] Loaded 10 frequency bands from /home/admin/skyguard/hardware/hackrf-bridge/frequencies.json
+Jul 17 07:36:10 skyguard python3[8976]: 2026-07-17 07:36:10,558 [INFO] SkyGuard HackRF Bridge starting.
+Jul 17 07:36:10 skyguard python3[8976]: 2026-07-17 07:36:10,558 [INFO] WebSocket server on ws://0.0.0.0:8765
+Jul 17 07:36:10 skyguard python3[8976]: 2026-07-17 07:36:10,559 [INFO] Posting RF alerts to http://192.168.100.224:3001/api/rf-alerts
+Jul 17 07:36:10 skyguard python3[8976]: 2026-07-17 07:36:10,560 [INFO] Alert threshold: -50 dBm  |  Warning: -60 dBm
+Jul 17 07:36:10 skyguard python3[8976]: 2026-07-17 07:36:10,624 [INFO] server listening on 0.0.0.0:8765
+Jul 17 07:36:10 skyguard python3[8976]: 2026-07-17 07:36:10,624 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz
+Jul 17 07:36:12 skyguard python3[8976]: 2026-07-17 07:36:12,903 [INFO] RF ALERT  RC 433 MHz  -58.0 dBm @ 440.0 MHz
+Jul 17 07:36:14 skyguard python3[8976]: 2026-07-17 07:36:14,447 [INFO] RF ALERT  DJI O3 Low-band 5.1 GHz  -54.8 dBm @ 5167.9 MHz
+J
