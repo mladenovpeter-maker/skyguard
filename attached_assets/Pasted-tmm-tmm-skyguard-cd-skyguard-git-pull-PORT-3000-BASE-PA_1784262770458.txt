@@ -1,0 +1,41 @@
+tmm@tmm:~/skyguard$ cd ~/skyguard && git pull && \
+  PORT=3000 BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build && \
+  sudo cp -r artifacts/skyguard-os/dist/public/* /var/www/skyguard/public/
+remote: Enumerating objects: 34, done.
+remote: Counting objects: 100% (34/34), done.
+remote: Compressing objects: 100% (7/7), done.
+remote: Total 24 (delta 17), reused 24 (delta 17), pack-reused 0 (from 0)
+Unpacking objects: 100% (24/24), 169.47 KiB | 2.61 MiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+   46fab44..9eae802  main       -> origin/main
+Updating 46fab44..9eae802
+Fast-forward
+ artifacts/skyguard-os/src/pages/spectrum.tsx       |   2 +-
+ ...ard-sudo-journalctl-u-skyguar_1784262523003.txt |  22 +++++++++++++
+ ...ard-sudo-pip3-install-websock_1784262285008.txt |  36 +++++++++++++++++++++
+ ...enshot_2026-07-17_at_07.26.29_1784262392288.png | Bin 0 -> 117764 bytes
+ ...enshot_2026-07-17_at_07.27.37_1784262460283.png | Bin 0 -> 107822 bytes
+ hardware/hackrf-bridge/frequencies.json            |  10 +++---
+ 6 files changed, 64 insertions(+), 6 deletions(-)
+ create mode 100644 attached_assets/Pasted--venv-admin-skyguard-skyguard-sudo-journalctl-u-skyguar_1784262523003.txt
+ create mode 100644 attached_assets/Pasted--venv-admin-skyguard-skyguard-sudo-pip3-install-websock_1784262285008.txt
+ create mode 100644 attached_assets/Screenshot_2026-07-17_at_07.26.29_1784262392288.png
+ create mode 100644 attached_assets/Screenshot_2026-07-17_at_07.27.37_1784262460283.png
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2779 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.55 kB
+dist/public/assets/index-Du22l5DX.css  130.99 kB │ gzip:  27.99 kB
+dist/public/assets/index-BG56UNYF.js   807.91 kB │ gzip: 245.68 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.00s
+tmm@tmm:~/skyguard$ 
