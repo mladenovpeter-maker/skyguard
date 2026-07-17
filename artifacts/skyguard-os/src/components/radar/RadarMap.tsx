@@ -62,6 +62,7 @@ const BAND_RING_RADIUS: Record<string, number> = {
   dji_2400: 180,
   dji_5150: 230,
   dji_5800: 280,
+  WIFI_DJI: 120,
 };
 const DEFAULT_RING_RADIUS = 150;
 

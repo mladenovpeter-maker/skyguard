@@ -53,11 +53,18 @@ if not API_BASE or not DEVICE_KEY:
     log.error("SKYGUARD_API_BASE and SKYGUARD_DEVICE_KEY must be set.")
     sys.exit(1)
 
-AMBIENT_URL = f"{API_BASE}/api/ambient"
+AMBIENT_URL  = f"{API_BASE}/api/ambient"
+RF_ALERT_URL = f"{API_BASE}/api/rf-alerts"
 AUTH_HEADERS = {
     "Authorization": f"Bearer {DEVICE_KEY}",
     "Content-Type": "application/json",
 }
+
+# DJI / drone-related WiFi SSID prefixes (case-insensitive)
+DJI_SSID_PREFIXES = (
+    "dji-", "mavic", "phantom", "spark-", "mini-", "air-",
+    "fpv-", "agras", "matrice", "inspire",
+)
 
 
 # ---------------------------------------------------------------------------
@@ -107,6 +114,35 @@ def scan_wifi() -> list[dict]:
 # Post to SkyGuard
 # ---------------------------------------------------------------------------
 
+def check_dji_wifi(items: list[dict]) -> None:
+    """Post an RF alert if any DJI-related SSID is found."""
+    dji_found = [
+        d for d in items
+        if d.get("name") and any(d["name"].lower().startswith(p) for p in DJI_SSID_PREFIXES)
+    ]
+    if not dji_found:
+        return
+    best = min(dji_found, key=lambda d: d.get("rssiDbm") or -100, default=None)
+    ssids = ", ".join(d["name"] for d in dji_found if d.get("name"))
+    payload = {
+        "bandId":        "WIFI_DJI",
+        "bandLabel":     "DJI WiFi",
+        "peakDbm":       best["rssiDbm"] if best and best.get("rssiDbm") else -70,
+        "peakHz":        2_400_000_000,
+        "threat":        "medium",
+        "possibleDrones": ssids,
+        "aboveBaselineDb": 20,
+    }
+    try:
+        resp = requests.post(RF_ALERT_URL, json=payload, headers=AUTH_HEADERS, timeout=6)
+        if resp.status_code == 201:
+            log.info("DJI WiFi alert posted — SSIDs: %s", ssids)
+        else:
+            log.warning("DJI alert API %s: %s", resp.status_code, resp.text[:80])
+    except requests.RequestException as exc:
+        log.warning("DJI alert POST failed: %s", exc)
+
+
 def post_ambient(items: list[dict]) -> None:
     if not items:
         return
@@ -139,6 +175,7 @@ def main() -> None:
 
         wifi = scan_wifi()
         log.debug("WiFi found %d AP(s)", len(wifi))
+        check_dji_wifi(wifi)
         post_ambient(wifi)
 
         elapsed = time.monotonic() - cycle_start
