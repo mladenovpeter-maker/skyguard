@@ -18,3 +18,9 @@ id = "GPPqhx-gUTsKZ51oNkbqP"
 uri = "file://attached_assets/generated_images/skyguard_box_cutaway.jpg"
 type = "image"
 title = "SkyGuard Box — Вътрешност (cutaway)"
+
+[[outputs]]
+id = "Z1WI-khrF_T8bVbItS8pg"
+uri = "file://attached_assets/generated_images/skyguard_box_twomaterial.jpg"
+type = "image"
+title = "SkyGuard Box — Алуминий + Пластмаса"
