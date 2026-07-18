@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "n5-MaQrMI27Zs7i40Zqgy"
+uri = "file://attached_assets/benchmark.html"
+type = "unspecified"
+title = "SkyGuard OS — Competitive Benchmark"

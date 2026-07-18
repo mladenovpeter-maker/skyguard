@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SkyGuard OS — Competitive Benchmark</title>
+<style>
+  :root {
+    --bg: #0a0e17;
+    --surface: #111827;
+    --surface2: #1a2236;
+    --border: #1e2d45;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --accent: #3b82f6;
+    --green: #22c55e;
+    --red: #ef4444;
+    --amber: #f59e0b;
+    --purple: #a78bfa;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; line-height: 1.6; }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #0a0e17 0%, #0f1f3d 50%, #0a0e17 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 64px 24px 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(59,130,246,0.12) 0%, transparent 70%);
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3);
+    border-radius: 999px; padding: 6px 16px;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.08em;
+    color: var(--accent); text-transform: uppercase; margin-bottom: 24px;
+  }
+  .hero h1 { font-size: clamp(28px,5vw,52px); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 16px; }
+  .hero h1 span { color: var(--accent); }
+  .hero p { color: var(--muted); font-size: 17px; max-width: 600px; margin: 0 auto; }
+
+  /* LAYOUT */
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+  section { padding: 64px 0; }
+  section + section { border-top: 1px solid var(--border); }
+
+  h2 { font-size: 22px; font-weight: 700; margin-bottom: 32px; letter-spacing: -0.01em; }
+  h2 span { color: var(--muted); font-weight: 400; font-size: 15px; margin-left: 8px; }
+
+  /* COMPETITOR CARDS */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 28px; position: relative; overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--accent); }
+  .card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--card-accent, var(--accent));
+  }
+  .card-logo {
+    font-size: 18px; font-weight: 800; letter-spacing: -0.02em;
+    margin-bottom: 6px; color: var(--text);
+  }
+  .card-tagline { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
+  .card-price {
+    font-size: 28px; font-weight: 800; color: var(--text); margin-bottom: 4px;
+  }
+  .card-price-note { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
+  .card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 24px; }
+  .tag {
+    font-size: 11px; font-weight: 600; padding: 4px 10px;
+    border-radius: 999px; border: 1px solid;
+  }
+  .tag-red { color: var(--red); border-color: rgba(239,68,68,0.3); background: rgba(239,68,68,0.08); }
+  .tag-blue { color: var(--accent); border-color: rgba(59,130,246,0.3); background: rgba(59,130,246,0.08); }
+  .tag-amber { color: var(--amber); border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.08); }
+  .tag-purple { color: var(--purple); border-color: rgba(167,139,250,0.3); background: rgba(167,139,250,0.08); }
+  .card-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 600; color: var(--accent);
+    text-decoration: none; transition: gap 0.2s;
+  }
+  .card-link:hover { gap: 10px; }
+
+  /* SKYGUARD HIGHLIGHT CARD */
+  .card-skyguard {
+    background: linear-gradient(135deg, #0f1f3d 0%, #1a2236 100%);
+    border-color: rgba(59,130,246,0.4);
+  }
+  .card-skyguard::before { background: linear-gradient(90deg, var(--accent), var(--purple)); }
+  .card-skyguard .card-price { color: var(--green); }
+  .badge-us { 
+    position: absolute; top: 20px; right: 20px;
+    background: var(--green); color: #000; font-size: 10px; font-weight: 800;
+    padding: 4px 10px; border-radius: 999px; letter-spacing: 0.06em;
+  }
+
+  /* FEATURE MATRIX */
+  .matrix { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .matrix thead th {
+    padding: 14px 16px; text-align: left; font-weight: 700; font-size: 12px;
+    text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted);
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    position: sticky; top: 0;
+  }
+  .matrix thead th:first-child { border-radius: 12px 0 0 0; }
+  .matrix thead th:last-child { border-radius: 0 12px 0 0; }
+  .matrix thead th.skyguard-col { color: var(--accent); background: rgba(59,130,246,0.06); }
+  .matrix tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+  .matrix tbody tr:hover { background: rgba(255,255,255,0.02); }
+  .matrix tbody tr:last-child { border-bottom: none; }
+  .matrix td { padding: 14px 16px; vertical-align: middle; }
+  .matrix td:first-child { color: var(--text); font-weight: 500; }
+  .matrix td.skyguard-col { background: rgba(59,130,246,0.04); }
+  .matrix .category-row td {
+    background: var(--surface2); color: var(--muted); font-size: 11px;
+    font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 10px 16px;
+  }
+  .check { color: var(--green); font-size: 18px; }
+  .cross { color: var(--red); font-size: 18px; }
+  .partial { color: var(--amber); font-size: 18px; }
+  .note { font-size: 11px; color: var(--muted); display: block; margin-top: 2px; }
+  .matrix-wrap {
+    border: 1px solid var(--border); border-radius: 16px;
+    overflow: hidden; overflow-x: auto;
+  }
+
+  /* PRICING BAR */
+  .pricing-bars { display: flex; flex-direction: column; gap: 16px; }
+  .pbar-row { display: flex; align-items: center; gap: 16px; }
+  .pbar-label { min-width: 180px; font-size: 14px; font-weight: 600; }
+  .pbar-label .pbar-sub { font-size: 11px; color: var(--muted); font-weight: 400; }
+  .pbar-track { flex: 1; background: var(--surface2); border-radius: 999px; height: 10px; overflow: hidden; }
+  .pbar-fill { height: 100%; border-radius: 999px; transition: width 1s ease; }
+  .pbar-price { min-width: 120px; text-align: right; font-size: 13px; font-weight: 700; }
+
+  /* VERDICT */
+  .verdict { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 40px; }
+  .verdict-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; margin-top: 28px; }
+  .verdict-item { padding: 24px; background: var(--surface2); border-radius: 12px; border: 1px solid var(--border); }
+  .verdict-icon { font-size: 28px; margin-bottom: 12px; }
+  .verdict-title { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+  .verdict-text { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .verdict-item.win { border-color: rgba(34,197,94,0.3); background: rgba(34,197,94,0.04); }
+  .verdict-item.lose { border-color: rgba(239,68,68,0.2); }
+  .verdict-item.neutral { border-color: rgba(245,158,11,0.2); }
+
+  footer { padding: 32px 24px; text-align: center; color: var(--muted); font-size: 12px; border-top: 1px solid var(--border); }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">⚡ Competitive Intelligence</div>
+  <h1>SkyGuard OS<br/><span>vs. The Market</span></h1>
+  <p>Honest benchmark of drone detection systems — capabilities, pricing, and where we win.</p>
+</div>
+
+<!-- COMPETITOR CARDS -->
+<section>
+  <div class="container">
+    <h2>Competitors <span>Direct market comparison</span></h2>
+    <div class="cards">
+
+      <!-- SkyGuard -->
+      <div class="card card-skyguard" style="--card-accent: var(--accent);">
+        <div class="badge-us">OURS</div>
+        <div class="card-logo">🛡 SkyGuard OS</div>
+        <div class="card-tagline">Self-hosted · Open hardware · Real-time</div>
+        <div class="card-price">~$2,500</div>
+        <div class="card-price-note">Turnkey incl. hardware + software + setup</div>
+        <div class="card-tags">
+          <span class="tag tag-blue">BLE Remote ID</span>
+          <span class="tag tag-blue">RF Spectrum</span>
+          <span class="tag tag-blue">Radar Map</span>
+          <span class="tag tag-blue">Self-hosted</span>
+          <span class="tag tag-blue">Open</span>
+        </div>
+      </div>
+
+      <!-- Dedrone -->
+      <div class="card" style="--card-accent: #ef4444;">
+        <div class="card-logo">Dedrone</div>
+        <div class="card-tagline">Market leader · Acquired by Axon · US-based</div>
+        <div class="card-price">$21,000+</div>
+        <div class="card-price-note">Portable unit MSRP · Enterprise $100k–$430k+</div>
+        <div class="card-tags">
+          <span class="tag tag-red">Enterprise</span>
+          <span class="tag tag-red">Cloud AI</span>
+          <span class="tag tag-red">DF included</span>
+          <span class="tag tag-red">Requires internet</span>
+        </div>
+        <a class="card-link" href="https://www.dedrone.com/products/drone-detection-software" target="_blank">
+          View product →
+        </a>
+      </div>
+
+      <!-- Aaronia -->
+      <div class="card" style="--card-accent: #f59e0b;">
+        <div class="card-logo">Aaronia ARIS</div>
+        <div class="card-tagline">German precision · AARTOS platform · RF focus</div>
+        <div class="card-price">€15,000–€40,000</div>
+        <div class="card-price-note">Single receiver · Full system much higher</div>
+        <div class="card-tags">
+          <span class="tag tag-amber">RF Fingerprint</span>
+          <span class="tag tag-amber">Direction Finding</span>
+          <span class="tag tag-amber">German engineering</span>
+        </div>
+        <a class="card-link" href="https://aaronia.com/en/solutions/drone-detection" target="_blank">
+          View product →
+        </a>
+      </div>
+
+      <!-- D-Fend -->
+      <div class="card" style="--card-accent: #a78bfa;">
+        <div class="card-logo">D-Fend Solutions</div>
+        <div class="card-tagline">Israeli · RF cyber-takeover · Military focus</div>
+        <div class="card-price">Classified</div>
+        <div class="card-price-note">Government / military contracts only</div>
+        <div class="card-tags">
+          <span class="tag tag-purple">Cyber takeover</span>
+          <span class="tag tag-purple">Military grade</span>
+          <span class="tag tag-purple">Non-kinetic</span>
+        </div>
+        <a class="card-link" href="https://d-fendsolutions.com/enforceair/" target="_blank">
+          View product →
+        </a>
+      </div>
+
+      <!-- Fortem -->
+      <div class="card" style="--card-accent: #64748b;">
+        <div class="card-logo">Fortem SkyDome</div>
+        <div class="card-tagline">Radar-based · Drone interception · US DoD</div>
+        <div class="card-price">€100,000+</div>
+        <div class="card-price-note">SkyDome Manager per unit</div>
+        <div class="card-tags">
+          <span class="tag tag-amber">Radar tracking</span>
+          <span class="tag tag-amber">Drone interception</span>
+          <span class="tag tag-amber">DoD certified</span>
+        </div>
+        <a class="card-link" href="https://www.fortemtech.com/products/" target="_blank">
+          View product →
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FEATURE MATRIX -->
+<section>
+  <div class="container">
+    <h2>Feature Matrix <span>Capability by capability</span></h2>
+    <div class="matrix-wrap">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th style="min-width:220px">Feature</th>
+            <th class="skyguard-col">🛡 SkyGuard OS</th>
+            <th>Dedrone</th>
+            <th>Aaronia ARIS</th>
+            <th>D-Fend</th>
+            <th>Fortem</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <tr class="category-row"><td colspan="6">Detection</td></tr>
+          <tr>
+            <td>BLE Remote ID (ASTM F3411)</td>
+            <td class="skyguard-col"><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="cross">✗</span></td>
+          </tr>
+          <tr>
+            <td>RF Spectrum 400–6000 MHz</td>
+            <td class="skyguard-col"><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="cross">✗</span></td>
+          </tr>
+          <tr>
+            <td>DroneID Protocol Decoding</td>
+            <td class="skyguard-col"><span class="partial">◐</span><span class="note">Roadmap — 2nd HackRF</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="cross">✗</span></td>
+          </tr>
+          <tr>
+            <td>RF Fingerprinting (non-Remote ID)</td>
+            <td class="skyguard-col"><span class="partial">◐</span><span class="note">Roadmap — AI module</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="cross">✗</span></td>
+          </tr>
+          <tr>
+            <td>Radar detection</td>
+            <td class="skyguard-col"><span class="cross">✗</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="check">✓</span></td>
+          </tr>
+
+          <tr class="category-row"><td colspan="6">Localization</td></tr>
+          <tr>
+            <td>Direction Finding</td>
+            <td class="skyguard-col"><span class="partial">◐</span><span class="note">Roadmap — Yagi + servo</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+          </tr>
+          <tr>
+            <td>Drone GPS Coordinates</td>
+            <td class="skyguard-col"><span class="check">✓</span><span class="note">Via Remote ID</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+          </tr>
+          <tr>
+            <td>Pilot Location</td>
+            <td class="skyguard-col"><span class="check">✓</span><span class="note">Via Remote ID</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="cross">✗</span></td>
+          </tr>
+
+          <tr class="category-row"><td colspan="6">Interface & Software</td></tr>
+          <tr>
+            <td>Real-time Radar Map</td>
+            <td class="skyguard-col"><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+          </tr>
+          <tr>
+            <td>Spectrum Waterfall</td>
+            <td class="skyguard-col"><span class="check">✓</span></td>
+            <td><span class="partial">◐</span><span class="note">Add-on</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="cross">✗</span></td>
+          </tr>
+          <tr>
+            <td>Web Dashboard (mobile-friendly)</td>
+            <td class="skyguard-col"><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="partial">◐</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="partial">◐</span></td>
+          </tr>
+          <tr>
+            <td>Detection History & Analytics</td>
+            <td class="skyguard-col"><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+          </tr>
+          <tr>
+            <td>Geofencing + Alerts</td>
+            <td class="skyguard-col"><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+          </tr>
+          <tr>
+            <td>Open API</td>
+            <td class="skyguard-col"><span class="check">✓</span></td>
+            <td><span class="partial">◐</span><span class="note">Enterprise only</span></td>
+            <td><span class="partial">◐</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="partial">◐</span></td>
+          </tr>
+          <tr>
+            <td>PTZ Camera Integration</td>
+            <td class="skyguard-col"><span class="partial">◐</span><span class="note">Roadmap</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="partial">◐</span></td>
+            <td><span class="check">✓</span></td>
+          </tr>
+
+          <tr class="category-row"><td colspan="6">Infrastructure</td></tr>
+          <tr>
+            <td>Self-hosted / Air-gapped</td>
+            <td class="skyguard-col"><span class="check">✓</span></td>
+            <td><span class="cross">✗</span><span class="note">Requires cloud</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="partial">◐</span></td>
+          </tr>
+          <tr>
+            <td>Works without internet</td>
+            <td class="skyguard-col"><span class="check">✓</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+          </tr>
+          <tr>
+            <td>Multi-sensor / scalable</td>
+            <td class="skyguard-col"><span class="partial">◐</span><span class="note">API-ready</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+          </tr>
+          <tr>
+            <td>Customizable / Open source hw</td>
+            <td class="skyguard-col"><span class="check">✓</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="cross">✗</span></td>
+          </tr>
+          <tr>
+            <td>Self-learning AI (roadmap)</td>
+            <td class="skyguard-col"><span class="partial">◐</span><span class="note">Roadmap</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="partial">◐</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="cross">✗</span></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING BARS -->
+<section>
+  <div class="container">
+    <h2>Pricing Comparison <span>Entry-level system cost</span></h2>
+    <div class="pricing-bars">
+      <div class="pbar-row">
+        <div class="pbar-label">Fortem SkyDome <div class="pbar-sub">Radar + interception</div></div>
+        <div class="pbar-track"><div class="pbar-fill" style="width:100%; background: linear-gradient(90deg, #64748b, #94a3b8);"></div></div>
+        <div class="pbar-price" style="color:#94a3b8">€100,000+</div>
+      </div>
+      <div class="pbar-row">
+        <div class="pbar-label">Dedrone Enterprise <div class="pbar-sub">Full deployment</div></div>
+        <div class="pbar-track"><div class="pbar-fill" style="width:90%; background: linear-gradient(90deg, #7f1d1d, #ef4444);"></div></div>
+        <div class="pbar-price" style="color:#ef4444">$100k–$430k</div>
+      </div>
+      <div class="pbar-row">
+        <div class="pbar-label">Aaronia ARIS <div class="pbar-sub">Single receiver</div></div>
+        <div class="pbar-track"><div class="pbar-fill" style="width:35%; background: linear-gradient(90deg, #78350f, #f59e0b);"></div></div>
+        <div class="pbar-price" style="color:#f59e0b">€15k–€40k</div>
+      </div>
+      <div class="pbar-row">
+        <div class="pbar-label">Dedrone Portable <div class="pbar-sub">Entry unit</div></div>
+        <div class="pbar-track"><div class="pbar-fill" style="width:20%; background: linear-gradient(90deg, #7f1d1d, #f87171);"></div></div>
+        <div class="pbar-price" style="color:#f87171">$21,000</div>
+      </div>
+      <div class="pbar-row">
+        <div class="pbar-label" style="color:#22c55e; font-weight:800">🛡 SkyGuard OS <div class="pbar-sub" style="color:#16a34a">Full turnkey system</div></div>
+        <div class="pbar-track"><div class="pbar-fill" style="width:3%; background: linear-gradient(90deg, #14532d, #22c55e);"></div></div>
+        <div class="pbar-price" style="color:#22c55e">~$2,500</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VERDICT -->
+<section>
+  <div class="container">
+    <div class="verdict">
+      <h2 style="margin-bottom:8px">Verdict</h2>
+      <p style="color:var(--muted); font-size:15px;">Where SkyGuard wins, where it doesn't, and what to do about it.</p>
+      <div class="verdict-grid">
+        <div class="verdict-item win">
+          <div class="verdict-icon">💰</div>
+          <div class="verdict-title">Price — We Win Hard</div>
+          <div class="verdict-text">~$2,500 vs $21,000–$430,000. Same core detection for 10–170× less. The hardware is commodity — the competitors sell support contracts and brand logos.</div>
+        </div>
+        <div class="verdict-item win">
+          <div class="verdict-icon">🖥</div>
+          <div class="verdict-title">UI & Spectrum — We Win</div>
+          <div class="verdict-text">Real-time radar + waterfall in a clean web UI. Most competitors have UIs that look like 2012. Mobile-friendly out of the box.</div>
+        </div>
+        <div class="verdict-item win">
+          <div class="verdict-icon">🔒</div>
+          <div class="verdict-title">Self-hosted — We Win</div>
+          <div class="verdict-text">Dedrone requires cloud. We work air-gapped. For clients with data sensitivity (military, gov, corporate) — this is a major differentiator.</div>
+        </div>
+        <div class="verdict-item neutral">
+          <div class="verdict-icon">🎯</div>
+          <div class="verdict-title">Direction Finding — Roadmap</div>
+          <div class="verdict-text">$100–250 of additional hardware + a few weeks of work. Yagi antenna + servo for Level A. Brings us to parity with most mid-tier systems.</div>
+        </div>
+        <div class="verdict-item neutral">
+          <div class="verdict-icon">🤖</div>
+          <div class="verdict-title">RF Fingerprinting — Roadmap</div>
+          <div class="verdict-text">Public datasets exist (AirID, CardRF, UAVSig). Self-learning AI via Remote ID auto-labeling. Not months from scratch — weeks with existing data.</div>
+        </div>
+        <div class="verdict-item lose">
+          <div class="verdict-icon">📋</div>
+          <div class="verdict-title">Certifications — Gap</div>
+          <div class="verdict-text">No CE/FCC product cert. Not needed for private clients. Required for government/military procurement. Not a priority for SMB market entry.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  SkyGuard OS — Internal Competitive Analysis · Data current as of July 2026 · Prices from public sources and government procurement records
+</footer>
+
+</body>
+</html>
