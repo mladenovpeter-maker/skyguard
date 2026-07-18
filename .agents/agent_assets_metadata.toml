@@ -6,3 +6,15 @@ id = "n5-MaQrMI27Zs7i40Zqgy"
 uri = "file://attached_assets/benchmark.html"
 type = "unspecified"
 title = "SkyGuard OS — Competitive Benchmark"
+
+[[outputs]]
+id = "OE22FIDi-vpAI4EWvALz8"
+uri = "file://attached_assets/generated_images/skyguard_box_exterior.jpg"
+type = "image"
+title = "SkyGuard Box — Екстериор"
+
+[[outputs]]
+id = "GPPqhx-gUTsKZ51oNkbqP"
+uri = "file://attached_assets/generated_images/skyguard_box_cutaway.jpg"
+type = "image"
+title = "SkyGuard Box — Вътрешност (cutaway)"
