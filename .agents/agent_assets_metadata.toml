@@ -24,3 +24,9 @@ id = "Z1WI-khrF_T8bVbItS8pg"
 uri = "file://attached_assets/generated_images/skyguard_box_twomaterial.jpg"
 type = "image"
 title = "SkyGuard Box — Алуминий + Пластмаса"
+
+[[outputs]]
+id = "zVNzsz_SUIEMsB-BZVsQ0"
+uri = "file://attached_assets/generated_images/skyguard_layout_v2.jpg"
+type = "image"
+title = "SkyGuard Box — Вътрешна схема"
