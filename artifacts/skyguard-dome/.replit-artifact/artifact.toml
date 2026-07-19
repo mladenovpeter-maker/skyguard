@@ -1,0 +1,27 @@
+kind = "web"
+previewPath = "/skyguard-dome/"
+title = "SkyGuard Dome 3D Model"
+version = "1.0.0"
+id = "artifacts/skyguard-dome"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/skyguard-dome/" ]
+localPort = 25685
+
+[services.development]
+run = "pnpm --filter @workspace/skyguard-dome run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/skyguard-dome", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/skyguard-dome/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25685"
+BASE_PATH = "/skyguard-dome/"
