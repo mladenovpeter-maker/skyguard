@@ -93,48 +93,86 @@ function WaterfallCanvas({
   freqMax: number;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const bufferRef = useRef<ImageData | null>(null);
+  const lastLenRef = useRef(0);
+
+  // Resize canvas to match container via ResizeObserver
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ro = new ResizeObserver(entries => {
+      for (const e of entries) {
+        const { width, height } = e.contentRect;
+        const w = Math.floor(width)  || 800;
+        const h = Math.floor(height) || 150;
+        if (canvas.width !== w || canvas.height !== h) {
+          canvas.width  = w;
+          canvas.height = h;
+          bufferRef.current = null; // reset buffer on resize
+        }
+      }
+    });
+    ro.observe(canvas);
+    return () => ro.disconnect();
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas || spectrumHistory.length === 0) return;
+    // Only render new rows that arrived since last render
+    if (spectrumHistory.length === lastLenRef.current) return;
+    lastLenRef.current = spectrumHistory.length;
+
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-
     const W = canvas.width;
     const H = canvas.height;
-    const rows = Math.min(spectrumHistory.length, H);
+    if (W === 0 || H === 0) return;
 
-    // Shift image down by 1 row
-    const img = ctx.getImageData(0, 0, W, H - 1);
-    ctx.putImageData(img, 0, 1);
+    // Init buffer (full canvas)
+    if (!bufferRef.current || bufferRef.current.width !== W || bufferRef.current.height !== H) {
+      bufferRef.current = ctx.createImageData(W, H);
+      // Fill dark violet background
+      for (let i = 0; i < bufferRef.current.data.length; i += 4) {
+        bufferRef.current.data[i]     = 20;
+        bufferRef.current.data[i + 1] = 0;
+        bufferRef.current.data[i + 2] = 40;
+        bufferRef.current.data[i + 3] = 255;
+      }
+    }
 
-    // Draw newest row at top
-    const latest = spectrumHistory[spectrumHistory.length - 1];
+    const buf = bufferRef.current;
     const freqRange = freqMax - freqMin;
+    const latest = spectrumHistory[spectrumHistory.length - 1];
 
-    const row = ctx.createImageData(W, 1);
+    // Build new row pixels
+    const rowPixels = new Uint8ClampedArray(W * 4);
     for (let x = 0; x < W; x++) {
       const hz = freqMin + (x / W) * freqRange;
-      // Find closest bin
       const bin = latest.reduce((prev, cur) =>
         Math.abs(cur.hz - hz) < Math.abs(prev.hz - hz) ? cur : prev
       );
       const [r, g, b] = dbToColor(bin.dbm);
       const idx = x * 4;
-      row.data[idx]     = r;
-      row.data[idx + 1] = g;
-      row.data[idx + 2] = b;
-      row.data[idx + 3] = 255;
+      rowPixels[idx]     = r;
+      rowPixels[idx + 1] = g;
+      rowPixels[idx + 2] = b;
+      rowPixels[idx + 3] = 255;
     }
-    ctx.putImageData(row, 0, 0);
+
+    // Scroll buffer UP by 1 row (oldest at top, newest at bottom)
+    buf.data.copyWithin(0, W * 4);
+    // Write new row at bottom
+    const offset = (H - 1) * W * 4;
+    buf.data.set(rowPixels, offset);
+
+    ctx.putImageData(buf, 0, 0);
   }, [spectrumHistory, freqMin, freqMax]);
 
   return (
     <canvas
       ref={canvasRef}
-      width={1200}
-      height={200}
-      className="w-full h-full"
+      className="w-full h-full block"
       style={{ imageRendering: "pixelated" }}
     />
   );
