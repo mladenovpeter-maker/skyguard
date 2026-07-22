@@ -1,0 +1,219 @@
+tmm@tmm:~$ cd ~/skyguard && git pull origin main && pnpm --filter @workspace/skyguard-os run build
+remote: Enumerating objects: 313, done.
+remote: Counting objects: 100% (313/313), done.
+remote: Compressing objects: 100% (137/137), done.
+remote: Total 282 (delta 138), reused 281 (delta 137), pack-reused 0 (from 0)
+Receiving objects: 100% (282/282), 7.99 MiB | 10.17 MiB/s, done.
+Resolving deltas: 100% (138/138), completed with 26 local objects.
+From https://github.com/mladenovpeter-maker/skyguard
+ * branch            main       -> FETCH_HEAD
+   72fd430..a7291a6  main       -> origin/main
+Updating 72fd430..a7291a6
+Fast-forward
+ .agents/agent_assets_metadata.toml                 |     32 +
+ .agents/memory/MEMORY.md                           |      4 +-
+ .agents/memory/hackrf-sweep-vs-droneID.md          |     37 +
+ .agents/memory/hackrf-ws-proxy.md                  |      4 +-
+ .agents/memory/rf-datasets-todo.md                 |     35 +
+ .agents/memory/skyguard-box-hardware.md            |     58 +
+ .replit                                            |      2 +-
+ artifacts/api-server/dist/index.mjs                |  47557 +++----
+ artifacts/api-server/dist/index.mjs.map            |      8 +-
+ artifacts/api-server/src/routes/rf-alerts.ts       |     30 +
+ .../skyguard-dome/.replit-artifact/artifact.toml   |     27 +
+ artifacts/skyguard-dome/index.html                 |     12 +
+ artifacts/skyguard-dome/package.json               |     29 +
+ artifacts/skyguard-dome/public/model.stl           | 130874 ++++++++++++++++++
+ artifacts/skyguard-dome/scripts/render-scad.ts     |     25 +
+ artifacts/skyguard-dome/scripts/watch-scad.ts      |     32 +
+ artifacts/skyguard-dome/src/App.tsx                |    239 +
+ artifacts/skyguard-dome/src/index.css              |    271 +
+ artifacts/skyguard-dome/src/main.tsx               |     16 +
+ artifacts/skyguard-dome/src/model.scad             |     89 +
+ artifacts/skyguard-dome/tsconfig.json              |     16 +
+ artifacts/skyguard-dome/vite.config.ts             |     51 +
+ artifacts/skyguard-os/public/hardware-layout.html  |    247 +
+ .../skyguard-os/public/skyguard_box_exterior.jpg   |    Bin 0 -> 113359 bytes
+ artifacts/skyguard-os/public/skyguard_dome.jpg     |    Bin 0 -> 63950 bytes
+ .../public/skyguard_plastic_cutaway.jpg            |    Bin 0 -> 167432 bytes
+ artifacts/skyguard-os/src/pages/spectrum.tsx       |     74 +-
+ attached_assets/IMG_2564_1784306686923.png         |    Bin 0 -> 279872 bytes
+ attached_assets/IMG_2578_1784380643289.jpeg        |    Bin 0 -> 162611 bytes
+ attached_assets/IMG_2579_1784380138736.jpeg        |    Bin 0 -> 91046 bytes
+ attached_assets/IMG_2612_1784438926894.jpeg        |    Bin 0 -> 85352 bytes
+ attached_assets/IMG_2612_1784439792260.jpeg        |    Bin 0 -> 85352 bytes
+ attached_assets/IMG_2616_1784438926894.jpeg        |    Bin 0 -> 114411 bytes
+ attached_assets/IMG_2619_1784437920498.jpeg        |    Bin 0 -> 22917 bytes
+ attached_assets/IMG_2619_1784438573729.jpeg        |    Bin 0 -> 22917 bytes
+ ...rt-ls-dev-ttyACM-2-connectivi_1784715087226.txt |     55 +
+ ...i-over-current-power-reset-us_1784714440447.txt |     51 +
+ ...1-52840-52832-pca10059-fw-nrf_1784716264471.txt |     18 +
+ ...01-Device-001-ID-1d6b-0002-Li_1784714686846.txt |     58 +
+ ...-bin-adafruit-nrfutil-dfu-ser_1784717537907.txt |     31 +
+ ...-bin-adafruit-nrfutil-dfu-ser_1784717579580.txt |     31 +
+ ...-bin-nrfutil-dfu-serial-pkg-n_1784717733165.txt |     31 +
+ ...-bin-nrfutil-dfu-usb-serial-p_1784717303889.txt |     46 +
+ ...-bin-nrfutil-pkg-generate-app_1784716337320.txt |     66 +
+ ...-bin-nrfutil-pkg-generate-app_1784716472637.txt |     80 +
+ ...-bin-nrfutil-pkg-generate-app_1784716591284.txt |     76 +
+ ...-bin-nrfutil-pkg-generate-hel_1784715450689.txt |    108 +
+ ...-bin-pip-install-websockets-S_1784722057789.txt |     37 +
+ ...e-sniffer-sniff-help-Sniff-fo_1784717010659.txt |    104 +
+ ...vice-program-help-2-1-grep-A5_1784717871285.txt |     41 +
+ ...lp-nrfutil-Usage-nrfutil-MODI_1784716826818.txt |     73 +
+ ...-bridge-grep-v-grep-echo-sudo_1784720803354.txt |     24 +
+ ...env-nrfutil-env-nrfutil-env-b_1784714992305.txt |     79 +
+ ...-i-in-range-start-end-1-for-i_1784716652214.txt |     73 +
+ ...26-07-22-15-15-14-359-WARNING_1784722525333.txt |     19 +
+ ...t-pull-sudo-systemctl-restart_1784303539951.txt |     47 +
+ ...do-journalctl-u-skyguard-hack_1784722557500.txt |     22 +
+ ...rf-fingerprinting-sudo-apt-in_1784735455380.txt |    383 +
+ ...rf-fingerprinting-sudo-apt-in_1784735493662.txt |     52 +
+ ...rf-fingerprinting-sudo-apt-in_1784735534498.txt |     53 +
+ ...enshot_2026-07-18_at_14.08.22_1784372905474.png |    Bin 0 -> 395834 bytes
+ ...enshot_2026-07-22_at_14.27.08_1784719632072.png |    Bin 0 -> 899875 bytes
+ ...enshot_2026-07-22_at_14.30.26_1784719829740.png |    Bin 0 -> 331687 bytes
+ ...enshot_2026-07-22_at_14.40.36_1784720440269.png |    Bin 0 -> 328076 bytes
+ ...enshot_2026-07-22_at_14.52.18_1784721141027.png |    Bin 0 -> 429750 bytes
+ ...enshot_2026-07-22_at_15.10.35_1784722239070.png |    Bin 0 -> 86227 bytes
+ ...enshot_2026-07-22_at_15.25.46_1784723149016.png |    Bin 0 -> 265504 bytes
+ ...enshot_2026-07-22_at_18.08.50_1784732935351.png |    Bin 0 -> 743923 bytes
+ ...enshot_2026-07-22_at_18.11.33_1784733097494.png |    Bin 0 -> 1436776 bytes
+ ...enshot_2026-07-22_at_18.16.22_1784733386586.png |    Bin 0 -> 404624 bytes
+ ...enshot_2026-07-22_at_18.41.55_1784734918110.png |    Bin 0 -> 52409 bytes
+ ...enshot_2026-07-22_at_20.04.55_1784739900886.png |    Bin 0 -> 205768 bytes
+ attached_assets/benchmark.html                     |    535 +
+ .../generated_images/skyguard_box_cutaway.jpg      |    Bin 0 -> 172602 bytes
+ .../generated_images/skyguard_box_exterior.jpg     |    Bin 0 -> 71621 bytes
+ .../generated_images/skyguard_box_twomaterial.jpg  |    Bin 0 -> 113359 bytes
+ attached_assets/generated_images/skyguard_dome.jpg |    Bin 0 -> 63950 bytes
+ .../skyguard_internal_exploded.jpg                 |    Bin 0 -> 154572 bytes
+ .../generated_images/skyguard_internal_topdown.jpg |    Bin 0 -> 171537 bytes
+ .../generated_images/skyguard_layout_inside.jpg    |    Bin 0 -> 214518 bytes
+ .../generated_images/skyguard_layout_v2.jpg        |    Bin 0 -> 146043 bytes
+ .../generated_images/skyguard_plastic_cutaway.jpg  |    Bin 0 -> 167432 bytes
+ hardware/hackrf-bridge/bridge.py                   |     24 +
+ hardware/hackrf-bridge/drone_signatures.json       |      4 +-
+ .../hackrf-bridge/skyguard-hackrf-bridge.service   |      3 +-
+ hardware/nrf-sniffer-bridge/.env.example           |      8 +
+ hardware/nrf-sniffer-bridge/bridge.py              |    357 +
+ .../skyguard-nrf-sniffer.service                   |     14 +
+ hardware/rf-fingerprinting/README.md               |    102 +
+ hardware/rf-fingerprinting/classify.py             |     88 +
+ hardware/rf-fingerprinting/download_datasets.py    |    128 +
+ hardware/rf-fingerprinting/extract_dronerf.py      |    129 +
+ hardware/rf-fingerprinting/process_datasets.py     |    145 +
+ hardware/rf-fingerprinting/setup.sh                |     81 +
+ hardware/rf-fingerprinting/train.py                |    121 +
+ hardware/rf-fingerprinting/train_from_datasets.py  |     93 +
+ lib/db/src/schema/rf-alerts.ts                     |      1 +
+ pnpm-lock.yaml                                     |    718 +
+ replit.nix                                         |      5 +
+ 99 files changed, 160709 insertions(+), 23274 deletions(-)
+ create mode 100644 .agents/agent_assets_metadata.toml
+ create mode 100644 .agents/memory/hackrf-sweep-vs-droneID.md
+ create mode 100644 .agents/memory/rf-datasets-todo.md
+ create mode 100644 .agents/memory/skyguard-box-hardware.md
+ create mode 100644 artifacts/skyguard-dome/.replit-artifact/artifact.toml
+ create mode 100644 artifacts/skyguard-dome/index.html
+ create mode 100644 artifacts/skyguard-dome/package.json
+ create mode 100644 artifacts/skyguard-dome/public/model.stl
+ create mode 100644 artifacts/skyguard-dome/scripts/render-scad.ts
+ create mode 100644 artifacts/skyguard-dome/scripts/watch-scad.ts
+ create mode 100644 artifacts/skyguard-dome/src/App.tsx
+ create mode 100644 artifacts/skyguard-dome/src/index.css
+ create mode 100644 artifacts/skyguard-dome/src/main.tsx
+ create mode 100644 artifacts/skyguard-dome/src/model.scad
+ create mode 100644 artifacts/skyguard-dome/tsconfig.json
+ create mode 100644 artifacts/skyguard-dome/vite.config.ts
+ create mode 100644 artifacts/skyguard-os/public/hardware-layout.html
+ create mode 100644 artifacts/skyguard-os/public/skyguard_box_exterior.jpg
+ create mode 100644 artifacts/skyguard-os/public/skyguard_dome.jpg
+ create mode 100644 artifacts/skyguard-os/public/skyguard_plastic_cutaway.jpg
+ create mode 100644 attached_assets/IMG_2564_1784306686923.png
+ create mode 100644 attached_assets/IMG_2578_1784380643289.jpeg
+ create mode 100644 attached_assets/IMG_2579_1784380138736.jpeg
+ create mode 100644 attached_assets/IMG_2612_1784438926894.jpeg
+ create mode 100644 attached_assets/IMG_2612_1784439792260.jpeg
+ create mode 100644 attached_assets/IMG_2616_1784438926894.jpeg
+ create mode 100644 attached_assets/IMG_2619_1784437920498.jpeg
+ create mode 100644 attached_assets/IMG_2619_1784438573729.jpeg
+ create mode 100644 attached_assets/Pasted-admin-skyguard-1-serial-port-ls-dev-ttyACM-2-connectivi_1784715087226.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-dmesg-grep-i-over-current-power-reset-us_1784714440447.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-grep-r-v2-v1-52840-52832-pca10059-fw-nrf_1784716264471.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-lsusb-Bus-001-Device-001-ID-1d6b-0002-Li_1784714686846.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-nrfutil-env-bin-adafruit-nrfutil-dfu-ser_1784717537907.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-nrfutil-env-bin-adafruit-nrfutil-dfu-ser_1784717579580.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-nrfutil-env-bin-nrfutil-dfu-serial-pkg-n_1784717733165.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-nrfutil-env-bin-nrfutil-dfu-usb-serial-p_1784717303889.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-nrfutil-env-bin-nrfutil-pkg-generate-app_1784716337320.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-nrfutil-env-bin-nrfutil-pkg-generate-app_1784716472637.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-nrfutil-env-bin-nrfutil-pkg-generate-app_1784716591284.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-nrfutil-env-bin-nrfutil-pkg-generate-hel_1784715450689.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-nrfutil-env-bin-pip-install-websockets-S_1784722057789.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-nrfutil7-ble-sniffer-sniff-help-Sniff-fo_1784717010659.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-nrfutil7-device-program-help-2-1-grep-A5_1784717871285.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-nrfutil7-help-nrfutil-Usage-nrfutil-MODI_1784716826818.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-ps-aux-grep-bridge-grep-v-grep-echo-sudo_1784720803354.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-python3-m-venv-nrfutil-env-nrfutil-env-b_1784714992305.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-sed-i-s-for-i-in-range-start-end-1-for-i_1784716652214.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-skyguard-2026-07-22-15-15-14-359-WARNING_1784722525333.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-skyguard-git-pull-sudo-systemctl-restart_1784303539951.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-skyguard-sudo-journalctl-u-skyguard-hack_1784722557500.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-hardware-rf-fingerprinting-sudo-apt-in_1784735455380.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-hardware-rf-fingerprinting-sudo-apt-in_1784735493662.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-hardware-rf-fingerprinting-sudo-apt-in_1784735534498.txt
+ create mode 100644 attached_assets/Screenshot_2026-07-18_at_14.08.22_1784372905474.png
+ create mode 100644 attached_assets/Screenshot_2026-07-22_at_14.27.08_1784719632072.png
+ create mode 100644 attached_assets/Screenshot_2026-07-22_at_14.30.26_1784719829740.png
+ create mode 100644 attached_assets/Screenshot_2026-07-22_at_14.40.36_1784720440269.png
+ create mode 100644 attached_assets/Screenshot_2026-07-22_at_14.52.18_1784721141027.png
+ create mode 100644 attached_assets/Screenshot_2026-07-22_at_15.10.35_1784722239070.png
+ create mode 100644 attached_assets/Screenshot_2026-07-22_at_15.25.46_1784723149016.png
+ create mode 100644 attached_assets/Screenshot_2026-07-22_at_18.08.50_1784732935351.png
+ create mode 100644 attached_assets/Screenshot_2026-07-22_at_18.11.33_1784733097494.png
+ create mode 100644 attached_assets/Screenshot_2026-07-22_at_18.16.22_1784733386586.png
+ create mode 100644 attached_assets/Screenshot_2026-07-22_at_18.41.55_1784734918110.png
+ create mode 100644 attached_assets/Screenshot_2026-07-22_at_20.04.55_1784739900886.png
+ create mode 100644 attached_assets/benchmark.html
+ create mode 100644 attached_assets/generated_images/skyguard_box_cutaway.jpg
+ create mode 100644 attached_assets/generated_images/skyguard_box_exterior.jpg
+ create mode 100644 attached_assets/generated_images/skyguard_box_twomaterial.jpg
+ create mode 100644 attached_assets/generated_images/skyguard_dome.jpg
+ create mode 100644 attached_assets/generated_images/skyguard_internal_exploded.jpg
+ create mode 100644 attached_assets/generated_images/skyguard_internal_topdown.jpg
+ create mode 100644 attached_assets/generated_images/skyguard_layout_inside.jpg
+ create mode 100644 attached_assets/generated_images/skyguard_layout_v2.jpg
+ create mode 100644 attached_assets/generated_images/skyguard_plastic_cutaway.jpg
+ create mode 100644 hardware/nrf-sniffer-bridge/.env.example
+ create mode 100644 hardware/nrf-sniffer-bridge/bridge.py
+ create mode 100644 hardware/nrf-sniffer-bridge/skyguard-nrf-sniffer.service
+ create mode 100644 hardware/rf-fingerprinting/README.md
+ create mode 100644 hardware/rf-fingerprinting/classify.py
+ create mode 100644 hardware/rf-fingerprinting/download_datasets.py
+ create mode 100644 hardware/rf-fingerprinting/extract_dronerf.py
+ create mode 100644 hardware/rf-fingerprinting/process_datasets.py
+ create mode 100644 hardware/rf-fingerprinting/setup.sh
+ create mode 100644 hardware/rf-fingerprinting/train.py
+ create mode 100644 hardware/rf-fingerprinting/train_from_datasets.py
+ create mode 100644 replit.nix
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+failed to load config from /home/tmm/skyguard/artifacts/skyguard-os/vite.config.ts
+error during build:
+Error: PORT environment variable is required but was not provided.
+    at file:///home/tmm/skyguard/artifacts/skyguard-os/node_modules/.vite-temp/vite.config.ts.timestamp-1784740177618-a616ddc89a6ee.mjs:10:9
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+    at async loadConfigFromBundledFile (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35996:12)
+    at async bundleAndLoadConfigFile (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35884:17)
+    at async loadConfigFromFile (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35851:42)
+    at async resolveConfig (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35500:22)
+    at async createBuilder (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:33955:19)
+    at async CAC.<anonymous> (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/cli.js:629:10)
+/home/tmm/skyguard/artifacts/skyguard-os:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/skyguard-os@0.0.0 build: `vite build --config vite.config.ts`
+Exit status 1
+tmm@tmm:~/skyguard$ 
