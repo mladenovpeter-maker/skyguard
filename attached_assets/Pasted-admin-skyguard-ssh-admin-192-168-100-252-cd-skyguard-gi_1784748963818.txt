@@ -1,0 +1,34 @@
+admin@skyguard:~ $ ssh admin@192.168.100.252 "cd ~/skyguard && git pull origin main && sudo systemctl restart skyguard-hackrf-bridge && sleep 3 && sudo journalctl -u skyguard-hackrf-bridge -n 15 --no-pager"
+admin@192.168.100.252's password: 
+From https://github.com/mladenovpeter-maker/skyguard
+ * branch            main       -> FETCH_HEAD
+   2e96c38..298525f  main       -> origin/main
+Updating 2e96c38..298525f
+Fast-forward
+ .../src/components/radar/TelemetryPanel.tsx        | 398 +++++----------------
+ artifacts/skyguard-os/src/pages/home.tsx           |  59 ++-
+ artifacts/skyguard-os/src/pages/spectrum.tsx       | 258 ++++++-------
+ ...admin-192-168-100-252-sudo-sy_1784742373043.txt |  25 ++
+ ...92-168-100-252-sudo-systemctl_1784742815479.txt |  28 ++
+ ...skyguard-git-pull-origin-mai-_1784742524700.txt |  38 ++
+ hardware/hackrf-bridge/bridge.py                   |  86 +++--
+ 7 files changed, 405 insertions(+), 487 deletions(-)
+ create mode 100644 attached_assets/Pasted-admin-skyguard-bridge-ssh-admin-192-168-100-252-sudo-sy_1784742373043.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-ssh-admin-192-168-100-252-sudo-systemctl_1784742815479.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-Linux-cd-skyguard-git-pull-origin-mai-_1784742524700.txt
+Jul 22 22:32:14 skyguard python3[10350]: 2026-07-22 22:32:14,914 [INFO] WS client connected from ('192.168.100.224', 39002)  (total: 1)
+Jul 22 22:35:52 skyguard systemd[1]: Stopping skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge...
+Jul 22 22:35:52 skyguard systemd[1]: skyguard-hackrf-bridge.service: Deactivated successfully.
+Jul 22 22:35:52 skyguard systemd[1]: Stopped skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+Jul 22 22:35:52 skyguard systemd[1]: skyguard-hackrf-bridge.service: Consumed 1min 36.048s CPU time.
+Jul 22 22:35:52 skyguard systemd[1]: Started skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+Jul 22 22:35:53 skyguard python3[10482]: 2026-07-22 22:35:53,096 [INFO] Loaded 10 frequency bands from /home/admin/skyguard/hardware/hackrf-bridge/frequencies.json
+Jul 22 22:35:53 skyguard python3[10482]: 2026-07-22 22:35:53,097 [INFO] Loaded 15 drone signatures from /home/admin/skyguard/hardware/hackrf-bridge/drone_signatures.json
+Jul 22 22:35:53 skyguard python3[10482]: 2026-07-22 22:35:53,102 [INFO] SkyGuard HackRF Bridge starting.
+Jul 22 22:35:53 skyguard python3[10482]: 2026-07-22 22:35:53,102 [INFO] WebSocket server on ws://0.0.0.0:8765
+Jul 22 22:35:53 skyguard python3[10482]: 2026-07-22 22:35:53,103 [INFO] Posting RF alerts to http://192.168.100.224:3001/api/rf-alerts
+Jul 22 22:35:53 skyguard python3[10482]: 2026-07-22 22:35:53,103 [INFO] Alert threshold: -50 dBm  |  Warning: -60 dBm
+Jul 22 22:35:53 skyguard python3[10482]: 2026-07-22 22:35:53,163 [INFO] server listening on 0.0.0.0:8765
+Jul 22 22:35:53 skyguard python3[10482]: 2026-07-22 22:35:53,164 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz  (watchdog=45s)
+Jul 22 22:35:54 skyguard python3[10482]: 2026-07-22 22:35:54,397 [INFO] Suppressed bands: none
+admin@skyguard:~ $ 
