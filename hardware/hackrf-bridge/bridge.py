@@ -411,40 +411,68 @@ async def run_sweep(queue: asyncio.Queue) -> None:
     cmd = [
         "hackrf_sweep",
         "-f", f"{FREQ_START_MHZ}:{FREQ_END_MHZ}",
-        "-B",  # binary output? no — use default CSV
-        "-w", str(BIN_WIDTH_KHZ * 1000),
-        "-l", str(LNA_GAIN),
-        "-g", str(VGA_GAIN),
-        "-1",  # one-shot per sweep? no — continuous
-    ]
-    # Remove -1 (not a valid flag); hackrf_sweep runs continuously by default
-    cmd = [
-        "hackrf_sweep",
-        "-f", f"{FREQ_START_MHZ}:{FREQ_END_MHZ}",
         "-w", str(BIN_WIDTH_KHZ * 1000),
         "-l", str(LNA_GAIN),
         "-g", str(VGA_GAIN),
     ]
 
-    log.info("Starting hackrf_sweep %d–%d MHz  bin=%.0f kHz",
-             FREQ_START_MHZ, FREQ_END_MHZ, BIN_WIDTH_KHZ)
-    try:
-        proc = await asyncio.create_subprocess_exec(
-            *cmd,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.DEVNULL,
-        )
-        assert proc.stdout
-        async for raw_line in proc.stdout:
-            line = raw_line.decode(errors="ignore")
-            bins = parse_sweep_line(line)
-            if bins:
-                await queue.put(bins)
-    except FileNotFoundError:
-        log.error("hackrf_sweep not found. Install: sudo apt install hackrf")
-        sys.exit(1)
-    except Exception as exc:
-        log.error("hackrf_sweep error: %s", exc)
+    WATCHDOG_S    = int(os.environ.get("SWEEP_WATCHDOG_S", "45"))   # restart if no data this long
+    RESTART_DELAY = int(os.environ.get("SWEEP_RESTART_DELAY_S", "5"))
+
+    while True:   # ── outer retry loop — keeps bridge alive forever ──────────
+        log.info("Starting hackrf_sweep %d–%d MHz  bin=%.0f kHz  (watchdog=%ds)",
+                 FREQ_START_MHZ, FREQ_END_MHZ, BIN_WIDTH_KHZ, WATCHDOG_S)
+        proc = None
+        try:
+            proc = await asyncio.create_subprocess_exec(
+                *cmd,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.DEVNULL,
+            )
+            assert proc.stdout
+            sweep_count = 0
+
+            while True:  # ── inner read loop ──────────────────────────────────
+                try:
+                    raw_line = await asyncio.wait_for(
+                        proc.stdout.readline(),
+                        timeout=WATCHDOG_S,
+                    )
+                except asyncio.TimeoutError:
+                    log.warning(
+                        "hackrf_sweep watchdog: no data for %ds after %d sweeps — "
+                        "killing subprocess and restarting",
+                        WATCHDOG_S, sweep_count,
+                    )
+                    proc.kill()
+                    await proc.wait()
+                    break   # ← exits inner loop; outer loop restarts subprocess
+
+                if not raw_line:   # EOF — process exited cleanly or crashed
+                    log.warning("hackrf_sweep exited after %d sweeps — restarting", sweep_count)
+                    break
+
+                line = raw_line.decode(errors="ignore")
+                bins = parse_sweep_line(line)
+                if bins:
+                    sweep_count += 1
+                    await queue.put(bins)
+
+        except FileNotFoundError:
+            log.error("hackrf_sweep not found. Install: sudo apt install hackrf")
+            sys.exit(1)
+        except Exception as exc:
+            log.error("hackrf_sweep error: %s", exc)
+        finally:
+            if proc and proc.returncode is None:
+                try:
+                    proc.kill()
+                    await proc.wait()
+                except Exception:
+                    pass
+
+        log.info("Restarting hackrf_sweep in %ds…", RESTART_DELAY)
+        await asyncio.sleep(RESTART_DELAY)
 
 
 # ---------------------------------------------------------------------------
