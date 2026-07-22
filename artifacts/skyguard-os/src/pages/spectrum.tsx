@@ -56,125 +56,147 @@ const DRONE_BANDS: FreqBand[] = [
 ];
 
 // ---------------------------------------------------------------------------
-// Waterfall canvas renderer
+// Constants for spectrum rendering
 // ---------------------------------------------------------------------------
 
-const DB_MIN = -95;   // near noise floor — keep visible even at floor
-const DB_MAX = -35;   // strong local signal (WiFi / LTE)
+const DB_MIN = -95;
+const DB_MAX = -35;
+
+// ---------------------------------------------------------------------------
+// Band Activity Monitor — replaces waterfall, works at any sweep rate
+// ---------------------------------------------------------------------------
 
 /**
- * Palette: dark-violet → blue → cyan → green → yellow → red
- * Starts from a VISIBLE dark colour so the waterfall is never all-black.
+ * For each drone band, finds the peak dBm from the latest sweep bins.
+ * Shows animated horizontal bars — reliable regardless of sweep rate.
  */
-function dbToColor(dbm: number): [number, number, number] {
-  const t = Math.max(0, Math.min(1, (dbm - DB_MIN) / (DB_MAX - DB_MIN)));
-  if (t < 0.2) {
-    const s = t / 0.2;
-    return [Math.round(40 - s * 40), 0, Math.round(60 + s * 155)]; // violet → blue
-  } else if (t < 0.45) {
-    const s = (t - 0.2) / 0.25;
-    return [0, Math.round(s * 220), 215];                           // blue → cyan
-  } else if (t < 0.7) {
-    const s = (t - 0.45) / 0.25;
-    return [Math.round(s * 255), 220, Math.round(215 - s * 215)];  // cyan → yellow
-  } else {
-    const s = (t - 0.7) / 0.3;
-    return [255, Math.round(220 - s * 220), 0];                    // yellow → red
-  }
-}
-
-function WaterfallCanvas({
-  spectrumHistory,
-  freqMin,
-  freqMax,
+function BandActivityMonitor({
+  bins,
+  sweepCount,
+  wsStatus,
+  lastSweepTs,
 }: {
-  spectrumHistory: SpectrumBin[][];
-  freqMin: number;
-  freqMax: number;
+  bins: SpectrumBin[];
+  sweepCount: number;
+  wsStatus: "connecting" | "connected" | "error";
+  lastSweepTs: number | null; // Date.now() of last sweep
 }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const bufferRef = useRef<ImageData | null>(null);
-  const lastLenRef = useRef(0);
+  const stale = lastSweepTs !== null && Date.now() - lastSweepTs > 30_000;
+  const live  = wsStatus === "connected" && !stale;
 
-  // Resize canvas to match container via ResizeObserver
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ro = new ResizeObserver(entries => {
-      for (const e of entries) {
-        const { width, height } = e.contentRect;
-        const w = Math.floor(width)  || 800;
-        const h = Math.floor(height) || 150;
-        if (canvas.width !== w || canvas.height !== h) {
-          canvas.width  = w;
-          canvas.height = h;
-          bufferRef.current = null; // reset buffer on resize
-        }
-      }
-    });
-    ro.observe(canvas);
-    return () => ro.disconnect();
-  }, []);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas || spectrumHistory.length === 0) return;
-    // Only render new rows that arrived since last render
-    if (spectrumHistory.length === lastLenRef.current) return;
-    lastLenRef.current = spectrumHistory.length;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    const W = canvas.width;
-    const H = canvas.height;
-    if (W === 0 || H === 0) return;
-
-    // Init buffer (full canvas)
-    if (!bufferRef.current || bufferRef.current.width !== W || bufferRef.current.height !== H) {
-      bufferRef.current = ctx.createImageData(W, H);
-      // Fill dark violet background
-      for (let i = 0; i < bufferRef.current.data.length; i += 4) {
-        bufferRef.current.data[i]     = 20;
-        bufferRef.current.data[i + 1] = 0;
-        bufferRef.current.data[i + 2] = 40;
-        bufferRef.current.data[i + 3] = 255;
+  // Compute peak dBm per band from latest bins
+  const bandPeaks: Record<string, number> = {};
+  if (bins.length > 0) {
+    for (const band of DRONE_BANDS) {
+      const inBand = bins.filter(b => b.hz >= band.hz_low && b.hz <= band.hz_high);
+      if (inBand.length > 0) {
+        bandPeaks[band.id] = Math.max(...inBand.map(b => b.dbm));
       }
     }
+  }
 
-    const buf = bufferRef.current;
-    const freqRange = freqMax - freqMin;
-    const latest = spectrumHistory[spectrumHistory.length - 1];
-
-    // Build new row pixels
-    const rowPixels = new Uint8ClampedArray(W * 4);
-    for (let x = 0; x < W; x++) {
-      const hz = freqMin + (x / W) * freqRange;
-      const bin = latest.reduce((prev, cur) =>
-        Math.abs(cur.hz - hz) < Math.abs(prev.hz - hz) ? cur : prev
-      );
-      const [r, g, b] = dbToColor(bin.dbm);
-      const idx = x * 4;
-      rowPixels[idx]     = r;
-      rowPixels[idx + 1] = g;
-      rowPixels[idx + 2] = b;
-      rowPixels[idx + 3] = 255;
-    }
-
-    // Scroll buffer UP by 1 row (oldest at top, newest at bottom)
-    buf.data.copyWithin(0, W * 4);
-    // Write new row at bottom
-    const offset = (H - 1) * W * 4;
-    buf.data.set(rowPixels, offset);
-
-    ctx.putImageData(buf, 0, 0);
-  }, [spectrumHistory, freqMin, freqMax]);
+  const shownBands = DRONE_BANDS.filter(b => b.threat === "high" || b.threat === "medium");
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="w-full h-full block"
-      style={{ imageRendering: "pixelated" }}
-    />
+    <div className="flex-1 flex flex-col gap-2 p-3 bg-black/30 rounded border border-border/30 min-h-[160px]">
+      {/* Header row */}
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+          Band Activity Monitor
+        </span>
+        <div className="flex items-center gap-2">
+          {stale && (
+            <span className="text-[10px] font-mono text-destructive uppercase animate-pulse">
+              LINK LOST
+            </span>
+          )}
+          {live && (
+            <span className="text-[10px] font-mono text-primary/50">
+              sweep #{sweepCount}
+            </span>
+          )}
+          <div
+            className={`w-1.5 h-1.5 rounded-full ${live ? "bg-green-400 animate-pulse" : stale ? "bg-destructive" : "bg-yellow-400"}`}
+          />
+        </div>
+      </div>
+
+      {/* One row per band */}
+      <div className="flex flex-col gap-1.5 flex-1 justify-around">
+        {shownBands.map(band => {
+          const peak    = bandPeaks[band.id] ?? null;
+          const pct     = peak !== null
+            ? Math.max(0, Math.min(1, (peak - DB_MIN) / (DB_MAX - DB_MIN)))
+            : 0;
+          const aboveNoise = peak !== null && peak > -70;
+
+          return (
+            <div key={band.id} className="flex items-center gap-3">
+              {/* Band label */}
+              <div className="w-20 flex-shrink-0">
+                <div className="text-[10px] font-mono font-bold" style={{ color: band.color }}>
+                  {band.label}
+                </div>
+                <div className="text-[9px] font-mono text-muted-foreground/50">
+                  {(band.hz_low / 1e6).toFixed(0)}M
+                </div>
+              </div>
+
+              {/* Activity bar */}
+              <div className="flex-1 h-5 bg-white/5 rounded overflow-hidden relative">
+                <div
+                  className="h-full rounded transition-all duration-300"
+                  style={{
+                    width: live && peak !== null ? `${Math.round(pct * 100)}%` : "0%",
+                    backgroundColor: band.color,
+                    opacity: live ? (aboveNoise ? 0.9 : 0.45) : 0.15,
+                    boxShadow: live && aboveNoise ? `0 0 8px ${band.color}88` : "none",
+                  }}
+                />
+                {/* Noise floor marker at 30% */}
+                <div
+                  className="absolute top-0 bottom-0 w-px bg-white/10"
+                  style={{ left: "30%" }}
+                />
+              </div>
+
+              {/* dBm value */}
+              <div className="w-16 flex-shrink-0 text-right">
+                {live && peak !== null ? (
+                  <span
+                    className="text-[11px] font-mono tabular-nums font-bold"
+                    style={{
+                      color: aboveNoise ? band.color : "rgba(255,255,255,0.3)",
+                    }}
+                  >
+                    {Math.round(peak)} dBm
+                  </span>
+                ) : (
+                  <span className="text-[10px] font-mono text-muted-foreground/30">---</span>
+                )}
+              </div>
+
+              {/* Alert dot */}
+              <div className="w-4 flex-shrink-0 flex items-center justify-center">
+                {live && aboveNoise && (
+                  <div
+                    className="w-2 h-2 rounded-full animate-pulse"
+                    style={{ backgroundColor: band.color }}
+                  />
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Footer: no data state */}
+      {!live && (
+        <div className="text-center text-[10px] font-mono text-muted-foreground/40 uppercase pt-1">
+          {wsStatus === "connecting" ? "Свързване с HackRF…" : stale ? "Няма данни >30s" : "Изчакване на sweep…"}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -321,7 +343,6 @@ const WS_URL = (import.meta.env.VITE_HACKRF_WS_URL as string) ||
   `ws://${window.location.host}/hackrf-ws`;
 const FREQ_MIN_HZ = 400e6;
 const FREQ_MAX_HZ = 6000e6;
-const MAX_HISTORY = 200;
 
 // ---------------------------------------------------------------------------
 // HackRF live badge — animated equalizer bars
@@ -409,10 +430,10 @@ function HackRFBadge({
 export default function Spectrum() {
   const { t } = useLanguage();
   const [bins, setBins] = useState<SpectrumBin[]>([]);
-  const [history, setHistory] = useState<SpectrumBin[][]>([]);
   const [wsStatus, setWsStatus] = useState<"connecting" | "connected" | "error">("connecting");
   const [sweepCount, setSweepCount] = useState(0);
   const [peakDbm, setPeakDbm] = useState<number | null>(null);
+  const [lastSweepTs, setLastSweepTs] = useState<number | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
 
   // RF Alerts from API
@@ -442,11 +463,8 @@ export default function Spectrum() {
         const msg: SpectrumMessage = JSON.parse(evt.data);
         if (msg.type === "spectrum") {
           setBins(msg.data);
-          setHistory(prev => {
-            const next = [...prev, msg.data];
-            return next.length > MAX_HISTORY ? next.slice(-MAX_HISTORY) : next;
-          });
           setSweepCount(c => c + 1);
+          setLastSweepTs(Date.now());
           if (msg.data.length > 0) {
             const peak = msg.data.reduce((a, b) => b.dbm > a.dbm ? b : a);
             setPeakDbm(Math.round(peak.dbm * 10) / 10);
@@ -524,17 +542,13 @@ export default function Spectrum() {
           {/* Frequency axis */}
           <FreqAxis freqMin={FREQ_MIN_HZ} freqMax={FREQ_MAX_HZ} />
 
-          {/* Waterfall */}
-          <div className="flex-1 relative bg-black rounded border border-border/30 overflow-hidden" style={{ minHeight: 150 }}>
-            <div className="absolute top-1 left-2 text-[10px] text-muted-foreground uppercase z-10">Waterfall</div>
-            {history.length === 0 ? (
-              <div className="absolute inset-0 flex items-center justify-center text-muted-foreground text-xs">
-                Waterfall ще се появи при получаване на данни
-              </div>
-            ) : (
-              <WaterfallCanvas spectrumHistory={history} freqMin={FREQ_MIN_HZ} freqMax={FREQ_MAX_HZ} />
-            )}
-          </div>
+          {/* Band Activity Monitor — replaces unreliable waterfall */}
+          <BandActivityMonitor
+            bins={bins}
+            sweepCount={sweepCount}
+            wsStatus={wsStatus}
+            lastSweepTs={lastSweepTs}
+          />
         </div>
 
         {/* RF Alerts panel — right on desktop, bottom on mobile */}
