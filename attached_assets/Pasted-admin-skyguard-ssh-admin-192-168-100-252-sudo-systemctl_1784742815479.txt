@@ -1,0 +1,28 @@
+admin@skyguard:~ $ ssh admin@192.168.100.252 "sudo systemctl restart skyguard-hackrf-bridge && sudo journalctl -u skyguard-hackrf-bridge -n 25 --no-pager"
+admin@192.168.100.252's password: 
+Jul 22 20:49:02 skyguard python3[8915]: 2026-07-22 20:49:02,652 [INFO] WS client connected from ('192.168.100.224', 59416)  (total: 2)
+Jul 22 20:49:12 skyguard python3[8915]: 2026-07-22 20:49:12,312 [WARNING] Sysinfo POST 401
+Jul 22 20:49:17 skyguard python3[8915]: 2026-07-22 20:49:17,117 [INFO] WS client disconnected (total: 1)
+Jul 22 20:49:17 skyguard python3[8915]: 2026-07-22 20:49:17,119 [INFO] WS client disconnected (total: 0)
+Jul 22 20:49:17 skyguard python3[8915]: 2026-07-22 20:49:17,803 [INFO] connection open
+Jul 22 20:49:17 skyguard python3[8915]: 2026-07-22 20:49:17,804 [INFO] WS client connected from ('192.168.100.224', 60752)  (total: 1)
+Jul 22 20:49:42 skyguard python3[8915]: 2026-07-22 20:49:42,466 [WARNING] Sysinfo POST 401
+Jul 22 20:49:51 skyguard python3[8915]: 2026-07-22 20:49:51,291 [INFO] WS client disconnected (total: 0)
+Jul 22 20:49:51 skyguard python3[8915]: 2026-07-22 20:49:51,527 [INFO] connection open
+Jul 22 20:49:51 skyguard python3[8915]: 2026-07-22 20:49:51,528 [INFO] WS client connected from ('192.168.100.224', 58162)  (total: 1)
+Jul 22 20:49:52 skyguard python3[8915]: 2026-07-22 20:49:52,018 [INFO] WS client disconnected (total: 0)
+Jul 22 20:49:53 skyguard python3[8915]: 2026-07-22 20:49:53,287 [INFO] connection open
+Jul 22 20:49:53 skyguard python3[8915]: 2026-07-22 20:49:53,288 [INFO] WS client connected from ('192.168.100.224', 58172)  (total: 1)
+Jul 22 20:50:12 skyguard python3[8915]: 2026-07-22 20:50:12,508 [WARNING] Sysinfo POST 401
+Jul 22 20:50:42 skyguard python3[8915]: 2026-07-22 20:50:42,545 [WARNING] Sysinfo POST 401
+Jul 22 20:51:12 skyguard python3[8915]: 2026-07-22 20:51:12,586 [WARNING] Sysinfo POST 401
+Jul 22 20:51:42 skyguard python3[8915]: 2026-07-22 20:51:42,623 [WARNING] Sysinfo POST 401
+Jul 22 20:52:36 skyguard python3[8915]: 2026-07-22 20:52:36,879 [INFO] WS client disconnected (total: 0)
+Jul 22 20:52:37 skyguard python3[8915]: 2026-07-22 20:52:37,405 [INFO] connection open
+Jul 22 20:52:37 skyguard python3[8915]: 2026-07-22 20:52:37,406 [INFO] WS client connected from ('192.168.100.224', 51172)  (total: 1)
+Jul 22 20:53:27 skyguard systemd[1]: Stopping skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge...
+Jul 22 20:53:27 skyguard systemd[1]: skyguard-hackrf-bridge.service: Deactivated successfully.
+Jul 22 20:53:27 skyguard systemd[1]: Stopped skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+Jul 22 20:53:27 skyguard systemd[1]: skyguard-hackrf-bridge.service: Consumed 1min 22.662s CPU time.
+Jul 22 20:53:27 skyguard systemd[1]: Started skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+admin@skyguard:~ $ 
