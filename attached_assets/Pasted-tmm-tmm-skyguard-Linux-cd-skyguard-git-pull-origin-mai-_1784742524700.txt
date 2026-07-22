@@ -1,0 +1,38 @@
+tmm@tmm:~/skyguard$ # На Linux сървъра — изпълни стъпка по стъпка:
+cd ~/skyguard
+git pull origin main
+PORT=25095 BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build
+sudo systemctl reload nginx
+remote: Enumerating objects: 18, done.
+remote: Counting objects: 100% (18/18), done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 10 (delta 8), reused 10 (delta 8), pack-reused 0 (from 0)
+Unpacking objects: 100% (10/10), 4.08 KiB | 1.02 MiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+ * branch            main       -> FETCH_HEAD
+   fc82a4b..2e96c38  main       -> origin/main
+Updating fc82a4b..2e96c38
+Fast-forward
+ artifacts/skyguard-os/src/components/radar/RadarOverlay.tsx | 232 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ artifacts/skyguard-os/src/pages/home.tsx                    |  50 +++++-------------
+ 2 files changed, 246 insertions(+), 36 deletions(-)
+ create mode 100644 artifacts/skyguard-os/src/components/radar/RadarOverlay.tsx
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2780 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.54 kB
+dist/public/assets/index-Cq_ghCIX.css  136.87 kB │ gzip:  28.93 kB
+dist/public/assets/index-B8Ky7dnm.js   831.48 kB │ gzip: 252.89 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.11s
+[sudo] password for tmm: 
+tmm@tmm:~/skyguard$ 
