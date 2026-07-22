@@ -1,0 +1,25 @@
+admin@skyguard:~ $ # Рестарт на bridge-а
+ssh admin@192.168.100.252 "sudo systemctl restart skyguard-hackrf-bridge"
+# После провери дали sweeps потеклят
+ssh admin@192.168.100.252 "sudo journalctl -u skyguard-hackrf-bridge -f --no-pager"
+The authenticity of host '192.168.100.252 (192.168.100.252)' can't be established.
+ED25519 key fingerprint is SHA256:EeqycCCr3ayemySHKk3JXxXf1ero+Zg/iTWzUICpcmk.
+This host key is known by the following other names/addresses:
+    ~/.ssh/known_hosts:1: [hashed name]
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '192.168.100.252' (ED25519) to the list of known hosts.
+admin@192.168.100.252's password: 
+admin@192.168.100.252's password: 
+Jul 22 20:45:52 skyguard python3[8850]: 2026-07-22 20:45:52,996 [INFO] WebSocket server on ws://0.0.0.0:8765
+Jul 22 20:45:52 skyguard python3[8850]: 2026-07-22 20:45:52,997 [INFO] Posting RF alerts to http://192.168.100.224:3001/api/rf-alerts
+Jul 22 20:45:52 skyguard python3[8850]: 2026-07-22 20:45:52,997 [INFO] Alert threshold: -50 dBm  |  Warning: -60 dBm
+Jul 22 20:45:53 skyguard python3[8850]: 2026-07-22 20:45:53,058 [INFO] server listening on 0.0.0.0:8765
+Jul 22 20:45:53 skyguard python3[8850]: 2026-07-22 20:45:53,059 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz
+Jul 22 20:45:54 skyguard python3[8850]: 2026-07-22 20:45:54,292 [INFO] Suppressed bands: none
+Jul 22 20:45:55 skyguard python3[8850]: 2026-07-22 20:45:55,577 [INFO] connection open
+Jul 22 20:45:55 skyguard python3[8850]: 2026-07-22 20:45:55,578 [INFO] WS client connected from ('192.168.100.224', 51998)  (total: 1)
+Jul 22 20:45:55 skyguard python3[8850]: 2026-07-22 20:45:55,602 [INFO] connection open
+Jul 22 20:45:55 skyguard python3[8850]: 2026-07-22 20:45:55,603 [INFO] WS client connected from ('192.168.100.224', 52012)  (total: 2)
+Jul 22 20:46:01 skyguard python3[8850]: 2026-07-22 20:46:01,948 [WARNING] Alert POST 401: {"error":"Invalid or revoked device API key"}
+Jul 22 20:46:08 skyguard python3[8850]: 2026-07-22 20:46:08,040 [WARNING] Alert POST 401: {"error":"Invalid or revoked device API key"}
+
