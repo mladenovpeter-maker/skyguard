@@ -1,0 +1,40 @@
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ cd ~/skyguard && git stash && git pull origin main && PORT=25095 BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build && sudo systemctl reload nginx
+Saved working directory and index state WIP on main: a7291a6 Add spectrum page enhancements with image assets
+remote: Enumerating objects: 39, done.
+remote: Counting objects: 100% (39/39), done.
+remote: Compressing objects: 100% (14/14), done.
+remote: Total 29 (delta 20), reused 24 (delta 15), pack-reused 0 (from 0)
+Unpacking objects: 100% (29/29), 12.35 KiB | 421.00 KiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+ * branch            main       -> FETCH_HEAD
+   a7291a6..2e49ea5  main       -> origin/main
+Updating a7291a6..2e49ea5
+Fast-forward
+ .../src/components/radar/TelemetryPanel.tsx        | 402 ++++++++++++++++-----
+ artifacts/skyguard-os/src/pages/home.tsx           | 152 ++++++--
+ ...ll-origin-main-pnpm-filter-wo_1784740194459.txt | 219 +++++++++++
+ ...rd-PORT-3000-pnpm-filter-work_1784740223242.txt |  21 ++
+ ...rf-fingerprinting-datasets-ss_1784740490292.txt |  23 ++
+ 5 files changed, 685 insertions(+), 132 deletions(-)
+ create mode 100644 attached_assets/Pasted-tmm-tmm-cd-skyguard-git-pull-origin-main-pnpm-filter-wo_1784740194459.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-cd-skyguard-PORT-3000-pnpm-filter-work_1784740223242.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-hardware-rf-fingerprinting-datasets-ss_1784740490292.txt
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2779 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.54 kB
+dist/public/assets/index-B7II88uI.css  137.46 kB │ gzip:  28.93 kB
+dist/public/assets/index-xyxSu7b1.js   828.77 kB │ gzip: 251.77 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.24s
+[sudo] password for tmm: 
+tmm@tmm:~/skyguard$ 
