@@ -1,0 +1,23 @@
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ ssh admin@192.168.100.252 "sudo systemctl restart skyguard-hackrf-bridge && sudo journalctl -u skyguard-hackrf-bridge -n 20 --no-pager"
+admin@192.168.100.252's password: 
+Jul 22 20:11:30 skyguard python3[4492]: 2026-07-22 20:11:30,643 [INFO] connection open
+Jul 22 20:11:30 skyguard python3[4492]: 2026-07-22 20:11:30,644 [INFO] WS client connected from ('192.168.100.224', 57438)  (total: 1)
+Jul 22 20:11:38 skyguard python3[4492]: 2026-07-22 20:11:38,289 [WARNING] Sysinfo POST 401
+Jul 22 20:12:08 skyguard python3[4492]: 2026-07-22 20:12:08,333 [WARNING] Sysinfo POST 401
+Jul 22 20:12:14 skyguard python3[4492]: 2026-07-22 20:12:14,720 [INFO] WS client disconnected (total: 0)
+Jul 22 20:12:15 skyguard python3[4492]: 2026-07-22 20:12:15,253 [INFO] connection open
+Jul 22 20:12:15 skyguard python3[4492]: 2026-07-22 20:12:15,254 [INFO] WS client connected from ('192.168.100.224', 36120)  (total: 1)
+Jul 22 20:12:15 skyguard python3[4492]: 2026-07-22 20:12:15,782 [INFO] WS client disconnected (total: 0)
+Jul 22 20:12:17 skyguard python3[4492]: 2026-07-22 20:12:17,269 [INFO] connection open
+Jul 22 20:12:17 skyguard python3[4492]: 2026-07-22 20:12:17,269 [INFO] WS client connected from ('192.168.100.224', 36136)  (total: 1)
+Jul 22 20:12:38 skyguard python3[4492]: 2026-07-22 20:12:38,364 [WARNING] Sysinfo POST 401
+Jul 22 20:13:08 skyguard python3[4492]: 2026-07-22 20:13:08,399 [WARNING] Sysinfo POST 401
+Jul 22 20:13:38 skyguard python3[4492]: 2026-07-22 20:13:38,427 [WARNING] Sysinfo POST 401
+Jul 22 20:14:08 skyguard python3[4492]: 2026-07-22 20:14:08,465 [WARNING] Sysinfo POST 401
+Jul 22 20:14:38 skyguard python3[4492]: 2026-07-22 20:14:38,488 [WARNING] Sysinfo POST 401
+Jul 22 20:14:43 skyguard systemd[1]: Stopping skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge...
+Jul 22 20:14:43 skyguard systemd[1]: skyguard-hackrf-bridge.service: Deactivated successfully.
+Jul 22 20:14:43 skyguard systemd[1]: Stopped skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+Jul 22 20:14:43 skyguard systemd[1]: skyguard-hackrf-bridge.service: Consumed 6min 19.949s CPU time.
+Jul 22 20:14:43 skyguard systemd[1]: Started skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
