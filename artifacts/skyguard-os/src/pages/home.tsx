@@ -1,10 +1,9 @@
-import { useState } from "react";
 import { useGetHomeConfig, useListActiveDroneTracks, getListActiveDroneTracksQueryKey } from "@workspace/api-client-react";
 import { RadarMap, type RfAlertMapEntry } from "@/components/radar/RadarMap";
-import { RadarScope } from "@/components/radar/RadarScope";
+import { RadarOverlay } from "@/components/radar/RadarOverlay";
 import { TelemetryPanel } from "@/components/radar/TelemetryPanel";
 import { AudioAlarm } from "@/components/radar/AudioAlarm";
-import { AlertTriangle, Loader2, Map, Radar } from "lucide-react";
+import { AlertTriangle, Loader2 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
 import { useQuery } from "@tanstack/react-query";
 
@@ -25,8 +24,6 @@ function useRecentRfAlerts() {
 
 export default function Home() {
   const { t } = useLanguage();
-  const [showMap, setShowMap] = useState(false);
-
   const { data: config, isLoading: configLoading } = useGetHomeConfig();
   const { data: tracks = [] } = useListActiveDroneTracks({
     query: { refetchInterval: 2000, queryKey: getListActiveDroneTracksQueryKey() },
@@ -70,39 +67,20 @@ export default function Home() {
     <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
       <AudioAlarm active={hasAlarm} />
 
-      {/* ── Main display area ── */}
-      <div className="flex-1 relative min-h-[55vh] md:min-h-0 overflow-hidden bg-[#000902]">
+      {/* ── Map + SVG radar overlay ── */}
+      <div className="flex-1 relative min-h-[55vh] md:min-h-0 overflow-hidden">
+        {/* Leaflet map — unchanged, all existing markers work */}
+        <RadarMap config={config} activeTracks={tracks} rfAlerts={latestRfAlerts} />
 
-        {/* Radar scope or map */}
-        {showMap ? (
-          <RadarMap config={config} activeTracks={tracks} rfAlerts={latestRfAlerts} />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center p-4">
-            <RadarScope
-              config={config}
-              tracks={tracks}
-              rfAlerts={latestRfAlerts}
-              hasAlarm={hasAlarm}
-            />
-          </div>
-        )}
+        {/* SVG overlay: rings, sweep, cardinal labels, blips */}
+        <RadarOverlay
+          config={config}
+          tracks={tracks}
+          rfAlerts={latestRfAlerts}
+          hasAlarm={hasAlarm}
+        />
 
-        {/* View toggle button */}
-        <button
-          type="button"
-          onClick={() => setShowMap(v => !v)}
-          className="absolute bottom-4 right-4 z-[500] flex items-center gap-2 px-3 py-2 rounded font-mono text-[11px] uppercase tracking-wider transition-all border backdrop-blur-sm"
-          style={{
-            backgroundColor: "rgba(0,0,0,0.6)",
-            borderColor: showMap ? "rgba(0,255,140,0.35)" : "rgba(255,255,255,0.12)",
-            color: showMap ? "#00ff8c" : "rgba(255,255,255,0.45)",
-          }}
-        >
-          {showMap ? <Radar className="w-3.5 h-3.5" /> : <Map className="w-3.5 h-3.5" />}
-          {showMap ? "SCOPE" : "MAP"}
-        </button>
-
-        {/* Breach banner — visible on both views */}
+        {/* Breach banner */}
         {hasAlarm && (
           <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[500] flex items-center gap-2 bg-red-950/90 text-red-300 px-5 py-2 rounded font-mono font-bold text-sm uppercase tracking-widest border border-red-500/50 shadow-[0_0_40px_rgba(255,0,0,0.4)] animate-pulse">
             <AlertTriangle className="w-4 h-4" />
