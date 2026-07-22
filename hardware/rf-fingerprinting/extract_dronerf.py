@@ -28,17 +28,18 @@ from pathlib import Path
 logging.basicConfig(level="INFO", format="%(asctime)s [%(levelname)s] %(message)s")
 log = logging.getLogger("dronerf-extractor")
 
-# Folder-name → label rules (lower-case match, first hit wins)
-FOLDER_RULES = [
-    (re.compile(r"background|bg_|noise|no.drone", re.I), "background"),
-    (re.compile(r"phantom|bebop|ardrone|ar.drone|mavic|drone|uav|dji|parrot", re.I), "drone"),
+# Name → label rules (applied to BOTH folder names and file names, lower-case match, first hit wins)
+LABEL_RULES = [
+    (re.compile(r"background|^bg_|noise|no.drone", re.I), "background"),
+    (re.compile(r"phantom|bebop|ardrone|ar\.drone|mavic|drone|uav|dji|parrot", re.I), "drone"),
 ]
 
-def classify_folder(name: str) -> str:
-    for pattern, label in FOLDER_RULES:
+def classify_name(name: str) -> str:
+    """Classify a folder or file name into 'drone' or 'background'."""
+    for pattern, label in LABEL_RULES:
         if pattern.search(name):
             return label
-    return "drone"   # unknown folder → treat as drone (safe default)
+    return "drone"   # unknown → conservative: flag as drone
 
 def extract(zip_path: Path, out: Path) -> None:
     out.mkdir(parents=True, exist_ok=True)
@@ -57,14 +58,17 @@ def extract(zip_path: Path, out: Path) -> None:
             parts = Path(member).parts          # ('DroneRF', 'Background', 'BG_01.csv')
             filename = parts[-1]
 
-            # Determine label from the parent folder(s)
-            label = "drone"
-            for part in parts[:-1]:             # walk all parent dirs
-                candidate = classify_folder(part)
-                if candidate == "background":   # background wins if any parent says so
-                    label = "background"
-                    break
-                label = candidate               # last folder wins otherwise
+            # Determine label: check filename first, then parent folders
+            # Filename-based classification handles flat zips (no subfolders)
+            label = classify_name(filename)
+
+            # If filename is ambiguous, walk parent directories for more context
+            if label == "drone":  # "drone" is the default — check folders for "background"
+                for part in parts[:-1]:
+                    candidate = classify_name(part)
+                    if candidate == "background":
+                        label = "background"
+                        break
 
             # Unique output filename: prepend folder hierarchy to avoid collisions
             safe_prefix = "__".join(
