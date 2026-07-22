@@ -154,7 +154,7 @@ export default function Home() {
       <AudioAlarm active={hasAlarm} />
 
       {/* ── Map area ── */}
-      <div className="flex-1 relative min-h-[55vh] md:min-h-0">
+      <div className="flex-1 relative min-h-[55vh] md:min-h-0 overflow-hidden">
         <RadarMap config={config} activeTracks={tracks} rfAlerts={latestRfAlerts} />
         <RadarSweepOverlay hasAlarm={hasAlarm} />
         <MapHUD
