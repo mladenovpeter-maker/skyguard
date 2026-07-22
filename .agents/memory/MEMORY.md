@@ -3,3 +3,4 @@
 - [Testing Clerk-gated flows](clerk-testing-tickets.md) — sign-up/sign-in UI hits bot/email challenges a tester can't solve; use Clerk Backend API sign-in tickets to bypass.
 - [HackRF WebSocket proxy](hackrf-ws-proxy.md) — browser cannot reach Pi:8765 directly; nginx on Linux server proxies /hackrf-ws → ws://192.168.100.237:8765.
 - [HackRF sweep architecture + RF Fingerprinting roadmap](hackrf-sweep-vs-droneID.md) — bridge.py използва hackrf_sweep (не gr-DroneID); публични dataset-и съществуват; dataset-ите да се пазят на Linux сървъра, не на Pi.
+- [RF Datasets TODO](rf-datasets-todo.md) — 4 dataset-а за изтегляне: Zenodo RF UAV, KU Leuven 2024, IEEE DataPort Open Access (контролер), VTI_DroneSET_FFT Mendeley. CardRF е платен.
