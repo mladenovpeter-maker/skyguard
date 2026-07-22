@@ -82,10 +82,21 @@ ssh admin@192.168.100.252 "sudo systemctl status skyguard-hackrf-bridge"
 
 **Хартия:** Al-Sa'd et al., "DroneRF dataset: A dataset of drones for RF-based detection, classification and identification", Data in Brief, 2019.
 
+**Download:** https://data.mendeley.com/datasets/f4c2b4n755/1 (безплатен акаунт)
+
 **Лиценз:** CC BY 4.0
 
-**Дронове:** DJI Phantom 4, Parrot Bebop 2, AR.Drone 2.0
+**Дронове:** DJI Phantom 4, Parrot Bebop 2, AR.Drone 2.0 — 227 сегмента
 
-**Честота:** 2.4 GHz WiFi band (2400–2500 MHz)
+**Честота:** 2.4 GHz ISM band (2400–2500 MHz)
 
-**Формат:** hackrf_sweep CSV — `date, time, hz_low, hz_high, bin_width, n_samples, dBm...`
+**Реален формат** (`RF_Data.csv`) — транспонирана матрица (2051 × N):
+
+| Редове | Съдържание |
+|--------|-----------|
+| 0–2046 | 2047 RF стойности на sample (мощностен спектър) |
+| 2048   | Label 1 — detection: 0 = фон, 1 = дрон |
+| 2049   | Label 2 — identification: кой дрон |
+| 2050   | Label 3 — mode: off/on/hovering/flying/video |
+
+`process_datasets.py` чете Label 1 за бинарна класификация (дрон vs фон).
