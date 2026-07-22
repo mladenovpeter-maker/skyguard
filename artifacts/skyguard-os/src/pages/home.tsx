@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { useGetHomeConfig, useListActiveDroneTracks, getListActiveDroneTracksQueryKey } from "@workspace/api-client-react";
 import { RadarMap, type RfAlertMapEntry } from "@/components/radar/RadarMap";
+import { RadarScope } from "@/components/radar/RadarScope";
 import { TelemetryPanel } from "@/components/radar/TelemetryPanel";
 import { AudioAlarm } from "@/components/radar/AudioAlarm";
-import { AlertTriangle, Loader2 } from "lucide-react";
+import { AlertTriangle, Loader2, Map, Radar } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
 import { useQuery } from "@tanstack/react-query";
 
@@ -21,93 +23,10 @@ function useRecentRfAlerts() {
   });
 }
 
-// ── Radar sweep overlay ──────────────────────────────────────────────────────
-
-function RadarSweepOverlay({ hasAlarm }: { hasAlarm: boolean }) {
-  const rgb = hasAlarm ? "255,50,50" : "0,255,140";
-  return (
-    <>
-      <style>{`
-        @keyframes sg-sweep {
-          from { transform: rotate(0deg); }
-          to   { transform: rotate(360deg); }
-        }
-        @keyframes sg-alarm-glow {
-          0%,100% { box-shadow: inset 0 0 0px rgba(255,0,0,0); }
-          50%      { box-shadow: inset 0 0 60px rgba(255,0,0,0.18); }
-        }
-        .sg-alarm-frame { animation: sg-alarm-glow 1.2s ease-in-out infinite; }
-      `}</style>
-
-      {/* Rotating sweep */}
-      <div className="absolute inset-0 pointer-events-none z-[399] overflow-hidden flex items-center justify-center">
-        <div
-          style={{
-            width: "280vmax",
-            height: "280vmax",
-            borderRadius: "50%",
-            background: `conic-gradient(
-              from -8deg,
-              transparent 0deg,
-              rgba(${rgb},0.13) 18deg,
-              rgba(${rgb},0.05) 42deg,
-              transparent 42deg
-            )`,
-            animation: "sg-sweep 5s linear infinite",
-          }}
-        />
-      </div>
-
-      {/* Corner HUD brackets */}
-      <div className="absolute top-3 left-3 w-7 h-7 border-t-2 border-l-2 border-primary/50 pointer-events-none z-[400]" />
-      <div className="absolute top-3 right-3 w-7 h-7 border-t-2 border-r-2 border-primary/50 pointer-events-none z-[400]" />
-      <div className="absolute bottom-3 left-3 w-7 h-7 border-b-2 border-l-2 border-primary/50 pointer-events-none z-[400]" />
-      <div className="absolute bottom-3 right-3 w-7 h-7 border-b-2 border-r-2 border-primary/50 pointer-events-none z-[400]" />
-    </>
-  );
-}
-
-// ── Map HUD labels ────────────────────────────────────────────────────────────
-
-function MapHUD({
-  lat, lng, trackCount, hasAlarm, rfHighCount,
-}: {
-  lat: number; lng: number; trackCount: number; hasAlarm: boolean; rfHighCount: number;
-}) {
-  return (
-    <>
-      {/* Coordinates */}
-      <div className="absolute bottom-8 left-4 z-[400] font-mono text-[10px] text-primary/55 bg-black/50 px-2 py-1 rounded backdrop-blur-sm tracking-wider select-none">
-        {lat.toFixed(5)}° N &nbsp; {lng.toFixed(5)}° E
-      </div>
-
-      {/* Target counter */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[400] flex items-center gap-3">
-        <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary/40 bg-black/40 px-2 py-0.5 rounded">
-          TGT {trackCount.toString().padStart(2, "0")}
-        </span>
-        {rfHighCount > 0 && (
-          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-red-400/80 bg-black/40 px-2 py-0.5 rounded animate-pulse">
-            RF×{rfHighCount}
-          </span>
-        )}
-      </div>
-
-      {/* Breach banner */}
-      {hasAlarm && (
-        <div className="absolute top-10 left-1/2 -translate-x-1/2 z-[400] flex items-center gap-2 bg-destructive/90 text-white px-5 py-2 rounded font-mono font-bold text-sm uppercase tracking-widest shadow-[0_0_40px_rgba(255,0,0,0.55)] animate-pulse border border-red-400/40">
-          <AlertTriangle className="w-4 h-4" />
-          PERIMETER BREACH
-        </div>
-      )}
-    </>
-  );
-}
-
-// ── Page ─────────────────────────────────────────────────────────────────────
-
 export default function Home() {
   const { t } = useLanguage();
+  const [showMap, setShowMap] = useState(false);
+
   const { data: config, isLoading: configLoading } = useGetHomeConfig();
   const { data: tracks = [] } = useListActiveDroneTracks({
     query: { refetchInterval: 2000, queryKey: getListActiveDroneTracksQueryKey() },
@@ -147,23 +66,49 @@ export default function Home() {
     );
   }
 
-  const rfHighCount = latestRfAlerts.filter(a => a.threat === "high").length;
-
   return (
-    <div className={`flex-1 flex flex-col md:flex-row overflow-hidden ${hasAlarm ? "sg-alarm-frame" : ""}`}>
+    <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
       <AudioAlarm active={hasAlarm} />
 
-      {/* ── Map area ── */}
-      <div className="flex-1 relative min-h-[55vh] md:min-h-0 overflow-hidden">
-        <RadarMap config={config} activeTracks={tracks} rfAlerts={latestRfAlerts} />
-        <RadarSweepOverlay hasAlarm={hasAlarm} />
-        <MapHUD
-          lat={config.lat}
-          lng={config.lng}
-          trackCount={tracks.length}
-          hasAlarm={hasAlarm}
-          rfHighCount={rfHighCount}
-        />
+      {/* ── Main display area ── */}
+      <div className="flex-1 relative min-h-[55vh] md:min-h-0 overflow-hidden bg-[#000902]">
+
+        {/* Radar scope or map */}
+        {showMap ? (
+          <RadarMap config={config} activeTracks={tracks} rfAlerts={latestRfAlerts} />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center p-4">
+            <RadarScope
+              config={config}
+              tracks={tracks}
+              rfAlerts={latestRfAlerts}
+              hasAlarm={hasAlarm}
+            />
+          </div>
+        )}
+
+        {/* View toggle button */}
+        <button
+          type="button"
+          onClick={() => setShowMap(v => !v)}
+          className="absolute bottom-4 right-4 z-[500] flex items-center gap-2 px-3 py-2 rounded font-mono text-[11px] uppercase tracking-wider transition-all border backdrop-blur-sm"
+          style={{
+            backgroundColor: "rgba(0,0,0,0.6)",
+            borderColor: showMap ? "rgba(0,255,140,0.35)" : "rgba(255,255,255,0.12)",
+            color: showMap ? "#00ff8c" : "rgba(255,255,255,0.45)",
+          }}
+        >
+          {showMap ? <Radar className="w-3.5 h-3.5" /> : <Map className="w-3.5 h-3.5" />}
+          {showMap ? "SCOPE" : "MAP"}
+        </button>
+
+        {/* Breach banner — visible on both views */}
+        {hasAlarm && (
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[500] flex items-center gap-2 bg-red-950/90 text-red-300 px-5 py-2 rounded font-mono font-bold text-sm uppercase tracking-widest border border-red-500/50 shadow-[0_0_40px_rgba(255,0,0,0.4)] animate-pulse">
+            <AlertTriangle className="w-4 h-4" />
+            PERIMETER BREACH
+          </div>
+        )}
       </div>
 
       {/* ── Right tactical panel ── */}

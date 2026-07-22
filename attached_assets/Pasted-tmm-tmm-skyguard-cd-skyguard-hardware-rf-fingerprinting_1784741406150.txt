@@ -1,0 +1,241 @@
+tmm@tmm:~/skyguard$ cd ~/skyguard/hardware/rf-fingerprinting && \
+~/skyguard-venv/bin/python3 process_datasets.py \
+  --data-dir datasets/extracted \
+  --out datasets/features.npz && \
+~/skyguard-venv/bin/python3 train_from_datasets.py \
+  --features datasets/features.npz \
+  --out rf_model.joblib && \
+scp rf_model.joblib admin@192.168.100.252:~/skyguard/hardware/rf-fingerprinting/rf_model.joblib && \
+ssh admin@192.168.100.252 "cd ~/skyguard && git pull origin main && sudo systemctl restart skyguard-hackrf-bridge" && \
+echo "=== DONE ==="
+2026-07-22 17:17:35,958 [INFO] Found 200 labelled CSV files
+2026-07-22 17:17:40,481 [INFO]   drone         10100H_0.csv  → 1 samples
+2026-07-22 17:17:43,998 [INFO]   drone         10100H_1.csv  → 1 samples
+2026-07-22 17:17:47,564 [INFO]   drone         10100H_10.csv  → 1 samples
+2026-07-22 17:17:51,145 [INFO]   drone         10100H_11.csv  → 1 samples
+2026-07-22 17:17:54,792 [INFO]   drone         10100H_12.csv  → 1 samples
+2026-07-22 17:17:58,447 [INFO]   drone         10100H_13.csv  → 1 samples
+2026-07-22 17:18:02,074 [INFO]   drone         10100H_14.csv  → 1 samples
+2026-07-22 17:18:05,473 [INFO]   drone         10100H_15.csv  → 1 samples
+2026-07-22 17:18:09,017 [INFO]   drone         10100H_16.csv  → 1 samples
+2026-07-22 17:18:12,587 [INFO]   drone         10100H_17.csv  → 1 samples
+2026-07-22 17:18:16,180 [INFO]   drone         10100H_18.csv  → 1 samples
+2026-07-22 17:18:19,656 [INFO]   drone         10100H_19.csv  → 1 samples
+2026-07-22 17:18:23,074 [INFO]   drone         10100H_2.csv  → 1 samples
+2026-07-22 17:18:26,218 [INFO]   drone         10100H_20.csv  → 1 samples
+2026-07-22 17:18:29,625 [INFO]   drone         10100H_3.csv  → 1 samples
+2026-07-22 17:18:32,792 [INFO]   drone         10100H_4.csv  → 1 samples
+2026-07-22 17:18:36,156 [INFO]   drone         10100H_5.csv  → 1 samples
+2026-07-22 17:18:39,310 [INFO]   drone         10100H_6.csv  → 1 samples
+2026-07-22 17:18:42,535 [INFO]   drone         10100H_7.csv  → 1 samples
+2026-07-22 17:18:45,904 [INFO]   drone         10100H_8.csv  → 1 samples
+2026-07-22 17:18:49,094 [INFO]   drone         10100H_9.csv  → 1 samples
+2026-07-22 17:18:52,503 [INFO]   drone         10100L_0.csv  → 1 samples
+2026-07-22 17:18:55,645 [INFO]   drone         10100L_1.csv  → 1 samples
+2026-07-22 17:18:59,199 [INFO]   drone         10100L_10.csv  → 1 samples
+2026-07-22 17:19:02,354 [INFO]   drone         10100L_11.csv  → 1 samples
+2026-07-22 17:19:05,828 [INFO]   drone         10100L_12.csv  → 1 samples
+2026-07-22 17:19:09,213 [INFO]   drone         10100L_13.csv  → 1 samples
+2026-07-22 17:19:12,567 [INFO]   drone         10100L_14.csv  → 1 samples
+2026-07-22 17:19:16,010 [INFO]   drone         10100L_15.csv  → 1 samples
+2026-07-22 17:19:19,605 [INFO]   drone         10100L_16.csv  → 1 samples
+2026-07-22 17:19:22,824 [INFO]   drone         10100L_17.csv  → 1 samples
+2026-07-22 17:19:26,265 [INFO]   drone         10100L_18.csv  → 1 samples
+2026-07-22 17:19:29,638 [INFO]   drone         10100L_19.csv  → 1 samples
+2026-07-22 17:19:33,164 [INFO]   drone         10100L_2.csv  → 1 samples
+2026-07-22 17:19:36,461 [INFO]   drone         10100L_20.csv  → 1 samples
+2026-07-22 17:19:40,089 [INFO]   drone         10100L_3.csv  → 1 samples
+2026-07-22 17:19:43,720 [INFO]   drone         10100L_4.csv  → 1 samples
+2026-07-22 17:19:47,441 [INFO]   drone         10100L_5.csv  → 1 samples
+2026-07-22 17:19:51,149 [INFO]   drone         10100L_6.csv  → 1 samples
+2026-07-22 17:19:54,894 [INFO]   drone         10100L_7.csv  → 1 samples
+2026-07-22 17:19:58,494 [INFO]   drone         10100L_8.csv  → 1 samples
+2026-07-22 17:20:02,304 [INFO]   drone         10100L_9.csv  → 1 samples
+2026-07-22 17:20:06,044 [INFO]   drone         10101H_0.csv  → 1 samples
+2026-07-22 17:20:09,603 [INFO]   drone         10101H_1.csv  → 1 samples
+2026-07-22 17:20:13,290 [INFO]   drone         10101H_10.csv  → 1 samples
+2026-07-22 17:20:17,068 [INFO]   drone         10101H_11.csv  → 1 samples
+2026-07-22 17:20:20,773 [INFO]   drone         10101H_12.csv  → 1 samples
+2026-07-22 17:20:24,557 [INFO]   drone         10101H_13.csv  → 1 samples
+2026-07-22 17:20:28,370 [INFO]   drone         10101H_14.csv  → 1 samples
+2026-07-22 17:20:32,058 [INFO]   drone         10101H_15.csv  → 1 samples
+2026-07-22 17:20:35,668 [INFO]   drone         10101H_16.csv  → 1 samples
+2026-07-22 17:20:38,986 [INFO]   drone         10101H_17.csv  → 1 samples
+2026-07-22 17:20:42,524 [INFO]   drone         10101H_18.csv  → 1 samples
+2026-07-22 17:20:45,881 [INFO]   drone         10101H_19.csv  → 1 samples
+2026-07-22 17:20:49,249 [INFO]   drone         10101H_2.csv  → 1 samples
+2026-07-22 17:20:52,492 [INFO]   drone         10101H_20.csv  → 1 samples
+2026-07-22 17:20:56,113 [INFO]   drone         10101H_3.csv  → 1 samples
+2026-07-22 17:20:59,433 [INFO]   drone         10101H_4.csv  → 1 samples
+2026-07-22 17:21:03,009 [INFO]   drone         10101H_5.csv  → 1 samples
+2026-07-22 17:21:06,269 [INFO]   drone         10101H_6.csv  → 1 samples
+2026-07-22 17:21:10,008 [INFO]   drone         10101H_7.csv  → 1 samples
+2026-07-22 17:21:13,260 [INFO]   drone         10101H_8.csv  → 1 samples
+2026-07-22 17:21:16,585 [INFO]   drone         10101H_9.csv  → 1 samples
+2026-07-22 17:21:20,100 [INFO]   drone         10101L_0.csv  → 1 samples
+2026-07-22 17:21:23,346 [INFO]   drone         10101L_1.csv  → 1 samples
+2026-07-22 17:21:26,999 [INFO]   drone         10101L_10.csv  → 1 samples
+2026-07-22 17:21:30,230 [INFO]   drone         10101L_11.csv  → 1 samples
+2026-07-22 17:21:33,536 [INFO]   drone         10101L_12.csv  → 1 samples
+2026-07-22 17:21:36,847 [INFO]   drone         10101L_13.csv  → 1 samples
+2026-07-22 17:21:40,527 [INFO]   drone         10101L_14.csv  → 1 samples
+2026-07-22 17:21:43,839 [INFO]   drone         10101L_15.csv  → 1 samples
+2026-07-22 17:21:47,440 [INFO]   drone         10101L_16.csv  → 1 samples
+2026-07-22 17:21:50,795 [INFO]   drone         10101L_17.csv  → 1 samples
+2026-07-22 17:21:54,304 [INFO]   drone         10101L_18.csv  → 1 samples
+2026-07-22 17:21:57,539 [INFO]   drone         10101L_19.csv  → 1 samples
+2026-07-22 17:22:00,974 [INFO]   drone         10101L_2.csv  → 1 samples
+2026-07-22 17:22:04,236 [INFO]   drone         10101L_20.csv  → 1 samples
+2026-07-22 17:22:07,836 [INFO]   drone         10101L_3.csv  → 1 samples
+2026-07-22 17:22:11,113 [INFO]   drone         10101L_4.csv  → 1 samples
+2026-07-22 17:22:14,541 [INFO]   drone         10101L_5.csv  → 1 samples
+2026-07-22 17:22:17,772 [INFO]   drone         10101L_6.csv  → 1 samples
+2026-07-22 17:22:21,377 [INFO]   drone         10101L_7.csv  → 1 samples
+2026-07-22 17:22:24,796 [INFO]   drone         10101L_8.csv  → 1 samples
+2026-07-22 17:22:28,252 [INFO]   drone         10101L_9.csv  → 1 samples
+2026-07-22 17:22:31,505 [INFO]   drone         10110H_0.csv  → 1 samples
+2026-07-22 17:22:35,113 [INFO]   drone         10110H_1.csv  → 1 samples
+2026-07-22 17:22:38,356 [INFO]   drone         10110H_10.csv  → 1 samples
+2026-07-22 17:22:41,913 [INFO]   drone         10110H_11.csv  → 1 samples
+2026-07-22 17:22:45,226 [INFO]   drone         10110H_12.csv  → 1 samples
+2026-07-22 17:22:48,591 [INFO]   drone         10110H_13.csv  → 1 samples
+2026-07-22 17:22:51,958 [INFO]   drone         10110H_14.csv  → 1 samples
+2026-07-22 17:22:55,493 [INFO]   drone         10110H_15.csv  → 1 samples
+2026-07-22 17:22:58,816 [INFO]   drone         10110H_16.csv  → 1 samples
+2026-07-22 17:23:02,182 [INFO]   drone         10110H_17.csv  → 1 samples
+2026-07-22 17:23:05,805 [INFO]   drone         10110H_18.csv  → 1 samples
+2026-07-22 17:23:09,155 [INFO]   drone         10110H_19.csv  → 1 samples
+2026-07-22 17:23:12,513 [INFO]   drone         10110H_2.csv  → 1 samples
+2026-07-22 17:23:15,827 [INFO]   drone         10110H_20.csv  → 1 samples
+2026-07-22 17:23:19,328 [INFO]   drone         10110H_3.csv  → 1 samples
+2026-07-22 17:23:22,620 [INFO]   drone         10110H_4.csv  → 1 samples
+2026-07-22 17:23:26,257 [INFO]   drone         10110H_5.csv  → 1 samples
+2026-07-22 17:23:29,546 [INFO]   drone         10110H_6.csv  → 1 samples
+2026-07-22 17:23:33,052 [INFO]   drone         10110H_7.csv  → 1 samples
+2026-07-22 17:23:36,302 [INFO]   drone         10110H_8.csv  → 1 samples
+2026-07-22 17:23:39,947 [INFO]   drone         10110H_9.csv  → 1 samples
+2026-07-22 17:23:43,193 [INFO]   drone         10110L_0.csv  → 1 samples
+2026-07-22 17:23:46,923 [INFO]   drone         10110L_1.csv  → 1 samples
+2026-07-22 17:23:50,187 [INFO]   drone         10110L_10.csv  → 1 samples
+2026-07-22 17:23:53,620 [INFO]   drone         10110L_11.csv  → 1 samples
+2026-07-22 17:23:56,916 [INFO]   drone         10110L_12.csv  → 1 samples
+2026-07-22 17:24:00,294 [INFO]   drone         10110L_13.csv  → 1 samples
+2026-07-22 17:24:03,875 [INFO]   drone         10110L_14.csv  → 1 samples
+2026-07-22 17:24:07,472 [INFO]   drone         10110L_15.csv  → 1 samples
+2026-07-22 17:24:10,753 [INFO]   drone         10110L_16.csv  → 1 samples
+2026-07-22 17:24:14,303 [INFO]   drone         10110L_17.csv  → 1 samples
+2026-07-22 17:24:17,710 [INFO]   drone         10110L_18.csv  → 1 samples
+2026-07-22 17:24:21,226 [INFO]   drone         10110L_19.csv  → 1 samples
+2026-07-22 17:24:24,470 [INFO]   drone         10110L_2.csv  → 1 samples
+2026-07-22 17:24:27,890 [INFO]   drone         10110L_20.csv  → 1 samples
+2026-07-22 17:24:31,296 [INFO]   drone         10110L_3.csv  → 1 samples
+2026-07-22 17:24:34,771 [INFO]   drone         10110L_4.csv  → 1 samples
+2026-07-22 17:24:38,023 [INFO]   drone         10110L_5.csv  → 1 samples
+2026-07-22 17:24:41,510 [INFO]   drone         10110L_6.csv  → 1 samples
+2026-07-22 17:24:44,847 [INFO]   drone         10110L_7.csv  → 1 samples
+2026-07-22 17:24:48,320 [INFO]   drone         10110L_8.csv  → 1 samples
+2026-07-22 17:24:51,784 [INFO]   drone         10110L_9.csv  → 1 samples
+2026-07-22 17:24:55,065 [INFO]   drone         10111H_0.csv  → 1 samples
+2026-07-22 17:24:58,586 [INFO]   drone         10111H_1.csv  → 1 samples
+2026-07-22 17:25:02,011 [INFO]   drone         10111H_10.csv  → 1 samples
+2026-07-22 17:25:05,586 [INFO]   drone         10111H_11.csv  → 1 samples
+2026-07-22 17:25:08,851 [INFO]   drone         10111H_12.csv  → 1 samples
+2026-07-22 17:25:12,458 [INFO]   drone         10111H_13.csv  → 1 samples
+2026-07-22 17:25:15,745 [INFO]   drone         10111H_14.csv  → 1 samples
+2026-07-22 17:25:19,386 [INFO]   drone         10111H_15.csv  → 1 samples
+2026-07-22 17:25:22,704 [INFO]   drone         10111H_16.csv  → 1 samples
+2026-07-22 17:25:26,333 [INFO]   drone         10111H_17.csv  → 1 samples
+2026-07-22 17:25:29,617 [INFO]   drone         10111H_2.csv  → 1 samples
+2026-07-22 17:25:33,192 [INFO]   drone         10111H_3.csv  → 1 samples
+2026-07-22 17:25:36,470 [INFO]   drone         10111H_4.csv  → 1 samples
+2026-07-22 17:25:39,825 [INFO]   drone         10111H_5.csv  → 1 samples
+2026-07-22 17:25:43,308 [INFO]   drone         10111H_6.csv  → 1 samples
+2026-07-22 17:25:46,956 [INFO]   drone         10111H_7.csv  → 1 samples
+2026-07-22 17:25:50,190 [INFO]   drone         10111H_8.csv  → 1 samples
+2026-07-22 17:25:53,711 [INFO]   drone         10111H_9.csv  → 1 samples
+2026-07-22 17:25:57,002 [INFO]   drone         10111L_0.csv  → 1 samples
+2026-07-22 17:26:00,563 [INFO]   drone         10111L_1.csv  → 1 samples
+2026-07-22 17:26:03,828 [INFO]   drone         10111L_10.csv  → 1 samples
+2026-07-22 17:26:07,372 [INFO]   drone         10111L_11.csv  → 1 samples
+2026-07-22 17:26:10,869 [INFO]   drone         10111L_12.csv  → 1 samples
+2026-07-22 17:26:14,444 [INFO]   drone         10111L_13.csv  → 1 samples
+2026-07-22 17:26:17,701 [INFO]   drone         10111L_14.csv  → 1 samples
+2026-07-22 17:26:21,252 [INFO]   drone         10111L_15.csv  → 1 samples
+2026-07-22 17:26:24,687 [INFO]   drone         10111L_16.csv  → 1 samples
+2026-07-22 17:26:28,274 [INFO]   drone         10111L_17.csv  → 1 samples
+2026-07-22 17:26:31,576 [INFO]   drone         10111L_2.csv  → 1 samples
+2026-07-22 17:26:35,192 [INFO]   drone         10111L_3.csv  → 1 samples
+2026-07-22 17:26:38,695 [INFO]   drone         10111L_4.csv  → 1 samples
+2026-07-22 17:26:42,382 [INFO]   drone         10111L_5.csv  → 1 samples
+2026-07-22 17:26:45,646 [INFO]   drone         10111L_6.csv  → 1 samples
+2026-07-22 17:26:49,337 [INFO]   drone         10111L_7.csv  → 1 samples
+2026-07-22 17:26:52,631 [INFO]   drone         10111L_8.csv  → 1 samples
+2026-07-22 17:26:55,967 [INFO]   drone         10111L_9.csv  → 1 samples
+2026-07-22 17:26:59,400 [INFO]   background    00000H_21.csv  → 1 samples
+2026-07-22 17:27:02,864 [INFO]   background    00000H_22.csv  → 1 samples
+2026-07-22 17:27:06,405 [INFO]   background    00000H_23.csv  → 1 samples
+2026-07-22 17:27:09,666 [INFO]   background    00000H_24.csv  → 1 samples
+2026-07-22 17:27:13,332 [INFO]   background    00000H_25.csv  → 1 samples
+2026-07-22 17:27:16,602 [INFO]   background    00000H_26.csv  → 1 samples
+2026-07-22 17:27:20,032 [INFO]   background    00000H_27.csv  → 1 samples
+2026-07-22 17:27:23,584 [INFO]   background    00000H_28.csv  → 1 samples
+2026-07-22 17:27:26,956 [INFO]   background    00000H_29.csv  → 1 samples
+2026-07-22 17:27:30,351 [INFO]   background    00000H_30.csv  → 1 samples
+2026-07-22 17:27:33,800 [INFO]   background    00000H_31.csv  → 1 samples
+2026-07-22 17:27:37,225 [INFO]   background    00000H_32.csv  → 1 samples
+2026-07-22 17:27:40,769 [INFO]   background    00000H_33.csv  → 1 samples
+2026-07-22 17:27:44,140 [INFO]   background    00000H_34.csv  → 1 samples
+2026-07-22 17:27:47,721 [INFO]   background    00000H_35.csv  → 1 samples
+2026-07-22 17:27:51,005 [INFO]   background    00000H_36.csv  → 1 samples
+2026-07-22 17:27:54,637 [INFO]   background    00000H_37.csv  → 1 samples
+2026-07-22 17:27:58,059 [INFO]   background    00000H_38.csv  → 1 samples
+2026-07-22 17:28:01,702 [INFO]   background    00000H_39.csv  → 1 samples
+2026-07-22 17:28:04,987 [INFO]   background    00000H_40.csv  → 1 samples
+2026-07-22 17:28:08,522 [INFO]   background    00000H_0.csv  → 1 samples
+2026-07-22 17:28:11,841 [INFO]   background    00000H_1.csv  → 1 samples
+2026-07-22 17:28:15,371 [INFO]   background    00000H_10.csv  → 1 samples
+2026-07-22 17:28:18,674 [INFO]   background    00000H_11.csv  → 1 samples
+2026-07-22 17:28:22,240 [INFO]   background    00000H_12.csv  → 1 samples
+2026-07-22 17:28:25,575 [INFO]   background    00000H_13.csv  → 1 samples
+2026-07-22 17:28:29,189 [INFO]   background    00000H_14.csv  → 1 samples
+2026-07-22 17:28:32,653 [INFO]   background    00000H_15.csv  → 1 samples
+2026-07-22 17:28:36,101 [INFO]   background    00000H_16.csv  → 1 samples
+2026-07-22 17:28:39,389 [INFO]   background    00000H_17.csv  → 1 samples
+2026-07-22 17:28:43,056 [INFO]   background    00000H_2.csv  → 1 samples
+2026-07-22 17:28:46,421 [INFO]   background    00000H_3.csv  → 1 samples
+2026-07-22 17:28:49,944 [INFO]   background    00000H_4.csv  → 1 samples
+2026-07-22 17:28:53,230 [INFO]   background    00000H_5.csv  → 1 samples
+2026-07-22 17:28:56,772 [INFO]   background    00000H_6.csv  → 1 samples
+2026-07-22 17:29:00,092 [INFO]   background    00000H_7.csv  → 1 samples
+2026-07-22 17:29:03,547 [INFO]   background    00000H_8.csv  → 1 samples
+2026-07-22 17:29:06,859 [INFO]   background    00000H_9.csv  → 1 samples
+2026-07-22 17:29:06,981 [INFO] Total: 200 samples | drone=162  background=38
+2026-07-22 17:29:06,982 [INFO] Features saved → datasets/features.npz
+2026-07-22 17:29:08,494 [INFO] Loading features from datasets/features.npz …
+2026-07-22 17:29:08,496 [INFO] Dataset: 200 samples | drone=162  wifi/bg=38
+2026-07-22 17:29:11,356 [INFO]   RandomForest  CV F1 = 0.894 ± 0.024
+2026-07-22 17:29:12,296 [INFO]   GradientBoosting  CV F1 = 0.901 ± 0.032
+2026-07-22 17:29:12,296 [INFO] Training best model: GradientBoosting …
+
+── Classification Report ──────────────────────────
+              precision    recall  f1-score   support
+
+     wifi/bg       0.40      0.50      0.44         8
+       drone       0.87      0.81      0.84        32
+
+    accuracy                           0.75        40
+   macro avg       0.63      0.66      0.64        40
+weighted avg       0.77      0.75      0.76        40
+
+── Confusion Matrix ───────────────────────────────
+  True negative (correct wifi) : 4
+  False positive (wifi as drone): 4
+  False negative (missed drone) : 6
+  True positive (correct drone) : 26
+
+2026-07-22 17:29:12,509 [INFO] Model saved → rf_model.joblib
+admin@192.168.100.252's password: 
+Permission denied, please try again.
+admin@192.168.100.252's password: 
+rf_model.joblib                               100%  446KB 856.9KB/s   00:00    
+admin@192.168.100.252's password: 
