@@ -1,0 +1,108 @@
+admin@skyguard:~ $ ~/nrfutil-env/bin/nrfutil pkg generate --help
+Usage: nrfutil pkg generate [OPTIONS] ZIPFILE
+
+  Generate a zip package for distribution to apps that support Nordic DFU
+  OTA. The application, bootloader, and SoftDevice files are converted to
+  .bin if supplied as .hex files. For more information on the generated
+  package, see: http://developer.nordicsemi.com/nRF5_SDK/doc/
+
+  The following combinations are supported by this command:
+
+  * BL only: Supported.
+
+  * SD only: Supported (SD of same Major Version).
+
+  * APP only: Supported (external or internal).
+
+  * BL + SD: Supported.
+
+  * BL + APP: Not supported (use two packages instead).
+
+  * BL + SD + APP: Supported.
+
+  * SD + APP: Supported (SD of same Major Version).
+
+Options:
+  --debug-mode                    Debug mode switch, enables version check
+                                  skipping.
+
+  --application TEXT              The application firmware file.
+  --application-version INTEGER   The application version.
+  --application-version-string TEXT
+                                  The application version string, e.g
+                                  "2.7.31".
+
+  --bootloader TEXT               The bootloader firmware file.
+  --bootloader-version INTEGER    The bootloader version.
+  --hw-version INTEGER            The hardware version.
+  --sd-req TEXT                   The SoftDevice requirements. A comma-
+                                  separated list of SoftDevice firmware IDs (1
+                                  or more) of which one must be present on the
+                                  target device. Each item on the list must be
+                                  a two- or four-digit hex number prefixed
+                                  with "0x" (e.g. "0x12", "0x1234"). A non-
+                                  exhaustive list of well-known values to use
+                                  with this option follows:
+                                  |s112_nrf52_6.0.0|0xA7|
+                                  |s112_nrf52_6.1.0|0xB0|
+                                  |s112_nrf52_6.1.1|0xB8|
+                                  |s130_nrf51_1.0.0|0x67|
+                                  |s130_nrf51_2.0.0|0x80|
+                                  |s132_nrf52_2.0.0|0x81|
+                                  |s130_nrf51_2.0.1|0x87|
+                                  |s132_nrf52_2.0.1|0x88|
+                                  |s132_nrf52_3.0.0|0x8C|
+                                  |s132_nrf52_3.1.0|0x91|
+                                  |s132_nrf52_4.0.0|0x95|
+                                  |s132_nrf52_4.0.2|0x98|
+                                  |s132_nrf52_4.0.3|0x99|
+                                  |s132_nrf52_4.0.4|0x9E|
+                                  |s132_nrf52_4.0.5|0x9F|
+                                  |s132_nrf52_5.0.0|0x9D|
+                                  |s132_nrf52_5.1.0|0xA5|
+                                  |s132_nrf52_6.0.0|0xA8|
+                                  |s132_nrf52_6.1.0|0xAF|
+                                  |s132_nrf52_6.1.1|0xB7|
+                                  |s140_nrf52_6.0.0|0xA9|
+                                  |s140_nrf52_6.1.0|0xAE|
+                                  |s140_nrf52_6.1.1|0xB6|
+
+  --sd-id TEXT                    The new SoftDevice ID to be used as --sd-req
+                                  for the Application update in case the ZIP
+                                  contains a SoftDevice and an Application.
+
+  --softdevice TEXT               The SoftDevice firmware file.
+  --sd-boot-validation TEXT       The method of boot validation for
+                                  Softdevice. Choose from: NO_VALIDATION
+                                  VALIDATE_GENERATED_CRC
+                                  VALIDATE_GENERATED_SHA256
+                                  VALIDATE_ECDSA_P256_SHA256
+
+  --app-boot-validation TEXT      The method of boot validation for
+                                  application. Choose from: NO_VALIDATION
+                                  VALIDATE_GENERATED_CRC
+                                  VALIDATE_GENERATED_SHA256
+                                  VALIDATE_ECDSA_P256_SHA256
+
+  --key-file FILE                 The private (signing) key in PEM fomat.
+  --external-app                  Indicates that the FW upgrade is intended to
+                                  be passed through (not applied on the
+                                  receiving device)
+
+  --zigbee BOOLEAN                Create an image and distribution package for
+                                  Zigbee DFU server.
+
+  --zigbee-manufacturer-id INTEGER
+                                  Manufacturer ID to be used in Zigbee OTA
+                                  header.
+
+  --zigbee-image-type INTEGER     Image type to be used in Zigbee OTA header.
+  --zigbee-comment TEXT           Firmware comment to be used in Zigbee OTA
+                                  header.
+
+  --zigbee-ota-hw-version INTEGER
+                                  The zigbee OTA hw version.
+  --zigbee-ota-fw-version INTEGER
+                                  The zigbee OTA fw version.
+  --help                          Show this message and exit.
+admin@skyguard:~ $ 

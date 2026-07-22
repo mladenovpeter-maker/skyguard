@@ -1,0 +1,22 @@
+admin@skyguard:~/skyguard $ sudo journalctl -u skyguard-hackrf-bridge -n 20 --no-pager
+Jul 22 15:15:13 skyguard python3[4003]: OSError: [Errno 98] error while attempting to bind on address ('0.0.0.0', 8765): [errno 98] address already in use
+Jul 22 15:15:13 skyguard systemd[1]: skyguard-hackrf-bridge.service: Main process exited, code=exited, status=1/FAILURE
+Jul 22 15:15:13 skyguard systemd[1]: skyguard-hackrf-bridge.service: Failed with result 'exit-code'.
+Jul 22 15:15:13 skyguard systemd[1]: skyguard-hackrf-bridge.service: Consumed 1.200s CPU time.
+Jul 22 15:15:15 skyguard systemd[1]: skyguard-hackrf-bridge.service: Scheduled restart job immediately on client request, restart counter is at 67.
+Jul 22 15:15:15 skyguard systemd[1]: Started skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+Jul 22 15:15:16 skyguard python3[4018]: 2026-07-22 15:15:16,312 [INFO] Loaded 10 frequency bands from /home/admin/skyguard/hardware/hackrf-bridge/frequencies.json
+Jul 22 15:15:16 skyguard python3[4018]: 2026-07-22 15:15:16,313 [INFO] Loaded 15 drone signatures from /home/admin/skyguard/hardware/hackrf-bridge/drone_signatures.json
+Jul 22 15:15:16 skyguard python3[4018]: 2026-07-22 15:15:16,318 [INFO] SkyGuard HackRF Bridge starting.
+Jul 22 15:15:16 skyguard python3[4018]: 2026-07-22 15:15:16,319 [INFO] WebSocket server on ws://0.0.0.0:8765
+Jul 22 15:15:16 skyguard python3[4018]: 2026-07-22 15:15:16,319 [INFO] Posting RF alerts to http://192.168.100.224:3001/api/rf-alerts
+Jul 22 15:15:16 skyguard python3[4018]: 2026-07-22 15:15:16,320 [INFO] Alert threshold: -50 dBm  |  Warning: -60 dBm
+Jul 22 15:15:16 skyguard python3[4018]: 2026-07-22 15:15:16,383 [INFO] server listening on 0.0.0.0:8765
+Jul 22 15:15:16 skyguard python3[4018]: 2026-07-22 15:15:16,384 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz
+Jul 22 15:15:28 skyguard python3[4018]: 2026-07-22 15:15:28,652 [INFO] connection open
+Jul 22 15:15:28 skyguard python3[4018]: 2026-07-22 15:15:28,653 [INFO] WS client connected from ('192.168.100.224', 56820)  (total: 1)
+Jul 22 15:15:33 skyguard python3[4018]: 2026-07-22 15:15:33,160 [INFO] WS client disconnected (total: 0)
+Jul 22 15:15:33 skyguard python3[4018]: 2026-07-22 15:15:33,622 [INFO] connection open
+Jul 22 15:15:33 skyguard python3[4018]: 2026-07-22 15:15:33,622 [INFO] WS client connected from ('192.168.100.224', 43340)  (total: 1)
+Jul 22 15:15:46 skyguard python3[4018]: 2026-07-22 15:15:46,476 [WARNING] Sysinfo POST 401
+admin@skyguard:~/skyguard $ 

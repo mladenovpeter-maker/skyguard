@@ -14,6 +14,7 @@ export const rfAlertsTable = pgTable("rf_alerts", {
   deviceId:        integer("device_id"),                // which hardware reported it
   possibleDrones:  text("possible_drones"),             // JSON array of matched drone model labels
   aboveBaselineDb: real("above_baseline_db"),           // how many dB above ambient baseline
+  label:           text("label"),                        // "drone" | "wifi" | "other" — set by operator for training
   timestamp:       timestamp("timestamp", { withTimezone: true }).notNull().defaultNow(),
 });
 

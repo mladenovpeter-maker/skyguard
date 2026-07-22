@@ -1,7 +1,7 @@
 {
   "_comment": "Known drone RF signatures mapped to frequency bands. Used by bridge.py for classification.",
-  "BASELINE_SWEEPS": 30,
-  "BASELINE_MARGIN_DB": 12,
+  "BASELINE_SWEEPS": 60,
+  "BASELINE_MARGIN_DB": 16,
   "signatures": [
     {
       "id": "dji_mini_2",

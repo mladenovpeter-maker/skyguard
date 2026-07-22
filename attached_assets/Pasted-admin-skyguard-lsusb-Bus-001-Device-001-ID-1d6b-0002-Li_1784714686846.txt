@@ -1,0 +1,58 @@
+admin@skyguard:~ $ lsusb
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 001 Device 002: ID 0424:2514 Microchip Technology, Inc. (formerly SMSC) USB 2.0 Hub
+Bus 001 Device 003: ID 0424:2514 Microchip Technology, Inc. (formerly SMSC) USB 2.0 Hub
+Bus 001 Device 004: ID 1d50:6089 OpenMoko, Inc. Great Scott Gadgets HackRF One SDR
+Bus 001 Device 005: ID 0424:7800 Microchip Technology, Inc. (formerly SMSC) 
+Bus 001 Device 006: ID 2357:0120 TP-Link Archer T2U PLUS [RTL8821AU]
+Bus 001 Device 007: ID 1915:521f Nordic Semiconductor ASA Open DFU Bootloader
+admin@skyguard:~ $ hciconfig -a
+hci0:	Type: Primary  Bus: UART
+	BD Address: B8:27:EB:C2:EE:91  ACL MTU: 1021:8  SCO MTU: 64:1
+	UP RUNNING 
+	RX bytes:4482 acl:0 sco:0 events:436 errors:0
+	TX bytes:68590 acl:0 sco:0 commands:436 errors:0
+	Features: 0xbf 0xfe 0xcf 0xfe 0xdb 0xff 0x7b 0x87
+	Packet type: DM1 DM3 DM5 DH1 DH3 DH5 HV1 HV2 HV3 
+	Link policy: RSWITCH SNIFF 
+	Link mode: PERIPHERAL ACCEPT 
+	Name: 'skyguard'
+	Class: 0x6c0000
+	Service Classes: Rendering, Capturing, Audio, Telephony
+	Device Class: Miscellaneous, 
+	HCI Version: 5.0 (0x9)  Revision: 0x17e
+	LMP Version: 5.0 (0x9)  Subversion: 0x6119
+	Manufacturer: Cypress Semiconductor (305)
+
+admin@skyguard:~ $ dmesg | grep -i "bluetooth\|nordic\|nrf\|hci\|1915:\|2fe3:\|0a12\|0a5c" | tail -30
+[    4.030535] sdhci-pltfm: SDHCI platform and OF driver helper
+[   11.885457] Bluetooth: Core ver 2.22
+[   11.885623] NET: Registered PF_BLUETOOTH protocol family
+[   11.885631] Bluetooth: HCI device and connection manager initialized
+[   11.885657] Bluetooth: HCI socket layer initialized
+[   11.885669] Bluetooth: L2CAP socket layer initialized
+[   11.885685] Bluetooth: SCO socket layer initialized
+[   11.938054] Bluetooth: HCI UART driver ver 2.3
+[   11.938068] Bluetooth: HCI UART protocol H4 registered
+[   11.938686] Bluetooth: HCI UART protocol Three-wire (H5) registered
+[   11.939723] Bluetooth: HCI UART protocol Broadcom registered
+[   11.943633] hci_uart_bcm serial0-0: supply vbat not found, using dummy regulator
+[   11.943890] hci_uart_bcm serial0-0: supply vddio not found, using dummy regulator
+[   12.316004] Bluetooth: hci0: BCM: chip id 107
+[   12.316320] Bluetooth: hci0: BCM: features 0x2f
+[   12.317475] Bluetooth: hci0: BCM4345C0
+[   12.317500] Bluetooth: hci0: BCM4345C0 (003.001.025) build 0000
+[   12.331216] Bluetooth: hci0: BCM4345C0 'brcm/BCM4345C0.raspberrypi,3-model-b-plus.hcd' Patch
+[   13.132429] Bluetooth: hci0: BCM: features 0x2f
+[   13.133967] Bluetooth: hci0: BCM43455 37.4MHz Raspberry Pi 3+-0190
+[   13.134000] Bluetooth: hci0: BCM4345C0 (003.001.025) build 0382
+[   13.134429] Bluetooth: hci0: BCM: Using default device address (43:45:c0:00:1f:ac)
+[   17.786145] Bluetooth: BNEP (Ethernet Emulation) ver 1.3
+[   17.786172] Bluetooth: BNEP filters: protocol multicast
+[   17.786201] Bluetooth: BNEP socket layer initialized
+[   17.818400] Bluetooth: MGMT ver 1.23
+[   18.135708] Bluetooth: RFCOMM TTY layer initialized
+[   18.135746] Bluetooth: RFCOMM socket layer initialized
+[   18.135774] Bluetooth: RFCOMM ver 1.11
+[  250.293390] usb 1-1.2: Manufacturer: Nordic Semiconductor
+admin@skyguard:~ $ 

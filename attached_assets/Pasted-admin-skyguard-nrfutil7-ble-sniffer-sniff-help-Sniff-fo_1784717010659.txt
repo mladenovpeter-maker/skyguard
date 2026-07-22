@@ -1,0 +1,104 @@
+admin@skyguard:~ $ ~/nrfutil7 ble-sniffer sniff --help
+Sniff for BLE packets
+
+Usage: nrfutil-ble-sniffer sniff [OPTIONS] --port <port>
+
+Options:
+      --baudrate <BAUDRATE>
+          Sniffer baudrate. Defaults to 1000000 bits/s
+
+      --output-pcap-file <path>
+          Path to file of captured BLE data, stored in PCAP format. Defaults to
+          a file in current directory
+
+      --timeout <TIMEOUT>
+          Sniffer timeout in milliseconds. Defaults to 500 ms
+
+      --follow <address>
+          Follow device with this address
+
+      --follow-by-name <device name>
+          Follow device with this user-friendly name
+
+      --irk-key <key>
+          Provide an Identity Resolve Key, used to resolve resolvable addresses
+          from advertising devices
+
+      --diffie-hellman-key <key>
+          Provide a Diffie-Hellman (DH) private key, used to derive the Secure
+          Connection (SC) Long Term Key (LTK) on bonding.
+          
+          Host sends a DH private key to the sniffer. This key is then used to
+          authenticate the pairing event and derive the SC LTK key on bonding.
+          
+          Key is expected to be in big-endian format.
+
+      --legacy-ltk-key <key>
+          Provide a Legacy Long Term Key (LTK) to use for decrypting bonded
+          connections with legacy pairing.
+          
+          Key is expected to be in big-endian format.
+
+      --sc-ltk-key <key>
+          Provide Secure Connections Long Term Key (SC LTK) to use for
+          decrypting bonded connections pairing.
+          
+          Key is expected to be in big-endian format.
+
+      --port <port>
+          Sniffer serial port
+
+      --rssi-cut-off <RSSI>
+          RSSI cut-off value
+
+  -h, --help
+          Print help (see a summary with '-h')
+
+SCAN CONFIGURATIONS:
+      --scan-follow-rsp
+          Find scan response data
+
+      --scan-follow-aux
+          Find auxiliary pointer data
+
+      --scan-follow-aux-chain
+          Find auxiliary data chain
+
+      --scan-follow-aux-rsp
+          Find auxiliary scan response data
+
+      --coded
+          Scan and follow on LE Coded PHY
+
+ADVERTISEMENT CONFIGURATIONS:
+      --only-advertising
+          Sniff only advertising packets
+
+      --only-legacy_advertising
+          Sniff only legacy advertising packets
+
+Log options:
+      --log-level <LOG_LEVEL>
+          Set the maximum log level
+          
+          [env: NRFUTIL_LOG=]
+          [possible values: off, error, warn, info, debug, trace]
+
+      --log-output <LOG_OUTPUT>
+          Possible values:
+          - file:   Log to file. Logs are written to file in
+            {USER_HOME}/.nrfutil/logs or {NRFUTIL_HOME}/logs if the environment
+            variable NRFUTIL_HOME is defined
+          - stdout: Log to stdout. Can be formatted to JSON
+
+JSON options:
+      --json
+          Print output in a JSON Lines format
+
+      --json-pretty
+          Print output as formatted JSON
+
+      --skip-overhead
+          Skip all message overhead when in JSON output mode, outputting only
+          the data part of "info" messages and ignoring the rest
+admin@skyguard:~ $ 

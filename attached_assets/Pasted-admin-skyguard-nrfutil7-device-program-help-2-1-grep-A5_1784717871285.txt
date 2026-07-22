@@ -1,0 +1,41 @@
+admin@skyguard:~ $ ~/nrfutil7 device program --help 2>&1 | grep -A5 "traits\|serial-number\|trait"
+          Several firmware formats and programming methods are supported. The device traits and the firmware
+          file format decides the attempted programming method. 
+          
+          Firmware format           Method                            Required device traits
+          IntelHex          (.hex)  SEGGER J-LINK                     jlink
+          IntelHex          (.hex)  MCUboot serial recovery           mcuBoot
+          SdfuZip           (.zip)  Nordic secure DFU                 nordicDfu
+          Nrf91Modem        (.zip)  Modem upgrade over MCUboot        modem mcuBoot
+          Nrf91Modem        (.zip)  Modem upgrade over SEGGER J-LINK  jlink modem
+--
+          The firmware format is currently guessed based on the file extension and the traits of the device
+          to be programmed. This behavior will change in the future.
+
+      --serial-number <SERIAL_NUMBERS>
+          Select one or more devices based on a comma-separated list of serial numbers: --serial-number
+          SN_1,SN_2,..,SN_n
+
+      --traits <TRAITS>
+          Select devices based on a comma-separated list of device traits: --traits TRAIT_1,TRAIT_2,...
+          
+          The list of device traits is treated as an OR filter. By default, all devices except for devices
+          that only has the usb trait are enumerated and listed.
+          
+          List of available device traits:
+          boardController Boardcontroller configuration
+          broken          Indicates a broken device
+          devkit          Device is a Nordic Semiconductor development kit
+          jlink           J-Link probes
+          mcuBoot         Device supports MCUboot
+--
+          `nrfutil device` uses plugins to enumerate devices and apply device operations. The `--traits`
+          option activates only the plugins that control the specified traits. Some trait combinations in
+          `--traits` might therefore make some operations or trait annotations unavailable for devices that
+          should have supported these operations or traits.
+
+      --remote-jlink <REMOTE_JLINK_PROBES>
+          Select one or more remote J-Link probes: --remote-jlink
+          HOST_1[:PORT_1],HOST_2[:PORT_2],..,HOST_n[:PORT_n]
+          
+admin@skyguard:~ $ 

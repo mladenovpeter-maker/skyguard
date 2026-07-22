@@ -1,0 +1,18 @@
+admin@skyguard:~ $ grep -r "v2\|v1\|52840\|52832\|pca10059\|fw" ~/nrfutil-env/lib/python3.13/site-packages/btlejack/*.py | grep -i "hex\|chip\|device\|nrf" | head -20
+/home/admin/nrfutil-env/lib/python3.13/site-packages/btlejack/__init__.py:        fw_v1_path = os.path.join(_dir, "data", "btlejack-fw-v1.hex")
+/home/admin/nrfutil-env/lib/python3.13/site-packages/btlejack/__init__.py:        fw_v2_path = os.path.join(_dir, "data", "btlejack-fw-v2.hex")
+/home/admin/nrfutil-env/lib/python3.13/site-packages/btlejack/__init__.py:        supported_fw_versions = {
+/home/admin/nrfutil-env/lib/python3.13/site-packages/btlejack/__init__.py:            234: fw_v1_path,
+/home/admin/nrfutil-env/lib/python3.13/site-packages/btlejack/__init__.py:            241: fw_v1_path,
+/home/admin/nrfutil-env/lib/python3.13/site-packages/btlejack/__init__.py:            249: fw_v1_path,
+/home/admin/nrfutil-env/lib/python3.13/site-packages/btlejack/__init__.py:            253: fw_v1_path,
+/home/admin/nrfutil-env/lib/python3.13/site-packages/btlejack/__init__.py:            255: fw_v2_path,
+/home/admin/nrfutil-env/lib/python3.13/site-packages/btlejack/__init__.py:            256: fw_v2_path,
+/home/admin/nrfutil-env/lib/python3.13/site-packages/btlejack/__init__.py:            257: fw_v2_path
+/home/admin/nrfutil-env/lib/python3.13/site-packages/btlejack/__init__.py:                        if firmware_version > 0 and firmware_version in supported_fw_versions:
+/home/admin/nrfutil-env/lib/python3.13/site-packages/btlejack/__init__.py:                                volume.decode('ascii'), os.path.basename(supported_fw_versions[firmware_version])
+/home/admin/nrfutil-env/lib/python3.13/site-packages/btlejack/__init__.py:                            path = os.path.join(volume.decode('ascii'),'fw.hex')
+/home/admin/nrfutil-env/lib/python3.13/site-packages/btlejack/__init__.py:                            fw = open(supported_fw_versions[firmware_version],'r').read()
+/home/admin/nrfutil-env/lib/python3.13/site-packages/btlejack/__init__.py:                                output.write(fw.encode('ascii'))
+/home/admin/nrfutil-env/lib/python3.13/site-packages/btlejack/ui.py:            print(' > Sniffer #%d: fw version %d.%d' % (i, version[0], version[1]))
+admin@skyguard:~ $ 

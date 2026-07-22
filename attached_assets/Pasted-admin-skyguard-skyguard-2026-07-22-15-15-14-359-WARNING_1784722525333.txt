@@ -1,0 +1,19 @@
+admin@skyguard:~/skyguard $ 2026-07-22 15:15:14,359 [WARNING] Sysinfo POST 401
+
+admin@skyguard:~/skyguard $ sudo kill $(pgrep -f hackrf-bridge) 2>/dev/null; sudo systemctl start skyguard-hackrf-bridge && sleep 3 && sudo systemctl status skyguard-hackrf-bridge | grep -E "Active|Main PID" && sudo journalctl -u skyguard-hackrf-bridge -n 10 --no-pager
+Terminated
+[1]+  Exit 143                sudo kill $(pgrep -f hackrf-bridge) && sleep 2 && SKYGUARD_API_BASE=http://192.168.100.224:3001 SKYGUARD_DEVICE_KEY=sg_a637f2e7a490e894860a60f34e75b058831c5d949de666fb BLE_PORT=/dev/ttyACM0 NRFUTIL_PATH=/home/admin/nrfutil7 ~/nrfutil-env/bin/python3 ~/skyguard/hardware/hackrf-bridge/bridge.py  (wd: ~)
+(wd now: ~/skyguard)
+     Active: active (running) since Wed 2026-07-22 15:15:15 EEST; 3s ago
+   Main PID: 4018 (python3)
+Jul 22 15:15:15 skyguard systemd[1]: skyguard-hackrf-bridge.service: Scheduled restart job immediately on client request, restart counter is at 67.
+Jul 22 15:15:15 skyguard systemd[1]: Started skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+Jul 22 15:15:16 skyguard python3[4018]: 2026-07-22 15:15:16,312 [INFO] Loaded 10 frequency bands from /home/admin/skyguard/hardware/hackrf-bridge/frequencies.json
+Jul 22 15:15:16 skyguard python3[4018]: 2026-07-22 15:15:16,313 [INFO] Loaded 15 drone signatures from /home/admin/skyguard/hardware/hackrf-bridge/drone_signatures.json
+Jul 22 15:15:16 skyguard python3[4018]: 2026-07-22 15:15:16,318 [INFO] SkyGuard HackRF Bridge starting.
+Jul 22 15:15:16 skyguard python3[4018]: 2026-07-22 15:15:16,319 [INFO] WebSocket server on ws://0.0.0.0:8765
+Jul 22 15:15:16 skyguard python3[4018]: 2026-07-22 15:15:16,319 [INFO] Posting RF alerts to http://192.168.100.224:3001/api/rf-alerts
+Jul 22 15:15:16 skyguard python3[4018]: 2026-07-22 15:15:16,320 [INFO] Alert threshold: -50 dBm  |  Warning: -60 dBm
+Jul 22 15:15:16 skyguard python3[4018]: 2026-07-22 15:15:16,383 [INFO] server listening on 0.0.0.0:8765
+Jul 22 15:15:16 skyguard python3[4018]: 2026-07-22 15:15:16,384 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz
+admin@skyguard:~/skyguard $ 

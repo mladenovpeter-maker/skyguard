@@ -52,6 +52,36 @@ router.post("/rf-alerts", requireDeviceKey, async (req, res): Promise<void> => {
   res.status(201).json(row);
 });
 
+/** POST /rf-alerts/:id/label — operator labels an alert as drone/wifi/other for ML training */
+router.post("/rf-alerts/:id/label", requireAuth, async (req, res): Promise<void> => {
+  const id = parseInt(req.params["id"] ?? "");
+  const label = req.body?.label;
+  if (isNaN(id) || !["drone", "wifi", "other"].includes(label)) {
+    res.status(400).json({ error: "label must be drone | wifi | other" });
+    return;
+  }
+  const { eq } = await import("drizzle-orm");
+  const [row] = await db
+    .update(rfAlertsTable)
+    .set({ label })
+    .where(eq(rfAlertsTable.id, id))
+    .returning();
+  if (!row) { res.status(404).json({ error: "not found" }); return; }
+  res.json(row);
+});
+
+/** GET /rf-alerts/training-data — labeled examples for ML training */
+router.get("/rf-alerts/training-data", requireAuth, async (_req, res): Promise<void> => {
+  const { isNotNull } = await import("drizzle-orm");
+  const rows = await db
+    .select()
+    .from(rfAlertsTable)
+    .where(isNotNull(rfAlertsTable.label))
+    .orderBy(desc(rfAlertsTable.timestamp))
+    .limit(5000);
+  res.json(rows);
+});
+
 /** GET /rf-alerts/recent — last 10 minutes of alerts for the UI */
 router.get("/rf-alerts/recent", requireAuth, async (_req, res): Promise<void> => {
   const cutoff = new Date(Date.now() - RECENT_WINDOW_MS);

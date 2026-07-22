@@ -1,0 +1,14 @@
+[Unit]
+Description=SkyGuard nRF52840 BLE Remote ID Sniffer Bridge
+After=network.target
+
+[Service]
+User=admin
+WorkingDirectory=/home/admin
+EnvironmentFile=/home/admin/skyguard/hardware/nrf-sniffer-bridge/.env
+ExecStart=/home/admin/nrfutil-env/bin/python3 /home/admin/skyguard/hardware/nrf-sniffer-bridge/bridge.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

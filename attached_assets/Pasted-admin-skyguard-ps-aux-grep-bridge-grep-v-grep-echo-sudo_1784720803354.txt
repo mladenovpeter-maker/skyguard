@@ -1,0 +1,24 @@
+admin@skyguard:~ $ ps aux | grep bridge | grep -v grep && echo "---" && sudo journalctl -u skyguard-hackrf-bridge --no-pager -n 20 2>/dev/null || grep -r "hackrf" /etc/systemd/system/ 2>/dev/null | head -5
+root         807 87.1  6.6  73168 61660 ?        Rs   12:58  94:29 /usr/bin/python3 /home/admin/skyguard/hardware/hackrf-bridge/bridge.py
+---
+Jul 22 14:38:50 skyguard python3[807]: 2026-07-22 14:38:50,542 [INFO] Suppressed bands: none
+Jul 22 14:39:22 skyguard python3[807]: 2026-07-22 14:39:22,296 [INFO] RF ALERT  DJI / FPV 2.4 GHz  -28.1 dBm @ 2458.5 MHz  (+35.1 dB baseline)  [DJI Mini 2 / Mini SE, DJI Mini 3 / Mini 3 Pro]
+Jul 22 14:39:48 skyguard python3[807]: 2026-07-22 14:39:48,198 [INFO] RF ALERT  RC 868 MHz  -40.2 dBm @ 868.5 MHz  (+26.9 dB baseline)  [FPV Racing (ExpressLRS), FPV Racing (TBS Crossfire)]
+Jul 22 14:39:51 skyguard python3[807]: 2026-07-22 14:39:51,002 [INFO] Suppressed bands: none
+Jul 22 14:40:51 skyguard python3[807]: 2026-07-22 14:40:51,510 [INFO] Suppressed bands: none
+Jul 22 14:41:34 skyguard python3[807]: 2026-07-22 14:41:34,924 [INFO] RF ALERT  DJI / FPV 2.4 GHz  -29.9 dBm @ 2460.5 MHz  (+33.7 dB baseline)  [DJI Mini 2 / Mini SE, DJI Mini 3 / Mini 3 Pro]
+Jul 22 14:41:52 skyguard python3[807]: 2026-07-22 14:41:52,096 [INFO] Suppressed bands: none
+Jul 22 14:42:19 skyguard python3[807]: 2026-07-22 14:42:19,780 [INFO] RF ALERT  DJI / FPV 2.4 GHz  -29.7 dBm @ 2460.3 MHz  (+34.8 dB baseline)  [DJI Mini 2 / Mini SE, DJI Mini 3 / Mini 3 Pro]
+Jul 22 14:42:52 skyguard python3[807]: 2026-07-22 14:42:52,880 [INFO] Suppressed bands: none
+Jul 22 14:43:03 skyguard python3[807]: 2026-07-22 14:43:03,189 [INFO] RF ALERT  DJI / FPV 2.4 GHz  -26.4 dBm @ 2458.8 MHz  (+37.4 dB baseline)  [DJI Mini 2 / Mini SE, DJI Mini 3 / Mini 3 Pro]
+Jul 22 14:43:49 skyguard python3[807]: 2026-07-22 14:43:49,081 [INFO] RF ALERT  RC 868 MHz  -39.7 dBm @ 868.0 MHz  (+26.9 dB baseline)  [FPV Racing (ExpressLRS), FPV Racing (TBS Crossfire)]
+Jul 22 14:43:50 skyguard python3[807]: 2026-07-22 14:43:50,669 [INFO] RF ALERT  DJI / FPV 2.4 GHz  -15.9 dBm @ 2459.3 MHz  (+47.6 dB baseline)  [DJI Mini 2 / Mini SE, DJI Mini 3 / Mini 3 Pro]
+Jul 22 14:43:53 skyguard python3[807]: 2026-07-22 14:43:53,319 [INFO] Suppressed bands: none
+Jul 22 14:44:20 skyguard python3[807]: 2026-07-22 14:44:20,670 [INFO] RF ALERT  RC 868 MHz  -40.7 dBm @ 868.4 MHz  (+25.8 dB baseline)  [FPV Racing (ExpressLRS), FPV Racing (TBS Crossfire)]
+Jul 22 14:44:46 skyguard python3[807]: 2026-07-22 14:44:46,481 [INFO] RF ALERT  DJI / FPV 2.4 GHz  -22.2 dBm @ 2467.5 MHz  (+41.6 dB baseline)  [DJI Mini 2 / Mini SE, DJI Mini 3 / Mini 3 Pro]
+Jul 22 14:44:53 skyguard python3[807]: 2026-07-22 14:44:53,601 [INFO] Suppressed bands: none
+Jul 22 14:45:47 skyguard python3[807]: 2026-07-22 14:45:47,517 [INFO] RF ALERT  DJI / FPV 2.4 GHz  -26.6 dBm @ 2459.2 MHz  (+36.9 dB baseline)  [DJI Mini 2 / Mini SE, DJI Mini 3 / Mini 3 Pro]
+Jul 22 14:45:54 skyguard python3[807]: 2026-07-22 14:45:54,209 [INFO] Suppressed bands: none
+Jul 22 14:46:01 skyguard python3[807]: 2026-07-22 14:46:01,323 [INFO] RF ALERT  RC 868 MHz  -41.5 dBm @ 868.0 MHz  (+25.6 dB baseline)  [FPV Racing (ExpressLRS), FPV Racing (TBS Crossfire)]
+Jul 22 14:46:18 skyguard python3[807]: 2026-07-22 14:46:18,020 [INFO] RF ALERT  DJI / FPV 2.4 GHz  -29.2 dBm @ 2458.8 MHz  (+34.7 dB baseline)  [DJI Mini 2 / Mini SE, DJI Mini 3 / Mini 3 Pro]
+admin@skyguard:~ $ 

@@ -7,7 +7,8 @@ Type=simple
 User=root
 WorkingDirectory=/home/admin/skyguard/hardware/hackrf-bridge
 EnvironmentFile=/home/admin/skyguard/hardware/hackrf-bridge/.env
-ExecStart=/home/admin/hackrf_sweep/venv/bin/python3 /home/admin/skyguard/hardware/hackrf-bridge/bridge.py
+ExecStartPre=/usr/bin/python3 -c "import fcntl,os,subprocess; lines=[l for l in subprocess.check_output('lsusb').decode().split('\n') if '1d50:6089' in l]; p='/dev/bus/usb/{}/{}'.format(lines[0].split()[1],lines[0].split()[3].rstrip(':')) if lines else None; p and fcntl.ioctl(open(p,'wb'),21780,0)"
+ExecStart=/home/admin/nrfutil-env/bin/python3 /home/admin/skyguard/hardware/hackrf-bridge/bridge.py
 Restart=always
 RestartSec=5
 StandardOutput=journal

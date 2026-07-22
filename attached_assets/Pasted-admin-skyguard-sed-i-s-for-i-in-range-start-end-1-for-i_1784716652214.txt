@@ -1,0 +1,73 @@
+admin@skyguard:~ $ sed -i 's/for i in range(start, end+1)/for i in range(int(start), int(end)+1)/g' ~/nrfutil-env/lib/python3.13/site-packages/nordicsemi/dfu/intelhex/__init__.py && ~/nrfutil-env/bin/nrfutil pkg generate --application ~/nrfutil-env/lib/python3.13/site-packages/btlejack/data/btlejack-fw-v2.hex --application-version 1 --hw-version 52 --sd-req 0x00 --debug-mode btlejack-fw-v2.zip && echo "УСПЕХ" || echo "ПАК ГЪРМИ"
+
+|===============================================================|
+|##      ##    ###    ########  ##    ## #### ##    ##  ######  |
+|##  ##  ##   ## ##   ##     ## ###   ##  ##  ###   ## ##    ## |
+|##  ##  ##  ##   ##  ##     ## ####  ##  ##  ####  ## ##       |
+|##  ##  ## ##     ## ########  ## ## ##  ##  ## ## ## ##   ####|
+|##  ##  ## ######### ##   ##   ##  ####  ##  ##  #### ##    ## |
+|##  ##  ## ##     ## ##    ##  ##   ###  ##  ##   ### ##    ## |
+| ###  ###  ##     ## ##     ## ##    ## #### ##    ##  ######  |
+|===============================================================|
+|You are generating a package with the debug bit enabled in the |
+|init packet. This is only compatible with a debug bootloader   |
+|and is not suitable for production.                            |
+|===============================================================|
+
+
+|===============================================================|
+|##      ##    ###    ########  ##    ## #### ##    ##  ######  |
+|##  ##  ##   ## ##   ##     ## ###   ##  ##  ###   ## ##    ## |
+|##  ##  ##  ##   ##  ##     ## ####  ##  ##  ####  ## ##       |
+|##  ##  ## ##     ## ########  ## ## ##  ##  ## ## ## ##   ####|
+|##  ##  ## ######### ##   ##   ##  ####  ##  ##  #### ##    ## |
+|##  ##  ## ##     ## ##    ##  ##   ###  ##  ##   ### ##    ## |
+| ###  ###  ##     ## ##     ## ##    ## #### ##    ##  ######  |
+|===============================================================|
+|You are not providing a signature key, which means the DFU     |
+|files will not be signed, and are vulnerable to tampering.     |
+|This is only compatible with a signature-less bootloader and is|
+|not suitable for production environments.                      |
+|===============================================================|
+
+Traceback (most recent call last):
+  File "/home/admin/nrfutil-env/bin/nrfutil", line 8, in <module>
+    sys.exit(cli())
+             ~~~^^
+  File "/home/admin/nrfutil-env/lib/python3.13/site-packages/click/core.py", line 829, in __call__
+    return self.main(*args, **kwargs)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/admin/nrfutil-env/lib/python3.13/site-packages/click/core.py", line 782, in main
+    rv = self.invoke(ctx)
+  File "/home/admin/nrfutil-env/lib/python3.13/site-packages/click/core.py", line 1259, in invoke
+    return _process_result(sub_ctx.command.invoke(sub_ctx))
+                           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/admin/nrfutil-env/lib/python3.13/site-packages/click/core.py", line 1259, in invoke
+    return _process_result(sub_ctx.command.invoke(sub_ctx))
+                           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/admin/nrfutil-env/lib/python3.13/site-packages/click/core.py", line 1066, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/admin/nrfutil-env/lib/python3.13/site-packages/click/core.py", line 610, in invoke
+    return callback(*args, **kwargs)
+  File "/home/admin/nrfutil-env/lib/python3.13/site-packages/nordicsemi/__main__.py", line 867, in generate
+    package.generate_package(zipfile_path)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/home/admin/nrfutil-env/lib/python3.13/site-packages/nordicsemi/dfu/package.py", line 407, in generate_package
+    Package.normalize_firmware_to_bin(self.work_dir, firmware_data[FirmwareKeys.FIRMWARE_FILENAME])
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/admin/nrfutil-env/lib/python3.13/site-packages/nordicsemi/dfu/package.py", line 606, in normalize_firmware_to_bin
+    temp.tobinfile(new_filepath)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/home/admin/nrfutil-env/lib/python3.13/site-packages/nordicsemi/dfu/nrfhex.py", line 188, in tobinfile
+    super(nRFHex, self).tobinfile(fobj, start=start_address, size=size)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/admin/nrfutil-env/lib/python3.13/site-packages/nordicsemi/dfu/intelhex/__init__.py", line 403, in tobinfile
+    fobj.write(self._tobinstr_really(start, end, pad, size))
+               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/admin/nrfutil-env/lib/python3.13/site-packages/nordicsemi/dfu/intelhex/__init__.py", line 375, in _tobinstr_really
+    return asstr(self._tobinarray_really(start, end, pad, size).tostring())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'array.array' object has no attribute 'tostring'
+ПАК ГЪРМИ
+admin@skyguard:~ $ 

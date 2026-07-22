@@ -4,14 +4,14 @@ description: How the HackRF bridge WebSocket is exposed to the browser — nginx
 ---
 
 ## Rule
-Browser connects to `ws://192.168.100.224:8090/hackrf-ws` (nginx on Linux server), NOT directly to `ws://192.168.100.237:8765` (Pi).
+Browser connects to `ws://192.168.100.224:8090/hackrf-ws` (nginx on Linux server), NOT directly to `ws://192.168.100.252:8765` (Pi). Pi static IP is 192.168.100.252.
 
 **Why:** Browser on Mac LAN could not connect directly to Pi port 8765 (blocked/filtered on the home network). Proxying through nginx on the Linux server (which CAN reach the Pi) solves this.
 
 ## nginx location block (in /etc/nginx/sites-enabled/skyguard)
 ```nginx
 location /hackrf-ws {
-    proxy_pass http://192.168.100.237:8765;
+    proxy_pass http://192.168.100.252:8765;
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection "upgrade";

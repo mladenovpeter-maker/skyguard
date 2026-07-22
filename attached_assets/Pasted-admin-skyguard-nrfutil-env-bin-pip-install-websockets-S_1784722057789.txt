@@ -1,0 +1,37 @@
+admin@skyguard:~ $ ~/nrfutil-env/bin/pip install websockets && SKYGUARD_API_BASE=http://192.168.100.224:3001 SKYGUARD_DEVICE_KEY=sg_a637f2e7a490e894860a60f34e75b058831c5d949de666fb BLE_PORT=/dev/ttyACM0 NRFUTIL_PATH=/home/admin/nrfutil7 ~/nrfutil-env/bin/python3 ~/skyguard/hardware/hackrf-bridge/bridge.py &
+[1] 3521
+admin@skyguard:~ $ Looking in indexes: https://pypi.org/simple, https://www.piwheels.org/simple
+Collecting websockets
+  Downloading websockets-16.1.1-cp313-cp313-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl.metadata (6.8 kB)
+Downloading websockets-16.1.1-cp313-cp313-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (188 kB)
+Installing collected packages: websockets
+Successfully installed websockets-16.1.1
+2026-07-22 15:07:30,144 [INFO] Loaded 10 frequency bands from /home/admin/skyguard/hardware/hackrf-bridge/frequencies.json
+2026-07-22 15:07:30,145 [INFO] Loaded 15 drone signatures from /home/admin/skyguard/hardware/hackrf-bridge/drone_signatures.json
+2026-07-22 15:07:30,150 [INFO] SkyGuard HackRF Bridge starting.
+2026-07-22 15:07:30,150 [INFO] WebSocket server on ws://0.0.0.0:8765
+2026-07-22 15:07:30,150 [INFO] Posting RF alerts to http://192.168.100.224:3001/api/rf-alerts
+2026-07-22 15:07:30,151 [INFO] Alert threshold: -50 dBm  |  Warning: -60 dBm
+Traceback (most recent call last):
+  File "/home/admin/skyguard/hardware/hackrf-bridge/bridge.py", line 509, in <module>
+    asyncio.run(main())
+    ~~~~~~~~~~~^^^^^^^^
+  File "/usr/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.13/asyncio/base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/home/admin/skyguard/hardware/hackrf-bridge/bridge.py", line 497, in main
+    ws_server = await websockets.serve(ws_handler, "0.0.0.0", WS_PORT)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/admin/nrfutil-env/lib/python3.13/site-packages/websockets/asyncio/server.py", line 847, in __await_impl__
+    server = await self.create_server
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/asyncio/base_events.py", line 1622, in create_server
+    raise OSError(err.errno, msg) from None
+OSError: [Errno 98] error while attempting to bind on address ('0.0.0.0', 8765): [errno 98] address already in use
+

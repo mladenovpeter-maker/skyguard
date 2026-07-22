@@ -131,8 +131,18 @@ WS_PORT          = int(os.environ.get("WS_PORT", "8765"))
 API_BASE     = os.environ.get("SKYGUARD_API_BASE", "").rstrip("/")
 DEVICE_KEY   = os.environ.get("SKYGUARD_DEVICE_KEY", "")
 ALERT_COOLDOWN_S = float(os.environ.get("ALERT_COOLDOWN_S", "30"))
+CONFIRM_SWEEPS   = int(os.environ.get("CONFIRM_SWEEPS", "3"))  # require N consecutive above-threshold sweeps before alerting (filters WiFi bursts)
 FREQ_JSON        = os.environ.get("FREQUENCIES_JSON", str(Path(__file__).parent / "frequencies.json"))
 SIGNATURES_JSON  = os.environ.get("SIGNATURES_JSON",  str(Path(__file__).parent / "drone_signatures.json"))
+
+# Optional RF fingerprinting model — loaded if present
+try:
+    sys.path.insert(0, str(Path(__file__).parent.parent / "rf-fingerprinting"))
+    from classify import load_model, classify_band as rf_classify_band
+    _rf_model_available = load_model()
+except Exception:
+    _rf_model_available = False
+    def rf_classify_band(*_a, **_kw): return None  # type: ignore
 
 if not API_BASE or not DEVICE_KEY:
     log.error("SKYGUARD_API_BASE and SKYGUARD_DEVICE_KEY must be set.")
@@ -202,6 +212,8 @@ _last_alert: dict[str, float] = {}
 _band_peaks: dict[str, deque] = {b["id"]: deque(maxlen=BASELINE_SWEEPS) for b in BANDS}
 # Computed baseline dBm per band (None = not yet established)
 _baseline: dict[str, float] = {}
+# Consecutive above-threshold sweep counter per band (WiFi bursts reset to 0; drones accumulate)
+_band_consecutive_hits: dict[str, int] = {}
 # Suppressed bands (user-defined "own" devices) — refreshed periodically
 _suppressed_bands: set[str] = set()
 _last_suppressed_refresh: float = 0
@@ -302,7 +314,13 @@ def check_bands(bins: list[dict]) -> None:
             effective_threshold = band_static_threshold
 
         if peak["dbm"] < effective_threshold:
+            _band_consecutive_hits[band["id"]] = 0  # reset streak
             continue  # below threshold — ignore
+
+        # Require N consecutive above-threshold sweeps (filters single WiFi bursts)
+        _band_consecutive_hits[band["id"]] = _band_consecutive_hits.get(band["id"], 0) + 1
+        if _band_consecutive_hits[band["id"]] < CONFIRM_SWEEPS:
+            continue  # not sustained enough yet
 
         # Cooldown check
         if now - _last_alert.get(band["id"], 0) < ALERT_COOLDOWN_S:
@@ -312,6 +330,12 @@ def check_bands(bins: list[dict]) -> None:
 
         above_baseline = round(peak["dbm"] - baseline, 1) if baseline is not None else None
         possible_drones = match_signatures(band["id"])
+
+        # Optional RF fingerprinting — suppress if model classifies as wifi
+        rf_label = rf_classify_band(band_bins)
+        if rf_label == "wifi":
+            log.info("RF FINGERPRINT suppressed %s → classified as wifi", band["label"])
+            continue
 
         payload = {
             "bandId":          band["id"],

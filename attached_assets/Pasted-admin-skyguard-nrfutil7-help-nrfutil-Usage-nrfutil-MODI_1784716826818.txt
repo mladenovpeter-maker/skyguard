@@ -1,0 +1,73 @@
+admin@skyguard:~ $ ~/nrfutil7 --help
+nrfutil 
+
+Usage:
+    nrfutil [+MODIFIER] [OPTIONS] [SUBCOMMAND]
+
+Options:
+      --log-level <LOG_LEVEL>
+          Set the maximum log level
+          
+          [env: NRFUTIL_LOG=]
+          [possible values: off, error, warn, info, debug, trace]
+
+      --log-output <LOG_OUTPUT>
+          Possible values:
+          - file:   Log to file. Logs are written to file in
+            {USER_HOME}/.nrfutil/logs or {NRFUTIL_HOME}/logs if the environment
+            variable NRFUTIL_HOME is defined
+          - stdout: Log to stdout. Can be formatted to JSON
+
+      --json
+          Print output in a JSON Lines format
+
+      --json-pretty
+          Print output as formatted JSON
+
+      --skip-overhead
+          Skip all message overhead when in JSON output mode, outputting only
+          the data part of "info" messages and ignoring the rest
+
+      --changelog
+          Print the latest changelog entry
+
+      --changelog-full
+          Print the full changelog
+
+  -V, --version
+          
+
+      --help-extended
+          Show comprehensive documentation
+          
+          See the `help` subcommand for more viewing options.
+
+      --license
+          Show license information for in-built dependencies
+
+      --x-sbom
+          (Experimental) Output a cyclone-dx software bill of materials
+
+      --detect-proxy
+          Invoke libproxy's 'proxy' utility program to retrieve proxy server
+          info and use it.
+          
+          nrfutil will look for the proxy utility in the system PATH; if not
+          present there, it will look in $HOME/.nrfutil/proxy_utils/
+
+  -h, --help
+          Print help (see a summary with '-h')
+
+
+Built-in nrfutil commands (see installed commands with `list`):
+  help             Show comprehensive documentation
+  install          Download and install nrfutil commands
+  upgrade          Upgrade nrfutil commands to the latest version
+  uninstall        Uninstall nrfutil commands [aliases: remove]
+  prepare-offline  Prepare local package and resource repositories for offline
+                   installs of nrfutil commands
+  search           Search for installable nrfutil commands in the package index
+  list             List installed nrfutil commands
+  self-upgrade     Upgrades the nrfutil core functionality to the latest version
+  config           Subcommands to interact with the main nrfutil configuration
+admin@skyguard:~ $ 
