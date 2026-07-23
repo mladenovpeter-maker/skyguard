@@ -58,6 +58,8 @@ function useSpectrumWs() {
   const wsRef = useRef<WebSocket | null>(null);
 
   const connect = useCallback(() => {
+    const old = wsRef.current;
+    if (old) { old.onclose = null; old.onerror = null; old.close(); }
     const ws = new WebSocket(WS_URL);
     wsRef.current = ws;
     ws.onopen    = () => setStatus("connected");

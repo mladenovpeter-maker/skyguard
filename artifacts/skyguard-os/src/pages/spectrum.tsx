@@ -450,6 +450,8 @@ export default function Spectrum() {
   });
 
   const connect = useCallback(() => {
+    const old = wsRef.current;
+    if (old) { old.onclose = null; old.onerror = null; old.close(); }
     const ws = new WebSocket(WS_URL);
     wsRef.current = ws;
 

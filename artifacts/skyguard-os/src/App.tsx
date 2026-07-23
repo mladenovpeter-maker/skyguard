@@ -11,6 +11,7 @@ import Settings from '@/pages/settings';
 import Admin from '@/pages/admin';
 import Spectrum from '@/pages/spectrum';
 import LoginPage from '@/pages/login';
+import LandingPage from '@/pages/landing';
 import { LanguageProvider } from '@/lib/i18n';
 import { ThemeProvider } from 'next-themes';
 import { AuthProvider, useAuth } from '@/lib/auth';
@@ -35,11 +36,11 @@ function AdminPage({ component: Component }: { component: () => ReactElement }) 
   return <Shell><Component /></Shell>;
 }
 
-/** Root: show login or dashboard depending on auth state. */
+/** Root: landing page for guests, radar for logged-in users. */
 function HomeGate() {
   const { user, isLoaded } = useAuth();
   if (!isLoaded) return null;
-  if (!user) return <LoginPage />;
+  if (!user) return <LandingPage />;
   return <Shell><Home /></Shell>;
 }
 
@@ -47,6 +48,7 @@ function AppRoutes() {
   return (
     <Switch>
       <Route path="/" component={HomeGate} />
+      <Route path="/login" component={LoginPage} />
       <Route path="/history">
         <ProtectedPage component={History} />
       </Route>
