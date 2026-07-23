@@ -5,3 +5,4 @@
 - [HackRF sweep architecture + RF Fingerprinting roadmap](hackrf-sweep-vs-droneID.md) — bridge.py използва hackrf_sweep (не gr-DroneID); публични dataset-и съществуват; dataset-ите да се пазят на Linux сървъра, не на Pi.
 - [RF Fingerprinting статус](rf-datasets-todo.md) — модел натрениран (Jul 22), deploy-нат на Pi, зарежда се при старт на hackrf-bridge. ЗАВЪРШЕНО.
 - [Linux server deploy law](linux-deploy-law.md) — след ВСЯКА промяна по skyguard-os: `git pull && pnpm build && sudo nginx -s reload` на 192.168.100.224. ЗАДЪЛЖИТЕЛНО преди обявяване на задача за завършена.
+- [Linux server git sync quirk](linux-server-git-sync.md) — git pull пропуска Replit edits; прилагай с `sed -i` директно + rebuild. Всички WS URL-и: `wss://` на HTTPS.
