@@ -1,0 +1,39 @@
+tmm@tmm:~/skyguard$ cd ~/skyguard && git pull && cd artifacts/api-server && pnpm run build && sudo systemctl restart skyguard-api
+remote: Enumerating objects: 20, done.
+remote: Counting objects: 100% (20/20), done.
+remote: Compressing objects: 100% (7/7), done.
+remote: Total 14 (delta 7), reused 14 (delta 7), pack-reused 0 (from 0)
+Unpacking objects: 100% (14/14), 5.45 KiB | 1.36 MiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+   ae10eb2..e210803  main       -> origin/main
+Updating ae10eb2..e210803
+Fast-forward
+ artifacts/api-server/src/app.ts                                                                  |   2 +-
+ attached_assets/Pasted-tmm-tmm-skyguard-artifacts-api-server-cd-skyguard-pnpm-_1784817976164.txt |  68 ++++++++++++++++++++++++
+ attached_assets/Pasted-tmm-tmm-skyguard-git-checkout-artifacts-api-server-dist_1784817933578.txt | 172 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 241 insertions(+), 1 deletion(-)
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-artifacts-api-server-cd-skyguard-pnpm-_1784817976164.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-git-checkout-artifacts-api-server-dist_1784817933578.txt
+
+> @workspace/api-server@0.0.0 build /home/tmm/skyguard/artifacts/api-server
+> node ./build.mjs
+
+
+  dist/index.mjs                       2.3mb ⚠️
+  dist/pino-worker.mjs               153.4kb
+  dist/pino-file.mjs                 142.1kb
+  dist/pino-pretty.mjs               114.4kb
+  dist/thread-stream-worker.mjs        7.3kb
+  dist/index.mjs.map                   3.9mb
+  dist/pino-worker.mjs.map           256.9kb
+  dist/pino-file.mjs.map             229.0kb
+  dist/pino-pretty.mjs.map           203.6kb
+  dist/thread-stream-worker.mjs.map   12.0kb
+
+⚡ Done in 182ms
+tmm@tmm:~/skyguard/artifacts/api-server$ 
+tmm@tmm:~/skyguard/artifacts/api-server$ 
+tmm@tmm:~/skyguard/artifacts/api-server$ curl -s -X POST http://localhost:3001/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"Volareto78"}' | cat
+tmm@tmm:~/skyguard/artifacts/api-server$ 
