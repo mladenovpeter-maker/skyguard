@@ -1,31 +1,29 @@
 #!/usr/bin/env python3
 """
-SkyGuard OS — DJI Wi-Fi DroneID Scanner (runs on the Raspberry Pi)
+SkyGuard OS — Wi-Fi Passive Intelligence Scanner v2
 
-Puts the WiFi USB adapter in monitor mode and captures DJI DroneID
-broadcast frames (802.11 vendor-specific IE, OUI 26:37:12 / 60:60:1F).
+Monitor mode scanner with three detection layers:
 
-DJI Mini 2, Mini 3, Mavic 3, Air 2S etc. all use this protocol.
+  Layer 1 — DJI DroneID frames (beacon / probe-response with vendor IE)
+             → POST /api/detections  (full GPS telemetry when available)
 
-Detected drones are posted to the SkyGuard API as detections.
+  Layer 2 — DJI MAC OUI frames (any management frame from known DJI hardware)
+             → POST /api/rf-alerts   (drone or RC controller in range, no GPS)
 
-Requires:
-  sudo apt install -y python3-scapy iw
-  pip3 install requests
+  Layer 3 — Probe requests from unknown devices
+             → POST /api/ambient     (potential drone operator fingerprinting)
+
+CPU fix: BPF filter "type mgt" cuts Python-side packet processing by ~90%
+         because only management frames reach Python, not data/control.
+Channel hop interval raised to 1.5s (operators don't vanish in 0.3s).
 
 Environment variables:
   SKYGUARD_API_BASE     e.g. http://192.168.100.224:3001
   SKYGUARD_DEVICE_KEY   sg_... key from SkyGuard Admin
-  WIFI_IFACE            WiFi interface to use, default: wlan1
-  HOP_INTERVAL_S        Channel hop interval, default: 0.3
-  DEDUPE_S              Seconds between duplicate posts, default: 5
-
-Run (must be root for monitor mode):
-  sudo -E python3 scanner.py
-
-Always-on (systemd):
-  sudo cp skyguard-dji-wifi-scanner.service /etc/systemd/system/
-  sudo systemctl enable --now skyguard-dji-wifi-scanner.service
+  WIFI_IFACE            default: wlan1
+  HOP_INTERVAL_S        default: 1.5
+  DEDUPE_S              seconds between duplicate posts, default: 10
+  UNKNOWN_DEDUPE_S      seconds between duplicate unknown-probe posts, default: 30
 """
 
 import logging
@@ -36,7 +34,6 @@ import subprocess
 import sys
 import threading
 import time
-from datetime import datetime, timezone
 
 import requests
 
@@ -48,37 +45,62 @@ logging.basicConfig(
     level=os.environ.get("LOG_LEVEL", "INFO"),
     format="%(asctime)s [%(levelname)s] %(message)s",
 )
-log = logging.getLogger("skyguard-dji-wifi")
+log = logging.getLogger("skyguard-wifi")
 
-API_BASE     = os.environ.get("SKYGUARD_API_BASE", "").rstrip("/")
-DEVICE_KEY   = os.environ.get("SKYGUARD_DEVICE_KEY", "")
-WIFI_IFACE   = os.environ.get("WIFI_IFACE", "wlan1")
-HOP_INTERVAL = float(os.environ.get("HOP_INTERVAL_S", "0.3"))
-DEDUPE_S     = float(os.environ.get("DEDUPE_S", "5"))
+API_BASE         = os.environ.get("SKYGUARD_API_BASE", "").rstrip("/")
+DEVICE_KEY       = os.environ.get("SKYGUARD_DEVICE_KEY", "")
+WIFI_IFACE       = os.environ.get("WIFI_IFACE", "wlan1")
+HOP_INTERVAL     = float(os.environ.get("HOP_INTERVAL_S", "1.5"))
+DEDUPE_S         = float(os.environ.get("DEDUPE_S", "10"))
+UNKNOWN_DEDUPE_S = float(os.environ.get("UNKNOWN_DEDUPE_S", "30"))
 
 if not API_BASE or not DEVICE_KEY:
     log.error("SKYGUARD_API_BASE and SKYGUARD_DEVICE_KEY must be set.")
     sys.exit(1)
 
 DETECTIONS_URL = f"{API_BASE}/api/detections"
-AUTH_HEADERS   = {
+AMBIENT_URL    = f"{API_BASE}/api/ambient"
+RF_ALERTS_URL  = f"{API_BASE}/api/rf-alerts"
+
+AUTH_HEADERS = {
     "Authorization": f"Bearer {DEVICE_KEY}",
     "Content-Type":  "application/json",
 }
 
-# DJI DroneID Wi-Fi OUI values (vendor-specific IE, element ID 221)
-DJI_OUIS = {
-    bytes([0x26, 0x37, 0x12]),   # DJI DroneID v1/v2 (most common)
-    bytes([0x60, 0x60, 0x1F]),   # DJI Aeroscope (some firmware)
-    bytes([0x00, 0x26, 0x04]),   # older DJI
+# ---------------------------------------------------------------------------
+# DJI identification tables
+# ---------------------------------------------------------------------------
+
+# OUIs found in 802.11 vendor-specific Information Elements (IE 221)
+# These identify DJI DroneID broadcast frames
+DJI_IE_OUIS = {
+    bytes([0x26, 0x37, 0x12]),   # DJI DroneID v1/v2 — most common
+    bytes([0x60, 0x60, 0x1F]),   # DJI AeroScope / some firmware
+    bytes([0x00, 0x26, 0x04]),   # older DJI models
 }
 
-# 2.4 GHz channels to hop through (prioritise 1, 6, 11; then fill others)
+# OUIs assigned to DJI hardware MAC addresses (NIC/source MAC)
+# These cover RC controllers, drones in Wi-Fi mode, and companion devices
+DJI_MAC_OUIS = {
+    bytes([0x60, 0x60, 0x1F]),   # DJI Technology Co., Ltd
+    bytes([0x18, 0x49, 0x25]),   # DJI
+    bytes([0x48, 0x1C, 0xB9]),   # DJI RC controller
+    bytes([0x34, 0xD2, 0x62]),   # DJI
+    bytes([0x0C, 0xAE, 0x7D]),   # DJI
+    bytes([0x90, 0x3A, 0xE6]),   # DJI
+    bytes([0x00, 0x0A, 0x14]),   # DJI (older)
+}
+
+# Channels to hop — prioritise 1/6/11 (standard non-overlapping), then the rest
 CHANNELS_2G = [1, 6, 11, 2, 3, 4, 5, 7, 8, 9, 10, 12, 13]
 
-MON_IFACE   = f"{WIFI_IFACE}mon"    # monitor interface name
-_seen: dict[str, float] = {}        # serial → last post time
-_stop = threading.Event()
+MON_IFACE = f"{WIFI_IFACE}mon"
+_stop     = threading.Event()
+
+# Deduplication caches  { key → last_post_monotonic }
+_seen_droneid : dict[str, float] = {}
+_seen_dji_mac : dict[str, float] = {}
+_seen_probes  : dict[str, float] = {}
 
 # ---------------------------------------------------------------------------
 # Monitor mode setup / teardown
@@ -89,24 +111,19 @@ def _run(cmd: list[str], check: bool = True) -> subprocess.CompletedProcess:
 
 
 def setup_monitor() -> bool:
-    """Create a monitor-mode interface; return True on success."""
     global MON_IFACE
-    log.info("Setting up monitor mode on %s → %s", WIFI_IFACE, MON_IFACE)
-
-    # Remove stale monitor iface if present
+    log.info("Setting up monitor mode: %s → %s", WIFI_IFACE, MON_IFACE)
     _run(["iw", "dev", MON_IFACE, "del"], check=False)
 
     try:
-        # Try iw add (preferred, non-destructive)
         _run(["iw", "dev", WIFI_IFACE, "interface", "add", MON_IFACE, "type", "monitor"])
         _run(["ip", "link", "set", MON_IFACE, "up"])
-        log.info("Monitor interface %s up (iw method)", MON_IFACE)
+        log.info("Monitor interface %s ready (virtual iw method)", MON_IFACE)
         return True
     except subprocess.CalledProcessError as e:
-        log.warning("iw add failed (%s); trying direct monitor mode", e.stderr.strip())
+        log.warning("iw add failed (%s) — trying direct mode", e.stderr.strip())
 
     try:
-        # Fallback: put original interface into monitor mode directly
         _run(["ip", "link", "set", WIFI_IFACE, "down"])
         _run(["iw", "dev", WIFI_IFACE, "set", "type", "monitor"])
         _run(["ip", "link", "set", WIFI_IFACE, "up"])
@@ -119,8 +136,7 @@ def setup_monitor() -> bool:
 
 
 def teardown_monitor() -> None:
-    """Remove monitor interface and restore managed mode."""
-    log.info("Tearing down monitor interface %s", MON_IFACE)
+    log.info("Restoring %s to managed mode", MON_IFACE)
     try:
         if MON_IFACE != WIFI_IFACE:
             _run(["iw", "dev", MON_IFACE, "del"], check=False)
@@ -139,39 +155,14 @@ def set_channel(ch: int) -> None:
     )
 
 # ---------------------------------------------------------------------------
-# DJI DroneID parser
+# DJI DroneID IE parser (Layer 1)
 # ---------------------------------------------------------------------------
 
 def _parse_dji_ie(payload: bytes) -> dict | None:
-    """
-    Parse DJI vendor-specific IE payload (after the 3-byte OUI).
-
-    DJI DroneID v2 layout (bytes after OUI+type):
-      0     : sub-type / version
-      1..4  : serial number (4 bytes ASCII or binary)
-      ...
-    GPS fields (v2, offset relative to IE payload start = after OUI):
-      [0]  version nibble
-      [1]  serial[0..3] (4 bytes)
-      [5]  serial cont.
-      GPS lat  : int32 LE at offset 14, unit 1e-7 deg
-      GPS lon  : int32 LE at offset 18, unit 1e-7 deg
-      altitude : uint16 LE at offset 22, (value - 500) / 10 metres
-      height   : uint16 LE at offset 24, value / 10 metres AGL
-      home_lat : int32 LE at offset 26, unit 1e-7 deg
-      home_lon : int32 LE at offset 30, unit 1e-7 deg
-      speed_x  : int16 LE at offset 34, cm/s  → m/s
-      speed_y  : int16 LE at offset 36, cm/s
-      speed_z  : int16 LE at offset 38, cm/s
-      heading  : uint16 LE at offset 40, degrees * 100
-      serial   : bytes 1..10 decoded as ASCII
-    """
-    # Need at least 42 bytes (OUI already stripped by caller)
+    """Parse DJI vendor-specific IE payload (OUI already stripped)."""
     if len(payload) < 42:
         return None
-
     try:
-        # Serial: bytes 1–10 (after OUI, skip byte 0 which is subtype)
         serial_raw = payload[1:10]
         serial = serial_raw.rstrip(b"\x00").decode("ascii", errors="replace").strip()
         if not serial:
@@ -188,102 +179,133 @@ def _parse_dji_ie(payload: bytes) -> dict | None:
         vz       = struct.unpack_from("<h", payload, 38)[0]
         hdg_raw  = struct.unpack_from("<H", payload, 40)[0]
 
-        lat = lat_raw * 1e-7 if lat_raw != 0 else None
-        lon = lon_raw * 1e-7 if lon_raw != 0 else None
-        alt = (alt_raw - 500) / 10.0 if alt_raw not in (0, 0xFFFF) else None
-        agl = agl_raw / 10.0          if agl_raw not in (0, 0xFFFF) else None
-        home_lat = hlat_raw * 1e-7    if hlat_raw != 0 else None
-        home_lon = hlon_raw * 1e-7    if hlon_raw != 0 else None
-        speed_h  = ((vx ** 2 + vy ** 2) ** 0.5) / 100.0   # m/s
-        speed_v  = vz / 100.0
-        heading  = hdg_raw / 100.0 if hdg_raw != 0xFFFF else None
-
         return {
-            "serial":   serial,
-            "lat":      lat,
-            "lng":      lon,
-            "altM":     alt,
-            "aglM":     agl,
-            "homeLat":  home_lat,
-            "homeLng":  home_lon,
-            "speedMs":  round(speed_h, 2),
-            "vSpeedMs": round(speed_v, 2),
-            "headingDeg": heading,
+            "serial":     serial,
+            "lat":        lat_raw * 1e-7  if lat_raw  != 0          else None,
+            "lng":        lon_raw * 1e-7  if lon_raw  != 0          else None,
+            "altM":       (alt_raw - 500) / 10.0 if alt_raw not in (0, 0xFFFF) else None,
+            "aglM":       agl_raw / 10.0          if agl_raw not in (0, 0xFFFF) else None,
+            "homeLat":    hlat_raw * 1e-7 if hlat_raw != 0          else None,
+            "homeLng":    hlon_raw * 1e-7 if hlon_raw != 0          else None,
+            "speedMs":    round(((vx**2 + vy**2) ** 0.5) / 100.0, 2),
+            "vSpeedMs":   round(vz / 100.0, 2),
+            "headingDeg": hdg_raw / 100.0 if hdg_raw != 0xFFFF      else None,
         }
     except struct.error:
         return None
 
 
-def _extract_dji_vendor_ie(packet_bytes: bytes) -> dict | None:
-    """
-    Walk 802.11 tagged parameters looking for DJI vendor-specific IEs.
-    packet_bytes: raw frame bytes starting AFTER the 802.11 fixed header.
-    """
+def _find_dji_ie(tagged_params: bytes) -> dict | None:
+    """Walk 802.11 tagged parameters, return parsed DJI IE or None."""
     offset = 0
-    while offset + 2 <= len(packet_bytes):
-        tag_id  = packet_bytes[offset]
-        tag_len = packet_bytes[offset + 1]
-        if offset + 2 + tag_len > len(packet_bytes):
+    while offset + 2 <= len(tagged_params):
+        tag_id  = tagged_params[offset]
+        tag_len = tagged_params[offset + 1]
+        if offset + 2 + tag_len > len(tagged_params):
             break
-        tag_data = packet_bytes[offset + 2: offset + 2 + tag_len]
+        tag_data = tagged_params[offset + 2: offset + 2 + tag_len]
 
-        if tag_id == 221 and len(tag_data) >= 4:   # Vendor-Specific
-            oui = tag_data[:3]
-            if oui in DJI_OUIS:
-                parsed = _parse_dji_ie(tag_data[3:])   # strip OUI before passing
-                if parsed:
-                    return parsed
+        if tag_id == 221 and len(tag_data) >= 4 and tag_data[:3] in DJI_IE_OUIS:
+            parsed = _parse_dji_ie(tag_data[3:])
+            if parsed:
+                return parsed
 
         offset += 2 + tag_len
     return None
 
 # ---------------------------------------------------------------------------
-# Packet handler
+# MAC helpers
 # ---------------------------------------------------------------------------
 
-def _handle_frame(raw_bytes: bytes, rssi: int | None = None) -> None:
-    """Process one raw 802.11 frame."""
+def _mac_bytes(raw: bytes, offset: int) -> bytes:
+    """Extract 6 MAC bytes at offset."""
+    return raw[offset: offset + 6]
+
+
+def _mac_str(raw: bytes, offset: int) -> str:
+    return ":".join(f"{b:02x}" for b in raw[offset: offset + 6])
+
+
+def _is_dji_mac(mac6: bytes) -> bool:
+    return mac6[:3] in DJI_MAC_OUIS
+
+
+def _is_multicast(mac6: bytes) -> bool:
+    """Broadcast/multicast MACs are not real devices."""
+    return bool(mac6[0] & 0x01)
+
+
+def _is_locally_administered(mac6: bytes) -> bool:
+    """Randomised MACs — less useful for tracking."""
+    return bool(mac6[0] & 0x02)
+
+# ---------------------------------------------------------------------------
+# Frame handler
+# ---------------------------------------------------------------------------
+
+# 802.11 management subtypes we care about
+#   0 = Association Request  (device → AP: operator connecting to drone hotspot)
+#   4 = Probe Request        (device actively searching for networks)
+#   5 = Probe Response       (AP/drone answering a probe)
+#   8 = Beacon               (AP/drone advertising itself)
+
+def _handle_frame(raw_bytes: bytes, rssi: int | None) -> None:
     if len(raw_bytes) < 24:
         return
 
     frame_ctrl = raw_bytes[0] | (raw_bytes[1] << 8)
-    subtype = (frame_ctrl >> 4) & 0xF
     ftype   = (frame_ctrl >> 2) & 0x3
+    subtype = (frame_ctrl >> 4) & 0xF
 
-    # Only management frames (type 0): beacon (subtype 8) or probe-response (5)
-    if ftype != 0 or subtype not in (5, 8):
+    # Only management frames (ftype == 0)
+    if ftype != 0:
         return
 
-    # Fixed-length management header: 24 bytes
-    # After header: variable tagged parameters (for beacon: +12 fixed fields)
-    beacon_fixed_offset = 24
-    if subtype == 8:
-        beacon_fixed_offset += 12   # timestamp(8) + interval(2) + cap(2)
+    # 802.11 management header address fields:
+    #   [4:10]  = addr1 (destination / BSSID in beacon)
+    #   [10:16] = addr2 = source / transmitter
+    #   [16:22] = addr3 = BSSID (in probe-req) or destination
+    src_mac6 = _mac_bytes(raw_bytes, 10)
+    src_str  = _mac_str(raw_bytes, 10)
 
-    info = _extract_dji_vendor_ie(raw_bytes[beacon_fixed_offset:])
-    if not info:
+    # ----- LAYER 1: DJI DroneID in beacon or probe-response -----
+    if subtype in (5, 8):
+        tagged_offset = 24 + (12 if subtype == 8 else 0)
+        dji = _find_dji_ie(raw_bytes[tagged_offset:])
+        if dji:
+            _handle_droneid(dji, src_str, rssi)
+            return   # Full DroneID hit — no need to process further layers
+
+    # ----- LAYER 2: DJI MAC in any management frame -----
+    if not _is_multicast(src_mac6) and _is_dji_mac(src_mac6):
+        _handle_dji_mac(src_str, subtype, rssi)
         return
 
+    # ----- LAYER 3: Probe requests from unknown / interesting devices -----
+    if subtype == 4 and not _is_multicast(src_mac6):
+        # Extract SSID from probe request (tag 0)
+        ssid = _extract_ssid(raw_bytes[24:])
+        _handle_probe(src_str, ssid, rssi, src_mac6)
+
+# ---------------------------------------------------------------------------
+# Layer handlers
+# ---------------------------------------------------------------------------
+
+def _handle_droneid(info: dict, mac: str, rssi: int | None) -> None:
     serial = info["serial"]
+    now = time.monotonic()
+    if now - _seen_droneid.get(serial, 0) < DEDUPE_S:
+        return
+    _seen_droneid[serial] = now
+
     log.info(
-        "✈ DJI DroneID: %s  lat=%.6f  lon=%.6f  alt=%.1fm  spd=%.1fm/s  RSSI=%s",
+        "✈  DroneID | %s | lat=%.5f lon=%.5f alt=%.0fm spd=%.1fm/s RSSI=%s",
         serial,
-        info.get("lat") or 0,
-        info.get("lng") or 0,
-        info.get("altM") or 0,
-        info.get("speedMs") or 0,
+        info.get("lat") or 0, info.get("lng") or 0,
+        info.get("altM") or 0, info.get("speedMs") or 0,
         rssi if rssi is not None else "?",
     )
-    _maybe_post(serial, info, rssi)
-
-
-def _maybe_post(serial: str, info: dict, rssi: int | None) -> None:
-    now = time.monotonic()
-    if now - _seen.get(serial, 0) < DEDUPE_S:
-        return
-    _seen[serial] = now
-
-    payload = {
+    _post(DETECTIONS_URL, {
         "droneId":    serial,
         "source":     "WIFI_DJI",
         "lat":        info.get("lat"),
@@ -293,23 +315,93 @@ def _maybe_post(serial: str, info: dict, rssi: int | None) -> None:
         "headingDeg": info.get("headingDeg"),
         "rssiDbm":    rssi,
         "rawJson": {
+            "mac":      mac,
             "homeLat":  info.get("homeLat"),
             "homeLng":  info.get("homeLng"),
             "aglM":     info.get("aglM"),
             "vSpeedMs": info.get("vSpeedMs"),
         },
-    }
-    try:
-        resp = requests.post(DETECTIONS_URL, json=payload, headers=AUTH_HEADERS, timeout=5)
-        if resp.status_code in (200, 201):
-            log.info("✅ Posted detection: %s", serial)
-        else:
-            log.warning("API %s: %s", resp.status_code, resp.text[:120])
-    except requests.RequestException as exc:
-        log.warning("POST failed: %s", exc)
+    })
+
+
+def _handle_dji_mac(mac: str, subtype: int, rssi: int | None) -> None:
+    now = time.monotonic()
+    if now - _seen_dji_mac.get(mac, 0) < DEDUPE_S:
+        return
+    _seen_dji_mac[mac] = now
+
+    subtype_names = {0: "assoc-req", 4: "probe-req", 5: "probe-resp", 8: "beacon"}
+    frame_name = subtype_names.get(subtype, f"subtype-{subtype}")
+
+    log.info("🔵 DJI MAC  | %s | frame=%s | RSSI=%s", mac, frame_name, rssi if rssi is not None else "?")
+    _post(RF_ALERTS_URL, {
+        "freqMhz":   2437,           # centre of 2.4GHz — exact channel unknown
+        "powerDbm":  rssi,
+        "label":     "DJI_DEVICE",
+        "note":      f"DJI hardware MAC detected via 802.11 {frame_name}",
+        "rawJson":   {"mac": mac, "frameSubtype": frame_name},
+    })
+
+
+def _handle_probe(mac: str, ssid: str | None, rssi: int | None, mac6: bytes) -> None:
+    now = time.monotonic()
+    if now - _seen_probes.get(mac, 0) < UNKNOWN_DEDUPE_S:
+        return
+    _seen_probes[mac] = now
+
+    randomised = _is_locally_administered(mac6)
+    label = "PROBE_RANDOM" if randomised else "PROBE_DEVICE"
+
+    # Only log non-randomised MACs (randomised are too noisy — every phone does it)
+    if not randomised:
+        log.info(
+            "📡 Probe    | %s | ssid=%r | RSSI=%s",
+            mac, ssid or "(wildcard)", rssi if rssi is not None else "?"
+        )
+
+    _post(AMBIENT_URL, {
+        "mac":     mac,
+        "type":    label,
+        "rssiDbm": rssi,
+        "rawJson": {
+            "ssid":       ssid,
+            "randomised": randomised,
+        },
+    })
 
 # ---------------------------------------------------------------------------
-# Channel hopper (background thread)
+# SSID extractor
+# ---------------------------------------------------------------------------
+
+def _extract_ssid(tagged_params: bytes) -> str | None:
+    """Return SSID string from tag 0, or None for wildcard probes."""
+    if len(tagged_params) < 2:
+        return None
+    tag_id  = tagged_params[0]
+    tag_len = tagged_params[1]
+    if tag_id == 0 and tag_len > 0 and 2 + tag_len <= len(tagged_params):
+        try:
+            return tagged_params[2: 2 + tag_len].decode("utf-8", errors="replace")
+        except Exception:
+            return None
+    return None
+
+# ---------------------------------------------------------------------------
+# HTTP poster (fire-and-forget in background thread)
+# ---------------------------------------------------------------------------
+
+def _post(url: str, payload: dict) -> None:
+    def _send():
+        try:
+            resp = requests.post(url, json=payload, headers=AUTH_HEADERS, timeout=5)
+            if resp.status_code not in (200, 201):
+                log.warning("API %s → %s: %s", url.split("/")[-1], resp.status_code, resp.text[:120])
+        except requests.RequestException as exc:
+            log.warning("POST %s failed: %s", url.split("/")[-1], exc)
+    threading.Thread(target=_send, daemon=True).start()
+
+# ---------------------------------------------------------------------------
+# Channel hopper
 # ---------------------------------------------------------------------------
 
 def _channel_hopper() -> None:
@@ -317,20 +409,20 @@ def _channel_hopper() -> None:
     while not _stop.is_set():
         set_channel(CHANNELS_2G[idx % len(CHANNELS_2G)])
         idx += 1
-        time.sleep(HOP_INTERVAL)
+        _stop.wait(HOP_INTERVAL)   # interruptible sleep
 
 # ---------------------------------------------------------------------------
-# Scapy sniff loop
+# Scapy sniffer  — BPF filter "type mgt" is the key CPU fix
 # ---------------------------------------------------------------------------
 
 def _run_sniffer() -> None:
     try:
-        from scapy.all import sniff, RadioTap, Dot11
+        from scapy.all import sniff, RadioTap
     except ImportError:
-        log.error("scapy not found — install with: sudo pip3 install scapy")
+        log.error("scapy not installed — sudo pip3 install scapy")
         sys.exit(1)
 
-    log.info("Sniffing on %s …", MON_IFACE)
+    log.info("Sniffing on %s (BPF: type mgt) …", MON_IFACE)
 
     def _pkt_cb(pkt) -> None:
         try:
@@ -340,29 +432,27 @@ def _run_sniffer() -> None:
                     rssi = pkt[RadioTap].dBm_AntSignal
                 except Exception:
                     pass
-            raw = bytes(pkt)
-            # Skip RadioTap header to get to 802.11 frame
-            if pkt.haslayer(RadioTap):
-                rt_len = pkt[RadioTap].len
-                raw = raw[rt_len:]
+                raw = bytes(pkt)[pkt[RadioTap].len:]
+            else:
+                raw = bytes(pkt)
             _handle_frame(raw, rssi)
         except Exception as exc:
             log.debug("Packet error: %s", exc)
 
     sniff(
         iface=MON_IFACE,
+        filter="type mgt",           # ← kernel BPF: only management frames
         prn=_pkt_cb,
-        store=False,
+        store=False,                 # never buffer packets in RAM
         stop_filter=lambda _: _stop.is_set(),
     )
-
 
 # ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
 
 def _on_signal(sig, _frame) -> None:
-    log.info("Signal %s received — stopping.", sig)
+    log.info("Signal %s — shutting down.", sig)
     _stop.set()
 
 
@@ -378,16 +468,15 @@ def main() -> None:
         sys.exit(1)
 
     try:
-        log.info("SkyGuard DJI Wi-Fi Scanner ready.")
-        log.info("API: %s | Iface: %s | Hop: %.1fs", DETECTIONS_URL, MON_IFACE, HOP_INTERVAL)
+        log.info("SkyGuard Wi-Fi Intelligence Scanner v2 ready.")
+        log.info("API: %s | Iface: %s | HopInterval: %.1fs", API_BASE, MON_IFACE, HOP_INTERVAL)
+        log.info("Layers: DroneID beacon/probe → DJI MAC (any frame) → Operator probe-req")
 
-        hopper = threading.Thread(target=_channel_hopper, daemon=True)
-        hopper.start()
-
+        threading.Thread(target=_channel_hopper, daemon=True).start()
         _run_sniffer()
     finally:
         teardown_monitor()
-        log.info("Scanner stopped.")
+        log.info("Scanner stopped cleanly.")
 
 
 if __name__ == "__main__":
