@@ -41,7 +41,7 @@
       "hz_high": 2483500000,
       "color": "#ef4444",
       "threat": "high",
-      "alert_dbm": -52,
+      "alert_dbm": -65,
       "static_threshold_only": true,
       "_note": "OcuSync 2.0 hops the full band — dynamic baseline defeats detection. Use static threshold only.",
       "description": "DJI OcuSync 1.0/2.0, DJI Mini 2/3, WiFi RC, FPV video 2.4G, Remote ID",
@@ -54,7 +54,7 @@
       "hz_high": 5850000000,
       "color": "#ef4444",
       "threat": "high",
-      "alert_dbm": -52,
+      "alert_dbm": -65,
       "static_threshold_only": true,
       "description": "DJI OcuSync 2.0/3.0, O3, DJI FPV, Avata, Mini 4 Pro, FPV video 5.8G",
       "protocols": ["OcuSync 2.0", "OcuSync 3.0", "O3", "O4"]
@@ -66,7 +66,8 @@
       "hz_high": 5250000000,
       "color": "#ef4444",
       "threat": "high",
-      "alert_dbm": -40,
+      "alert_dbm": -65,
+      "static_threshold_only": true,
       "description": "DJI O3/O4 extended band (Mavic 3, Mini 4 Pro, Avata 2)",
       "protocols": ["O3", "O4"]
     },
