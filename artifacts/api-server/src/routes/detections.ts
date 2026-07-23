@@ -12,6 +12,7 @@ import { distanceMeters } from "../lib/geo";
 import { groupIntoSessions, ACTIVE_WINDOW_MS } from "../lib/flight-sessions";
 import { requireAuth } from "../middlewares/requireAuth";
 import { requireDeviceKey } from "../middlewares/requireDeviceKey";
+import { sendDroneAlert } from "../lib/telegram";
 
 const router: IRouter = Router();
 
@@ -72,6 +73,18 @@ router.post("/detections", requireDeviceKey, async (req, res): Promise<void> => 
     .returning();
 
   req.log.info({ droneId: detection!.droneId, distanceFromHomeM }, "Detection ingested");
+
+  // Fire-and-forget Telegram alert (non-blocking)
+  sendDroneAlert({
+    droneId: detection!.droneId,
+    signalType: detection!.signalType,
+    model: detection!.model,
+    distanceFromHomeM,
+    lat: detection!.lat,
+    lng: detection!.lng,
+    altitudeM: detection!.altitudeM,
+    rssiDbm: detection!.rssiDbm,
+  }).catch(() => {});
 
   res.status(201).json(
     IngestDetectionResponse.parse({
