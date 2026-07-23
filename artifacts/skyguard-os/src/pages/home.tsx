@@ -272,7 +272,7 @@ function BleWifiPanel() {
             "text-[10px] font-mono font-bold uppercase",
             droneIdAlive ? "text-green-400" : "text-muted-foreground/40"
           )}>
-            {droneIdAlive ? `LIVE · ${bleStatus!.totalScans.toLocaleString()}` : "OFFLINE"}
+            {droneIdAlive ? `nRF: LIVE · ${bleStatus!.totalScans.toLocaleString()}` : "nRF: OFF"}
           </span>
         </div>
         <div className="flex items-center gap-1 ml-auto">
