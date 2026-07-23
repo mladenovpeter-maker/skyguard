@@ -31,7 +31,7 @@ interface RfAlert {
 // ---------------------------------------------------------------------------
 
 const WS_URL = (import.meta.env.VITE_HACKRF_WS_URL as string) ||
-  `ws://${window.location.host}/hackrf-ws`;
+  `${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}/hackrf-ws`;
 
 const DB_MIN = -95;
 const DB_MAX = -35;
