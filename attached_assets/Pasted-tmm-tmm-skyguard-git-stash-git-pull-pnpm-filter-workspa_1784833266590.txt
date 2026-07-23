@@ -1,0 +1,68 @@
+tmm@tmm:~/skyguard$ git stash
+git pull
+pnpm --filter @workspace/skyguard-os run build
+sudo nginx -s reload
+Saved working directory and index state WIP on main: 0459bb7 Fix requireAuth -> requireSession in home.ts
+Updating 0459bb7..9fa1d0e
+Fast-forward
+ .agents/memory/pending-tasks.md                                                                  |    14 +
+ artifacts/api-server/dist/index.mjs                                                              |     5 +-
+ artifacts/api-server/dist/index.mjs.map                                                          |     4 +-
+ artifacts/skyguard-dome/public/model.stl                                                         | 65154 +++++++++++++++++++++++++++++-----------------------------
+ attached_assets/Pasted-admin-skyguard-skyguard-cd-skyguard-git-pull-sudo-syste_1784821431527.txt |    30 +
+ attached_assets/Pasted-admin-skyguard-skyguard-git-stash-git-pull-No-local-cha_1784821201647.txt |   180 +
+ attached_assets/Pasted-admin-skyguard-skyguard-sudo-tcpdump-i-wlan1mon-c-20-no_1784821576003.txt |    22 +
+ attached_assets/Pasted-admin-skyguard-ssh-admin-192-168-100-252-sudo-systemctl_1784831270134.txt |    64 +
+ attached_assets/Pasted-tmm-tmm-skyguard-artifacts-api-server-cd-skyguard-git-p_1784818293830.txt |    36 +
+ attached_assets/Pasted-tmm-tmm-skyguard-sudo-systemctl-start-cloudflared-sudo-_1784832750106.txt |    23 +
+ attached_assets/Screenshot_2026-07-23_at_18.52.42_1784821965808.png                              |   Bin 0 -> 932098 bytes
+ attached_assets/Screenshot_2026-07-23_at_18.52.57_1784821983515.png                              |   Bin 0 -> 459232 bytes
+ attached_assets/Screenshot_2026-07-23_at_18.55.05_1784822108343.png                              |   Bin 0 -> 1429503 bytes
+ attached_assets/Screenshot_2026-07-23_at_18.55.20_1784822125700.png                              |   Bin 0 -> 472046 bytes
+ attached_assets/Screenshot_2026-07-23_at_21.45.53_1784832355905.png                              |   Bin 0 -> 400871 bytes
+ attached_assets/Screenshot_2026-07-23_at_21.48.04_1784832488169.png                              |   Bin 0 -> 390550 bytes
+ attached_assets/Screenshot_2026-07-23_at_21.54.22_1784832866424.png                              |   Bin 0 -> 575742 bytes
+ attached_assets/Screenshot_2026-07-23_at_21.55.05_1784832909779.png                              |   Bin 0 -> 140329 bytes
+ hardware/dji-wifi-scanner/README.md                                                              |    60 +
+ hardware/dji-wifi-scanner/scanner.py                                                             |   483 +
+ hardware/dji-wifi-scanner/skyguard-dji-wifi-scanner.service                                      |    15 +
+ hardware/hackrf-bridge/bridge.py                                                                 |   110 +-
+ hardware/hackrf-bridge/frequencies.json                                                          |    15 +-
+ 23 files changed, 33627 insertions(+), 32588 deletions(-)
+ create mode 100644 .agents/memory/pending-tasks.md
+ create mode 100644 attached_assets/Pasted-admin-skyguard-skyguard-cd-skyguard-git-pull-sudo-syste_1784821431527.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-skyguard-git-stash-git-pull-No-local-cha_1784821201647.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-skyguard-sudo-tcpdump-i-wlan1mon-c-20-no_1784821576003.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-ssh-admin-192-168-100-252-sudo-systemctl_1784831270134.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-artifacts-api-server-cd-skyguard-git-p_1784818293830.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-sudo-systemctl-start-cloudflared-sudo-_1784832750106.txt
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_18.52.42_1784821965808.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_18.52.57_1784821983515.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_18.55.05_1784822108343.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_18.55.20_1784822125700.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_21.45.53_1784832355905.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_21.48.04_1784832488169.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_21.54.22_1784832866424.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_21.55.05_1784832909779.png
+ create mode 100644 hardware/dji-wifi-scanner/README.md
+ create mode 100644 hardware/dji-wifi-scanner/scanner.py
+ create mode 100644 hardware/dji-wifi-scanner/skyguard-dji-wifi-scanner.service
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2721 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.54 kB
+dist/public/assets/index-gOQM5VU8.css  140.59 kB │ gzip:  29.26 kB
+dist/public/assets/index-BxSOW4ie.js   740.16 kB │ gzip: 229.85 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 4.67s
+2026/07/23 19:00:59 [notice] 1026005#1026005: signal process started
+tmm@tmm:~/skyguard$ 
