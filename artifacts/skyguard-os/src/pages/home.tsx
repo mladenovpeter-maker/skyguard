@@ -336,11 +336,14 @@ export default function Home() {
       </div>
 
       {/* ── Command Panel (right, fixed width) ── */}
-      <div className="w-[360px] flex-shrink-0 flex flex-col border-l border-border bg-card/80 backdrop-blur-md overflow-hidden">
+      <div
+        className="border-l border-border bg-card/80 backdrop-blur-md"
+        style={{ width: 360, flexShrink: 0, display: "grid", gridTemplateRows: "1fr 230px 196px", overflow: "hidden" }}
+      >
 
         {/* ── Section 1: Active Targets ── */}
-        <div className="flex flex-col min-h-0 flex-1 overflow-hidden">
-          <div className="px-3 py-2 border-b border-border/50 flex items-center gap-2 flex-shrink-0">
+        <div style={{ display: "flex", flexDirection: "column", overflow: "hidden", borderBottom: "1px solid hsl(var(--border) / 0.5)" }}>
+          <div className="px-3 py-2 border-b border-border/50 flex items-center gap-2" style={{ flexShrink: 0 }}>
             <Crosshair className="w-3.5 h-3.5 text-primary" />
             <span className="font-mono text-xs font-bold text-primary uppercase tracking-wider">
               {t("telemetry.activeTargets")}
@@ -352,7 +355,7 @@ export default function Home() {
               }
             </span>
           </div>
-          <ScrollArea className="flex-1">
+          <ScrollArea style={{ flex: 1, minHeight: 0 }}>
             <div className="p-2 space-y-2">
               {tracks.length === 0 ? (
                 <div className="flex flex-col items-center gap-2 py-6 text-muted-foreground/40">
@@ -367,8 +370,8 @@ export default function Home() {
         </div>
 
         {/* ── Section 2: RF Spectrum ── */}
-        <div className="border-t border-border/50 flex-shrink-0">
-          <div className="px-3 py-2 flex items-center gap-2">
+        <div style={{ display: "flex", flexDirection: "column", overflow: "hidden", borderBottom: "1px solid hsl(var(--border) / 0.5)" }}>
+          <div className="px-3 py-2 flex items-center gap-2" style={{ flexShrink: 0 }}>
             <Radio className="w-3.5 h-3.5 text-primary" />
             <span className="font-mono text-xs font-bold text-primary uppercase tracking-wider">
               RF Спектър
@@ -391,20 +394,20 @@ export default function Home() {
               )}
             </div>
           </div>
-          <div className="px-3 pb-3">
+          <div className="px-3 pb-3" style={{ flex: 1, overflow: "hidden" }}>
             <BandMonitor bins={bins} wsStatus={wsStatus} lastSweepTs={lastSweepTs} sweepCount={sweepCount} />
           </div>
         </div>
 
         {/* ── Section 3: History ── */}
-        <div className="border-t border-border/50 flex-shrink-0" style={{ maxHeight: 220 }}>
-          <div className="px-3 py-2 flex items-center gap-2 border-b border-border/30">
+        <div style={{ display: "flex", flexDirection: "column", overflow: "hidden" }}>
+          <div className="px-3 py-2 flex items-center gap-2 border-b border-border/30" style={{ flexShrink: 0 }}>
             <Clock className="w-3.5 h-3.5 text-primary" />
             <span className="font-mono text-xs font-bold text-primary uppercase tracking-wider">
               История
             </span>
           </div>
-          <ScrollArea style={{ maxHeight: 176 }}>
+          <ScrollArea style={{ flex: 1, minHeight: 0 }}>
             <CompactHistory language={language} />
           </ScrollArea>
         </div>
