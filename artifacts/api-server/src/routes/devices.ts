@@ -61,7 +61,7 @@ router.delete("/devices/:deviceId", requireAuth, async (req, res): Promise<void>
     return;
   }
 
-  await db.update(devicesTable).set({ revoked: true }).where(eq(devicesTable.id, deviceId));
+  await db.delete(devicesTable).where(eq(devicesTable.id, deviceId));
   res.status(204).send();
 });
 
