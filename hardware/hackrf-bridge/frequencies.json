@@ -41,10 +41,10 @@
       "hz_high": 2483500000,
       "color": "#ef4444",
       "threat": "high",
-      "alert_dbm": -30,
-      "_note": "High threshold — home WiFi routers sit at -40 to -60 dBm. -30 dBm = drone nearby.",
-      "description": "DJI OcuSync 1.0, DJI Mini 2/3, WiFi RC, FPV video 2.4G, Remote ID",
-      "protocols": ["OcuSync 1.0", "WiFi", "O3 fallback", "Remote ID BLE/WiFi"]
+      "alert_dbm": -52,
+      "_note": "OcuSync 2.0 (Mini 2) at 50-100m ≈ -55 to -70 dBm. Wide-band elevation detector in bridge.py distinguishes it from WiFi.",
+      "description": "DJI OcuSync 1.0/2.0, DJI Mini 2/3, WiFi RC, FPV video 2.4G, Remote ID",
+      "protocols": ["OcuSync 1.0", "OcuSync 2.0", "WiFi", "O3 fallback", "Remote ID BLE/WiFi"]
     },
     {
       "id": "dji_5800",
@@ -53,7 +53,7 @@
       "hz_high": 5850000000,
       "color": "#ef4444",
       "threat": "high",
-      "alert_dbm": -40,
+      "alert_dbm": -52,
       "description": "DJI OcuSync 2.0/3.0, O3, DJI FPV, Avata, Mini 4 Pro, FPV video 5.8G",
       "protocols": ["OcuSync 2.0", "OcuSync 3.0", "O3", "O4"]
     },

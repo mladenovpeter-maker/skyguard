@@ -224,6 +224,112 @@ _suppressed_bands: set[str] = set()
 _last_suppressed_refresh: float = 0
 SUPPRESSED_REFRESH_S = 60  # refresh every 60 seconds
 
+# ---------------------------------------------------------------------------
+# OcuSync wide-band detector
+# ---------------------------------------------------------------------------
+# OcuSync 2.0 (DJI Mini 2) hops across the FULL 2.4 GHz band. Standard WiFi
+# uses only 20 MHz out of 83.5 MHz total. We track how many bins are above
+# their rolling baseline simultaneously — if >40 % of the band is elevated
+# across N consecutive sweeps, it is likely OcuSync, not WiFi.
+
+_OCUSYNC_HZ_LOW  = 2_400_000_000
+_OCUSYNC_HZ_HIGH = 2_483_500_000
+_OCUSYNC_WINDOW  = 12        # rolling window per bin (sweeps)
+_OCUSYNC_MARGIN  = 6.0       # dB above per-bin median to count as "elevated"
+_OCUSYNC_FRAC    = 0.38      # fraction of band bins that must be elevated
+_OCUSYNC_CONFIRM = 4         # consecutive sweeps before firing
+_OCUSYNC_COOLDOWN_S = 45     # seconds between OcuSync detections
+
+_bin_history: dict[float, deque] = {}   # hz → deque of recent dBm values
+_ocusync_hits = 0
+_last_ocusync_alert: float = 0
+
+
+def ocusync_check(bins: list[dict]) -> None:
+    """Wide-band OcuSync 2.0 detector. Posts to /api/detections on confirm."""
+    global _ocusync_hits, _last_ocusync_alert
+
+    band_bins = [b for b in bins
+                 if _OCUSYNC_HZ_LOW <= b["hz"] <= _OCUSYNC_HZ_HIGH]
+    if not band_bins:
+        return
+
+    elevated = 0
+    peak_dbm = -999.0
+    total_power_sum = 0.0
+
+    for b in band_bins:
+        hz, dbm = b["hz"], b["dbm"]
+        if hz not in _bin_history:
+            _bin_history[hz] = deque(maxlen=_OCUSYNC_WINDOW)
+        history = _bin_history[hz]
+        history.append(dbm)
+
+        if len(history) >= 4:
+            median_dbm = statistics.median(history)
+            if dbm > median_dbm + _OCUSYNC_MARGIN:
+                elevated += 1
+            if dbm > peak_dbm:
+                peak_dbm = dbm
+        total_power_sum += dbm
+
+    if not band_bins:
+        return
+
+    frac_elevated = elevated / len(band_bins)
+    avg_dbm = total_power_sum / len(band_bins)
+
+    if frac_elevated >= _OCUSYNC_FRAC:
+        _ocusync_hits += 1
+    else:
+        _ocusync_hits = max(0, _ocusync_hits - 1)
+
+    if _ocusync_hits < _OCUSYNC_CONFIRM:
+        return
+
+    now = time.monotonic()
+    if now - _last_ocusync_alert < _OCUSYNC_COOLDOWN_S:
+        return
+    _last_ocusync_alert = now
+    _ocusync_hits = 0  # reset after firing
+
+    rssi = round(peak_dbm, 1)
+    avg  = round(avg_dbm, 1)
+    log.info(
+        "⚡ OcuSync 2.4GHz: %.0f%% bins elevated  peak=%.1f dBm  avg=%.1f dBm → DJI drone detected",
+        frac_elevated * 100, rssi, avg,
+    )
+
+    payload = {
+        "droneId":   f"OCUSYNC-2G-{rssi:+.0f}dBm",
+        "source":    "RF_OCUSYNC",
+        "lat":       None,
+        "lng":       None,
+        "altitudeM": None,
+        "speedMs":   None,
+        "rssiDbm":   rssi,
+        "rawJson": {
+            "band":         "2.4GHz",
+            "avgDbm":       avg,
+            "elevatedFrac": round(frac_elevated, 2),
+            "protocol":     "OcuSync 2.0",
+            "note":         "DJI Mini 2 / DJI OcuSync drone detected by wide-band RF signature",
+        },
+    }
+    try:
+        resp = requests.post(
+            f"{API_BASE}/api/detections",
+            json=payload,
+            headers=AUTH_HEADERS,
+            timeout=4,
+        )
+        if resp.status_code in (200, 201):
+            log.info("✅ OcuSync detection posted (peak %.1f dBm)", rssi)
+        else:
+            log.warning("Detection POST %s: %s", resp.status_code, resp.text[:80])
+    except requests.RequestException as exc:
+        log.warning("Detection POST failed: %s", exc)
+
 
 def refresh_suppressed_bands() -> None:
     """Fetch user-defined own RF sources from API and update suppressed set."""
@@ -508,6 +614,7 @@ async def process_queue(queue: asyncio.Queue) -> None:
             })
             await broadcast(msg)
             check_bands(sorted_bins)
+            ocusync_check(sorted_bins)
             last_broadcast = now
             sweep_bins = {}
 
