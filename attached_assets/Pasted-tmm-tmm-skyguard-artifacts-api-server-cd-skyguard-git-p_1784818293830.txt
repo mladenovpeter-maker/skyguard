@@ -1,0 +1,36 @@
+tmm@tmm:~/skyguard/artifacts/api-server$ cd ~/skyguard && git pull && cd artifacts/api-server && pnpm run build && sudo systemctl restart skyguard-api
+remote: Enumerating objects: 24, done.
+remote: Counting objects: 100% (24/24), done.
+remote: Compressing objects: 100% (7/7), done.
+remote: Total 17 (delta 10), reused 17 (delta 10), pack-reused 0 (from 0)
+Unpacking objects: 100% (17/17), 49.64 KiB | 782.00 KiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+   e210803..0459bb7  main       -> origin/main
+Updating e210803..0459bb7
+Fast-forward
+ artifacts/api-server/src/routes/home.ts                                                          |   2 +-
+ attached_assets/Pasted-tmm-tmm-skyguard-artifacts-api-server-sudo-journalctl-u_1784818247075.txt |  22 ++++++++++++++++++++++
+ attached_assets/Pasted-tmm-tmm-skyguard-cd-skyguard-git-pull-cd-artifacts-api-_1784818135254.txt |  39 +++++++++++++++++++++++++++++++++++++++
+ attached_assets/Screenshot_2026-07-23_at_17.48.13_1784818096373.png                              | Bin 0 -> 77818 bytes
+ 4 files changed, 62 insertions(+), 1 deletion(-)
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-artifacts-api-server-sudo-journalctl-u_1784818247075.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-cd-skyguard-git-pull-cd-artifacts-api-_1784818135254.txt
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_17.48.13_1784818096373.png
+
+> @workspace/api-server@0.0.0 build /home/tmm/skyguard/artifacts/api-server
+> node ./build.mjs
+
+
+  dist/index.mjs                       2.3mb ⚠️
+  dist/pino-worker.mjs               153.4kb
+  dist/pino-file.mjs                 142.1kb
+  dist/pino-pretty.mjs               114.4kb
+  dist/thread-stream-worker.mjs        7.3kb
+  dist/index.mjs.map                   3.9mb
+  dist/pino-worker.mjs.map           256.9kb
+  dist/pino-file.mjs.map             229.0kb
+  dist/pino-pretty.mjs.map           203.6kb
+  dist/thread-stream-worker.mjs.map   12.0kb
+
+⚡ Done in 175ms
+tmm@tmm:~/skyguard/artifacts/api-server$ 
