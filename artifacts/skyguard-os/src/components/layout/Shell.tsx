@@ -162,7 +162,7 @@ export function Shell({ children }: { children: ReactNode }) {
   ];
 
   return (
-    <div className="min-h-[100dvh] flex flex-col bg-background text-foreground dark">
+    <div className="h-[100dvh] flex flex-col bg-background text-foreground dark overflow-hidden">
       {/* ── Top header ── */}
       <header className="h-14 border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex items-center justify-between px-4 z-50 flex-shrink-0">
         {/* Left: logo + desktop nav */}
