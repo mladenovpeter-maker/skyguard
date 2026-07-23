@@ -2,6 +2,7 @@ import { MapContainer, TileLayer, Circle, Marker, Polyline, Tooltip, useMap } fr
 import { Icon, DivIcon } from "leaflet";
 import { DroneTrack, HomeConfig } from "@workspace/api-client-react";
 import { useEffect } from "react";
+import { useTheme } from "next-themes";
 import "leaflet/dist/leaflet.css";
 
 // Fix leaflet icons
@@ -89,7 +90,11 @@ interface RadarMapProps {
 
 export function RadarMap({ config, activeTracks, rfAlerts = [] }: RadarMapProps) {
   const hasAlarm = activeTracks.some(t => t.alarmActive);
-  
+  const { theme } = useTheme();
+  const tileUrl = theme === "light"
+    ? "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+    : "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+
   return (
     <div className={`w-full h-full relative ${hasAlarm ? 'alarm-active' : ''}`}>
       <MapContainer
@@ -99,7 +104,8 @@ export function RadarMap({ config, activeTracks, rfAlerts = [] }: RadarMapProps)
         zoomControl={false}
       >
         <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          key={tileUrl}
+          url={tileUrl}
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
         />
         

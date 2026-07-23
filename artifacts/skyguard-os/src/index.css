@@ -178,13 +178,14 @@
   transform-origin: center;
 }
 
-/* Make Leaflet dark */
+/* Leaflet base */
 .leaflet-container {
   background: hsl(var(--background)) !important;
 }
-.leaflet-control-zoom-in,
-.leaflet-control-zoom-out,
-.leaflet-control-attribution {
+/* Invert zoom/attribution controls only in dark mode */
+.dark .leaflet-control-zoom-in,
+.dark .leaflet-control-zoom-out,
+.dark .leaflet-control-attribution {
   filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
 }
 
