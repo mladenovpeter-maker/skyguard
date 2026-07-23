@@ -194,9 +194,7 @@ export function Shell({ children }: { children: ReactNode }) {
         {/* Right: badges + hamburger */}
         <div className="flex items-center gap-2">
           <LanguageToggle />
-          <BleBadge />
           <PiMonitor />
-          <ConnectionBadge />
           {/* User email + logout — desktop */}
           <div className="hidden md:flex items-center gap-2 pl-2 border-l border-border/50">
             {user && (
