@@ -1,0 +1,22 @@
+tmm@tmm:~/skyguard/artifacts/api-server$ sudo journalctl -u skyguard-api -n 20 --no-pager | tail -20
+Jul 23 14:50:33 tmm node[765027]:     at <anonymous> (/home/tmm/skyguard/artifacts/api-server/src/routes/home.ts:26:21)
+Jul 23 14:50:33 tmm node[765027]:     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+Jul 23 14:50:33 tmm node[765027]:     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Jul 23 14:50:33 tmm node[765027]:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+Jul 23 14:50:33 tmm node[765027]: Node.js v20.20.2
+Jul 23 14:50:33 tmm systemd[1]: skyguard-api.service: Main process exited, code=exited, status=1/FAILURE
+Jul 23 14:50:33 tmm systemd[1]: skyguard-api.service: Failed with result 'exit-code'.
+Jul 23 14:50:38 tmm systemd[1]: skyguard-api.service: Scheduled restart job, restart counter is at 49.
+Jul 23 14:50:38 tmm systemd[1]: Started skyguard-api.service - SkyGuard API Server.
+Jul 23 14:50:38 tmm node[765128]: /home/tmm/skyguard/artifacts/api-server/src/routes/home.ts:26
+Jul 23 14:50:38 tmm node[765128]: router.get("/home", requireAuth, async (_req, res): Promise<void> => {
+Jul 23 14:50:38 tmm node[765128]:                     ^
+Jul 23 14:50:38 tmm node[765128]: ReferenceError: requireAuth is not defined
+Jul 23 14:50:38 tmm node[765128]:     at <anonymous> (/home/tmm/skyguard/artifacts/api-server/src/routes/home.ts:26:21)
+Jul 23 14:50:38 tmm node[765128]:     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+Jul 23 14:50:38 tmm node[765128]:     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+Jul 23 14:50:38 tmm node[765128]:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+Jul 23 14:50:38 tmm node[765128]: Node.js v20.20.2
+Jul 23 14:50:38 tmm systemd[1]: skyguard-api.service: Main process exited, code=exited, status=1/FAILURE
+Jul 23 14:50:38 tmm systemd[1]: skyguard-api.service: Failed with result 'exit-code'.
+tmm@tmm:~/skyguard/artifacts/api-server$ 

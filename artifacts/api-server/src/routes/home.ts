@@ -23,7 +23,7 @@ async function getOrCreateHomeConfig() {
   return created;
 }
 
-router.get("/home", requireAuth, async (_req, res): Promise<void> => {
+router.get("/home", requireSession, async (_req, res): Promise<void> => {
   const home = await getOrCreateHomeConfig();
   res.json(GetHomeConfigResponse.parse(home));
 });
