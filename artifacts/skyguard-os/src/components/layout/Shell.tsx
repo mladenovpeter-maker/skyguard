@@ -1,11 +1,12 @@
 import { Link, useLocation } from "wouter";
 import { useGetIngestStatus, getGetIngestStatusQueryKey } from "@workspace/api-client-react";
-import { Settings, History, Radar, ShieldCheck, Languages, Cpu, LogOut, RadioTower, Menu, X } from "lucide-react";
+import { Settings, History, Radar, ShieldCheck, Languages, Cpu, LogOut, RadioTower, Menu, X, Sun, Moon } from "lucide-react";
 import { ReactNode, useState } from "react";
 import { useClerk, useUser } from "@clerk/react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n";
 import { useQuery } from "@tanstack/react-query";
+import { useTheme } from "next-themes";
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
@@ -152,6 +153,7 @@ export function Shell({ children }: { children: ReactNode }) {
   const { t } = useLanguage();
   const { signOut } = useClerk();
   const { user } = useUser();
+  const { theme, setTheme } = useTheme();
 
   const links = [
     { href: "/",          label: t("nav.radar"),    icon: Radar },
@@ -162,7 +164,7 @@ export function Shell({ children }: { children: ReactNode }) {
   ];
 
   return (
-    <div className="h-[100dvh] flex flex-col bg-background text-foreground dark overflow-hidden">
+    <div className="h-[100dvh] flex flex-col bg-background text-foreground overflow-hidden">
       {/* ── Top header ── */}
       <header className="h-14 border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex items-center justify-between px-4 z-50 flex-shrink-0">
         {/* Left: logo + desktop nav */}
@@ -211,6 +213,15 @@ export function Shell({ children }: { children: ReactNode }) {
               <LogOut className="h-3.5 w-3.5" />
             </button>
           </div>
+          {/* Theme toggle */}
+          <button
+            type="button"
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="flex items-center justify-center w-8 h-8 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+            aria-label="Toggle theme"
+          >
+            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </button>
           {/* Hamburger — mobile */}
           <button
             type="button"

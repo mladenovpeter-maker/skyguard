@@ -16,6 +16,7 @@ import Spectrum from '@/pages/spectrum';
 import SignInPage from '@/pages/sign-in';
 import SignUpPage from '@/pages/sign-up';
 import { LanguageProvider } from '@/lib/i18n';
+import { ThemeProvider } from 'next-themes';
 
 const queryClient = new QueryClient();
 
@@ -132,9 +133,11 @@ function ClerkProviderWithRoutes() {
 
 function App() {
   return (
-    <WouterRouter base={basePath}>
-      <ClerkProviderWithRoutes />
-    </WouterRouter>
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+      <WouterRouter base={basePath}>
+        <ClerkProviderWithRoutes />
+      </WouterRouter>
+    </ThemeProvider>
   );
 }
 
