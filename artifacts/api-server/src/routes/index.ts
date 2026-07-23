@@ -1,5 +1,6 @@
 import { Router, type IRouter } from "express";
 import healthRouter from "./health";
+import authRouter from "./auth";
 import homeRouter from "./home";
 import detectionsRouter from "./detections";
 import statusRouter from "./status";
@@ -14,6 +15,7 @@ import bleStatusRouter from "./ble-status";
 const router: IRouter = Router();
 
 router.use(healthRouter);
+router.use(authRouter);
 router.use(homeRouter);
 router.use(detectionsRouter);
 router.use(statusRouter);

@@ -1,16 +1,17 @@
+import { requireSession } from "../middlewares/requireSession";
 import { Router, type IRouter } from "express";
 import { and, eq, gte, sql, count } from "drizzle-orm";
 import { db, detectionsTable, devicesTable } from "@workspace/db";
 import { GetIngestStatusResponse } from "@workspace/api-zod";
 import { ACTIVE_WINDOW_MS } from "../lib/flight-sessions";
-import { requireAuth } from "../middlewares/requireAuth";
+
 
 const router: IRouter = Router();
 
 // Hardware is "connected" if a detection OR heartbeat was received within this window.
 const CONNECTED_WINDOW_MS = 60 * 1000; // 60 s (bridge heartbeats every 30 s)
 
-router.get("/status", requireAuth, async (_req, res): Promise<void> => {
+router.get("/status", requireSession, async (_req, res): Promise<void> => {
   const now = Date.now();
 
   const [{ lastIngestAt } = { lastIngestAt: null }] = await db

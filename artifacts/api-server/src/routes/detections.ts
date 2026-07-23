@@ -1,3 +1,4 @@
+import { requireSession } from "../middlewares/requireSession";
 import { Router, type IRouter } from "express";
 import { desc, gte } from "drizzle-orm";
 import { db, homeConfigTable, detectionsTable, type DetectionRow } from "@workspace/db";
@@ -10,7 +11,7 @@ import {
 } from "@workspace/api-zod";
 import { distanceMeters } from "../lib/geo";
 import { groupIntoSessions, ACTIVE_WINDOW_MS } from "../lib/flight-sessions";
-import { requireAuth } from "../middlewares/requireAuth";
+
 import { requireDeviceKey } from "../middlewares/requireDeviceKey";
 import { sendDroneAlert } from "../lib/telegram";
 
@@ -95,7 +96,7 @@ router.post("/detections", requireDeviceKey, async (req, res): Promise<void> => 
   );
 });
 
-router.get("/detections/active", requireAuth, async (_req, res): Promise<void> => {
+router.get("/detections/active", requireSession, async (_req, res): Promise<void> => {
   const home = await getOrCreateHomeConfig();
   const cutoff = new Date(Date.now() - ACTIVE_WINDOW_MS);
 
@@ -137,7 +138,7 @@ router.get("/detections/active", requireAuth, async (_req, res): Promise<void> =
   res.json(ListActiveDroneTracksResponse.parse(tracks));
 });
 
-router.get("/detections/history", requireAuth, async (req, res): Promise<void> => {
+router.get("/detections/history", requireSession, async (req, res): Promise<void> => {
   const query = ListFlightHistoryQueryParams.safeParse(req.query);
   if (!query.success) {
     res.status(400).json({ error: query.error.message });

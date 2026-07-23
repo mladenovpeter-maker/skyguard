@@ -2,7 +2,7 @@ import { Link, useLocation } from "wouter";
 import { useGetIngestStatus, getGetIngestStatusQueryKey } from "@workspace/api-client-react";
 import { Settings, History, Radar, ShieldCheck, Languages, Cpu, LogOut, RadioTower, Menu, X, Sun, Moon } from "lucide-react";
 import { ReactNode, useState } from "react";
-import { useClerk, useUser } from "@clerk/react";
+import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n";
 import { useQuery } from "@tanstack/react-query";
@@ -151,11 +151,10 @@ export function Shell({ children }: { children: ReactNode }) {
   const [location] = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const { t } = useLanguage();
-  const { signOut } = useClerk();
-  const { user } = useUser();
+  const { user, logout } = useAuth();
   const { theme, setTheme } = useTheme();
 
-  const isAdmin = (user?.publicMetadata as Record<string, unknown> | undefined)?.role === "admin";
+  const isAdmin = user?.role === "admin";
 
   const links = [
     { href: "/",          label: t("nav.radar"),    icon: Radar },
@@ -203,12 +202,12 @@ export function Shell({ children }: { children: ReactNode }) {
           <div className="hidden md:flex items-center gap-2 pl-2 border-l border-border/50">
             {user && (
               <span className="text-xs font-mono text-muted-foreground hidden xl:inline">
-                {user.primaryEmailAddress?.emailAddress}
+                {user.username}
               </span>
             )}
             <button
               type="button"
-              onClick={() => signOut({ redirectUrl: basePath || "/" })}
+              onClick={() => logout()}
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-mono font-medium uppercase tracking-wide text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
               aria-label={t("nav.logout")}
             >
@@ -257,7 +256,7 @@ export function Shell({ children }: { children: ReactNode }) {
             {/* Logout in mobile menu */}
             <button
               type="button"
-              onClick={() => signOut({ redirectUrl: basePath || "/" })}
+              onClick={() => logout()}
               className="flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
             >
               <LogOut className="h-4 w-4" />

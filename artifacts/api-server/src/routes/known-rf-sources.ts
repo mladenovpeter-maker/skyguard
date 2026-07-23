@@ -1,9 +1,8 @@
 import { Router, type IRouter } from "express";
 import { eq } from "drizzle-orm";
 import { db, knownRfSourcesTable } from "@workspace/db";
-import { requireAdmin } from "../middlewares/requireAdmin";
+import { requireAdmin } from "../middlewares/requireSession";
 import { requireDeviceKey } from "../middlewares/requireDeviceKey";
-// requireDeviceKey used below for device-side writes (not currently in use but kept for future)
 
 const router: IRouter = Router();
 

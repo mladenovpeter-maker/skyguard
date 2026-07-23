@@ -1,7 +1,8 @@
+import { requireSession } from "../middlewares/requireSession";
 import { Router, type IRouter } from "express";
 import { gte } from "drizzle-orm";
 import { db, ambientScansTable } from "@workspace/db";
-import { requireAuth } from "../middlewares/requireAuth";
+
 import { requireDeviceKey } from "../middlewares/requireDeviceKey";
 const router: IRouter = Router();
 
@@ -71,7 +72,7 @@ router.post("/ambient", requireDeviceKey, async (req, res): Promise<void> => {
  * GET /ambient/active
  * Returns the latest scan entry per MAC seen in the last 5 minutes.
  */
-router.get("/ambient/active", requireAuth, async (_req, res): Promise<void> => {
+router.get("/ambient/active", requireSession, async (_req, res): Promise<void> => {
   const cutoff = new Date(Date.now() - AMBIENT_WINDOW_MS);
 
   const recent = await db

@@ -2,8 +2,7 @@ import { Router, type IRouter } from "express";
 import { eq } from "drizzle-orm";
 import { db, devicesTable } from "@workspace/db";
 import { CreateDeviceBody, CreateDeviceResponse, ListDevicesResponse } from "@workspace/api-zod";
-import { requireAdmin } from "../middlewares/requireAdmin";
-import { getAuth } from "@clerk/express";
+import { requireAdmin } from "../middlewares/requireSession";
 import { generateDeviceKey, hashDeviceKey, keyDisplayPrefix } from "../lib/deviceKeys";
 
 const router: IRouter = Router();
@@ -32,7 +31,7 @@ router.post("/devices", requireAdmin, async (req, res): Promise<void> => {
   }
 
   const apiKey = generateDeviceKey();
-  const { userId } = getAuth(req);
+  const sessionUser = (req.session as any)?.user;
 
   const [device] = await db
     .insert(devicesTable)
@@ -40,7 +39,7 @@ router.post("/devices", requireAdmin, async (req, res): Promise<void> => {
       name: parsed.data.name,
       apiKeyHash: hashDeviceKey(apiKey),
       apiKeyPrefix: keyDisplayPrefix(apiKey),
-      createdByUserId: userId ?? null,
+      createdByUserId: sessionUser?.username ?? null,
     })
     .returning();
 

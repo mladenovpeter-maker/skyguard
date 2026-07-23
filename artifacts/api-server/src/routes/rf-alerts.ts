@@ -1,7 +1,8 @@
+import { requireSession } from "../middlewares/requireSession";
 import { Router, type IRouter } from "express";
 import { desc, gte } from "drizzle-orm";
 import { db, rfAlertsTable } from "@workspace/db";
-import { requireAuth } from "../middlewares/requireAuth";
+
 import { requireDeviceKey } from "../middlewares/requireDeviceKey";
 
 const router: IRouter = Router();
@@ -53,7 +54,7 @@ router.post("/rf-alerts", requireDeviceKey, async (req, res): Promise<void> => {
 });
 
 /** POST /rf-alerts/:id/label — operator labels an alert as drone/wifi/other for ML training */
-router.post("/rf-alerts/:id/label", requireAuth, async (req, res): Promise<void> => {
+router.post("/rf-alerts/:id/label", requireSession, async (req, res): Promise<void> => {
   const id = parseInt(req.params["id"] ?? "");
   const label = req.body?.label;
   if (isNaN(id) || !["drone", "wifi", "other"].includes(label)) {
@@ -71,7 +72,7 @@ router.post("/rf-alerts/:id/label", requireAuth, async (req, res): Promise<void>
 });
 
 /** GET /rf-alerts/training-data — labeled examples for ML training */
-router.get("/rf-alerts/training-data", requireAuth, async (_req, res): Promise<void> => {
+router.get("/rf-alerts/training-data", requireSession, async (_req, res): Promise<void> => {
   const { isNotNull } = await import("drizzle-orm");
   const rows = await db
     .select()
@@ -83,7 +84,7 @@ router.get("/rf-alerts/training-data", requireAuth, async (_req, res): Promise<v
 });
 
 /** GET /rf-alerts/recent — last 10 minutes of alerts for the UI */
-router.get("/rf-alerts/recent", requireAuth, async (_req, res): Promise<void> => {
+router.get("/rf-alerts/recent", requireSession, async (_req, res): Promise<void> => {
   const cutoff = new Date(Date.now() - RECENT_WINDOW_MS);
   const rows = await db
     .select()

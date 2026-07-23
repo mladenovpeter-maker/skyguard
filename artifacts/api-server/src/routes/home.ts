@@ -2,8 +2,7 @@ import { Router, type IRouter } from "express";
 import { eq } from "drizzle-orm";
 import { db, homeConfigTable } from "@workspace/db";
 import { GetHomeConfigResponse, UpdateHomeConfigBody, UpdateHomeConfigResponse } from "@workspace/api-zod";
-import { requireAuth } from "../middlewares/requireAuth";
-import { requireAdmin } from "../middlewares/requireAdmin";
+import { requireSession, requireAdmin } from "../middlewares/requireSession";
 
 const router: IRouter = Router();
 
