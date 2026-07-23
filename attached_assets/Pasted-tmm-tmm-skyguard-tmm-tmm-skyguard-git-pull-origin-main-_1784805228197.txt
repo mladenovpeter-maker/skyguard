@@ -1,0 +1,36 @@
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ git pull origin main && BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build && sudo nginx -s reload
+remote: Enumerating objects: 30, done.
+remote: Counting objects: 100% (30/30), done.
+remote: Compressing objects: 100% (9/9), done.
+remote: Total 19 (delta 14), reused 15 (delta 10), pack-reused 0 (from 0)
+Unpacking objects: 100% (19/19), 2.45 KiB | 139.00 KiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+ * branch            main       -> FETCH_HEAD
+   164a350..74f212b  main       -> origin/main
+Updating 164a350..74f212b
+Fast-forward
+ artifacts/skyguard-os/src/App.tsx                       |  9 ++++++---
+ artifacts/skyguard-os/src/components/layout/Shell.tsx   | 15 +++++++++++++--
+ artifacts/skyguard-os/src/components/radar/RadarMap.tsx | 10 ++++++++--
+ artifacts/skyguard-os/src/index.css                     | 88 +++++++++++++++++++++++++++++++++++++++++++++-------------------------------------------
+ 4 files changed, 72 insertions(+), 50 deletions(-)
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2779 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.54 kB
+dist/public/assets/index-CJUnS_bh.css  139.62 kB │ gzip:  29.14 kB
+dist/public/assets/index-B2oMyi-q.js   832.67 kB │ gzip: 253.11 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.09s
+2026/07/23 11:13:41 [notice] 537415#537415: signal process started
+tmm@tmm:~/skyguard$ 

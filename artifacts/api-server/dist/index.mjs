@@ -41175,7 +41175,7 @@ var require_micromatch = __commonJS({
 });
 
 // src/app.ts
-var import_express15 = __toESM(require_express2(), 1);
+var import_express16 = __toESM(require_express2(), 1);
 var import_cors = __toESM(require_lib3(), 1);
 var import_pino_http = __toESM(require_logger(), 1);
 
@@ -50636,7 +50636,7 @@ var getAuth = ((req, options) => {
 });
 
 // src/routes/index.ts
-var import_express14 = __toESM(require_express2(), 1);
+var import_express15 = __toESM(require_express2(), 1);
 
 // src/routes/health.ts
 var import_express = __toESM(require_express2(), 1);
@@ -54674,7 +54674,7 @@ router.get("/healthz", (_req, res) => {
 var health_default = router;
 
 // src/routes/home.ts
-var import_express3 = __toESM(require_express2(), 1);
+var import_express4 = __toESM(require_express2(), 1);
 init_drizzle_orm();
 
 // ../../node_modules/.pnpm/pg@8.22.0/node_modules/pg/esm/index.mjs
@@ -70117,8 +70117,25 @@ function requireAuth(req, res, next) {
   next();
 }
 
+// src/middlewares/requireAdmin.ts
+async function requireAdmin(req, res, next) {
+  const auth = getAuth(req);
+  const userId = auth?.userId;
+  if (!userId) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  const client = clerkClient();
+  const clerkUser = await client.users.getUser(userId);
+  if (clerkUser.publicMetadata?.role !== "admin") {
+    res.status(403).json({ error: "Forbidden" });
+    return;
+  }
+  next();
+}
+
 // src/routes/home.ts
-var router2 = (0, import_express3.Router)();
+var router2 = (0, import_express4.Router)();
 var DEFAULT_HOME = {
   propertyName: "Protected Property",
   lat: 42.6977,
@@ -70137,7 +70154,7 @@ router2.get("/home", requireAuth, async (_req, res) => {
   const home = await getOrCreateHomeConfig();
   res.json(GetHomeConfigResponse.parse(home));
 });
-router2.put("/home", requireAuth, async (req, res) => {
+router2.put("/home", requireAdmin, async (req, res) => {
   const parsed = UpdateHomeConfigBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
@@ -70150,7 +70167,7 @@ router2.put("/home", requireAuth, async (req, res) => {
 var home_default = router2;
 
 // src/routes/detections.ts
-var import_express4 = __toESM(require_express2(), 1);
+var import_express5 = __toESM(require_express2(), 1);
 init_drizzle_orm();
 
 // src/lib/geo.ts
@@ -70245,8 +70262,60 @@ async function requireDeviceKey(req, res, next) {
   }
 }
 
+// src/lib/telegram.ts
+var COOLDOWN_MS = 5 * 60 * 1e3;
+var lastAlertAt = /* @__PURE__ */ new Map();
+function isTelegramConfigured() {
+  return !!(process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID);
+}
+async function sendDroneAlert(params) {
+  if (!isTelegramConfigured()) return;
+  const last = lastAlertAt.get(params.droneId) ?? 0;
+  if (Date.now() - last < COOLDOWN_MS) return;
+  lastAlertAt.set(params.droneId, Date.now());
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  const signal = params.signalType ?? "RF";
+  const model = params.model ? ` \u2022 ${params.model}` : "";
+  const dist = Math.round(params.distanceFromHomeM);
+  const alt = params.altitudeM != null ? `
+\u{1F4D0} Altitude: ${Math.round(params.altitudeM)}m` : "";
+  const rssi = params.rssiDbm != null ? `
+\u{1F4F6} RSSI: ${params.rssiDbm} dBm` : "";
+  const mapsUrl = `https://maps.google.com/?q=${params.lat},${params.lng}`;
+  const text2 = [
+    `\u{1F6A8} *\u0414\u0420\u041E\u041D \u0417\u0410\u0421\u0415\u0427\u0415\u041D* \u{1F6A8}`,
+    ``,
+    `\u{1F194} ID: \`${params.droneId}\`${model}`,
+    `\u{1F4E1} \u0421\u0438\u0433\u043D\u0430\u043B: ${signal}`,
+    `\u{1F4CF} \u0420\u0430\u0437\u0441\u0442\u043E\u044F\u043D\u0438\u0435: ${dist}m \u043E\u0442 \u0431\u0430\u0437\u0430\u0442\u0430${alt}${rssi}`,
+    ``,
+    `\u{1F4CD} [\u041B\u043E\u043A\u0430\u0446\u0438\u044F \u0432 Google Maps](${mapsUrl})`,
+    ``,
+    `_SkyGuard OS \u2022 ${(/* @__PURE__ */ new Date()).toLocaleTimeString("bg-BG")}_`
+  ].join("\n");
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: text2,
+        parse_mode: "Markdown",
+        disable_web_page_preview: false
+      })
+    });
+    if (!res.ok) {
+      const err = await res.text();
+      console.error("[Telegram] Failed to send alert:", err);
+    }
+  } catch (e) {
+    console.error("[Telegram] Error sending alert:", e);
+  }
+}
+
 // src/routes/detections.ts
-var router3 = (0, import_express4.Router)();
+var router3 = (0, import_express5.Router)();
 var DEFAULT_HOME2 = {
   propertyName: "Protected Property",
   lat: 42.6977,
@@ -70295,6 +70364,17 @@ router3.post("/detections", requireDeviceKey, async (req, res) => {
     timestamp: timestamp2
   }).returning();
   req.log.info({ droneId: detection.droneId, distanceFromHomeM }, "Detection ingested");
+  sendDroneAlert({
+    droneId: detection.droneId,
+    signalType: detection.signalType,
+    model: detection.model,
+    distanceFromHomeM,
+    lat: detection.lat,
+    lng: detection.lng,
+    altitudeM: detection.altitudeM,
+    rssiDbm: detection.rssiDbm
+  }).catch(() => {
+  });
   res.status(201).json(
     IngestDetectionResponse.parse({
       ...detection,
@@ -70371,9 +70451,9 @@ router3.get("/detections/history", requireAuth, async (req, res) => {
 var detections_default = router3;
 
 // src/routes/status.ts
-var import_express5 = __toESM(require_express2(), 1);
+var import_express6 = __toESM(require_express2(), 1);
 init_drizzle_orm();
-var router4 = (0, import_express5.Router)();
+var router4 = (0, import_express6.Router)();
 var CONNECTED_WINDOW_MS = 60 * 1e3;
 router4.get("/status", requireAuth, async (_req, res) => {
   const now = Date.now();
@@ -70396,24 +70476,24 @@ router4.get("/status", requireAuth, async (_req, res) => {
 var status_default = router4;
 
 // src/routes/devices.ts
-var import_express6 = __toESM(require_express2(), 1);
+var import_express7 = __toESM(require_express2(), 1);
 init_drizzle_orm();
-var router5 = (0, import_express6.Router)();
+var router5 = (0, import_express7.Router)();
 function toDeviceJson(device) {
   return {
     id: device.id,
     name: device.name,
     apiKeyPrefix: device.apiKeyPrefix,
     revoked: device.revoked,
-    createdAt: device.createdAt.toISOString(),
+    createdAt: device.createdAt ? device.createdAt.toISOString() : (/* @__PURE__ */ new Date(0)).toISOString(),
     lastSeenAt: device.lastSeenAt ? device.lastSeenAt.toISOString() : null
   };
 }
-router5.get("/devices", requireAuth, async (_req, res) => {
+router5.get("/devices", requireAdmin, async (_req, res) => {
   const devices = await db.select().from(devicesTable).orderBy(devicesTable.createdAt);
   res.json(ListDevicesResponse.parse(devices.map(toDeviceJson)));
 });
-router5.post("/devices", requireAuth, async (req, res) => {
+router5.post("/devices", requireAdmin, async (req, res) => {
   const parsed = CreateDeviceBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
@@ -70435,29 +70515,29 @@ router5.post("/devices", requireAuth, async (req, res) => {
     })
   );
 });
-router5.delete("/devices/:deviceId", requireAuth, async (req, res) => {
+router5.delete("/devices/:deviceId", requireAdmin, async (req, res) => {
   const deviceId = Number(req.params.deviceId);
   if (!Number.isInteger(deviceId)) {
     res.status(400).json({ error: "Invalid device id" });
     return;
   }
-  await db.update(devicesTable).set({ revoked: true }).where(eq(devicesTable.id, deviceId));
+  await db.delete(devicesTable).where(eq(devicesTable.id, deviceId));
   res.status(204).send();
 });
 var devices_default = router5;
 
 // src/routes/heartbeat.ts
-var import_express8 = __toESM(require_express2(), 1);
-var router6 = (0, import_express8.Router)();
+var import_express9 = __toESM(require_express2(), 1);
+var router6 = (0, import_express9.Router)();
 router6.post("/heartbeat", requireDeviceKey, (_req, res) => {
   res.json({ ok: true, ts: (/* @__PURE__ */ new Date()).toISOString() });
 });
 var heartbeat_default = router6;
 
 // src/routes/ambient.ts
-var import_express9 = __toESM(require_express2(), 1);
+var import_express10 = __toESM(require_express2(), 1);
 init_drizzle_orm();
-var router7 = (0, import_express9.Router)();
+var router7 = (0, import_express10.Router)();
 var AMBIENT_WINDOW_MS = 5 * 60 * 1e3;
 function parseAmbientBatch(body) {
   if (!Array.isArray(body)) return null;
@@ -70522,9 +70602,9 @@ router7.get("/ambient/active", requireAuth, async (_req, res) => {
 var ambient_default = router7;
 
 // src/routes/rf-alerts.ts
-var import_express10 = __toESM(require_express2(), 1);
+var import_express11 = __toESM(require_express2(), 1);
 init_drizzle_orm();
-var router8 = (0, import_express10.Router)();
+var router8 = (0, import_express11.Router)();
 var RECENT_WINDOW_MS = 10 * 60 * 1e3;
 function parseRfAlert(body) {
   if (typeof body !== "object" || body === null) return null;
@@ -70582,14 +70662,14 @@ router8.get("/rf-alerts/recent", requireAuth, async (_req, res) => {
 var rf_alerts_default = router8;
 
 // src/routes/known-rf-sources.ts
-var import_express11 = __toESM(require_express2(), 1);
+var import_express12 = __toESM(require_express2(), 1);
 init_drizzle_orm();
-var router9 = (0, import_express11.Router)();
+var router9 = (0, import_express12.Router)();
 router9.get("/known-rf-sources", async (req, res) => {
   const rows = await db.select().from(knownRfSourcesTable).orderBy(knownRfSourcesTable.bandId);
   res.json(rows);
 });
-router9.post("/known-rf-sources", requireAuth, async (req, res) => {
+router9.post("/known-rf-sources", requireAdmin, async (req, res) => {
   const { bandId, label, suppress = true } = req.body ?? {};
   if (typeof bandId !== "string" || typeof label !== "string") {
     res.status(400).json({ error: "bandId and label required" });
@@ -70601,15 +70681,15 @@ router9.post("/known-rf-sources", requireAuth, async (req, res) => {
   }).returning();
   res.status(201).json(row);
 });
-router9.delete("/known-rf-sources/:bandId", requireAuth, async (req, res) => {
+router9.delete("/known-rf-sources/:bandId", requireAdmin, async (req, res) => {
   await db.delete(knownRfSourcesTable).where(eq(knownRfSourcesTable.bandId, req.params.bandId));
   res.status(204).end();
 });
 var known_rf_sources_default = router9;
 
 // src/routes/pi-status.ts
-var import_express12 = __toESM(require_express2(), 1);
-var router10 = (0, import_express12.Router)();
+var import_express13 = __toESM(require_express2(), 1);
+var router10 = (0, import_express13.Router)();
 var latestStatus = null;
 router10.post("/pi-status", requireDeviceKey, (req, res) => {
   const b = req.body ?? {};
@@ -70634,8 +70714,8 @@ router10.get("/pi-status", (req, res) => {
 var pi_status_default = router10;
 
 // src/routes/ble-status.ts
-var import_express13 = __toESM(require_express2(), 1);
-var router11 = (0, import_express13.Router)();
+var import_express14 = __toESM(require_express2(), 1);
+var router11 = (0, import_express14.Router)();
 var latestStatus2 = null;
 router11.post("/ble-status", requireDeviceKey, (req, res) => {
   const b = req.body ?? {};
@@ -70658,7 +70738,7 @@ router11.get("/ble-status", (req, res) => {
 var ble_status_default = router11;
 
 // src/routes/index.ts
-var router12 = (0, import_express14.Router)();
+var router12 = (0, import_express15.Router)();
 router12.use(health_default);
 router12.use(home_default);
 router12.use(detections_default);
@@ -71974,7 +72054,7 @@ function clerkProxyMiddleware() {
 }
 
 // src/app.ts
-var app = (0, import_express15.default)();
+var app = (0, import_express16.default)();
 app.use(
   (0, import_pino_http.default)({
     logger: logger2,
@@ -71996,8 +72076,8 @@ app.use(
 );
 app.use(CLERK_PROXY_PATH, clerkProxyMiddleware());
 app.use((0, import_cors.default)({ credentials: true, origin: true }));
-app.use(import_express15.default.json());
-app.use(import_express15.default.urlencoded({ extended: true }));
+app.use(import_express16.default.json());
+app.use(import_express16.default.urlencoded({ extended: true }));
 app.use(
   clerkMiddleware((req) => ({
     publishableKey: publishableKeyFromHost(

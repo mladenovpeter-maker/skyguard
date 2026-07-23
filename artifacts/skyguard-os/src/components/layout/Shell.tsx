@@ -155,12 +155,16 @@ export function Shell({ children }: { children: ReactNode }) {
   const { user } = useUser();
   const { theme, setTheme } = useTheme();
 
+  const isAdmin = (user?.publicMetadata as Record<string, unknown> | undefined)?.role === "admin";
+
   const links = [
     { href: "/",          label: t("nav.radar"),    icon: Radar },
     { href: "/spectrum",  label: t("nav.spectrum"), icon: RadioTower },
     { href: "/history",   label: t("nav.history"),  icon: History },
-    { href: "/settings",  label: t("nav.settings"), icon: Settings },
-    { href: "/admin",     label: t("nav.admin"),    icon: Cpu },
+    ...(isAdmin ? [
+      { href: "/settings",  label: t("nav.settings"), icon: Settings },
+      { href: "/admin",     label: t("nav.admin"),    icon: Cpu },
+    ] : []),
   ];
 
   return (

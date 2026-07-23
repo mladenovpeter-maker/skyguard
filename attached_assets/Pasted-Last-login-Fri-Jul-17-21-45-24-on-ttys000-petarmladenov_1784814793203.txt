@@ -1,0 +1,3290 @@
+Last login: Fri Jul 17 21:45:24 on ttys000
+petarmladenov@Petars-MacBook-Pro ~ % ssh admin@192.168.100.224   
+admin@192.168.100.224's password: 
+Permission denied, please try again.
+admin@192.168.100.224's password: 
+Permission denied, please try again.
+admin@192.168.100.224's password: 
+admin@192.168.100.224: Permission denied (publickey,password).
+petarmladenov@Petars-MacBook-Pro ~ % ssh tmm@192.168.100.224
+tmm@192.168.100.224's password: 
+Welcome to Ubuntu 24.04.4 LTS (GNU/Linux 6.8.0-134-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Wed Jul 22 11:50:15 AM UTC 2026
+
+  System load:           0.95
+  Usage of /:            72.3% of 97.87GB
+  Memory usage:          69%
+  Swap usage:            7%
+  Temperature:           59.0 C
+  Processes:             272
+  Users logged in:       0
+  IPv4 address for eno2: 192.168.100.224
+  IPv6 address for eno2: fdbc:b73a:6a64:433d:ba85:84ff:fe99:b371
+
+ * Strictly confined Kubernetes makes edge and IoT secure. Learn how MicroK8s
+   just raised the bar for easy, resilient and secure K8s cluster deployment.
+
+   https://ubuntu.com/engage/secure-kubernetes-at-the-edge
+
+Expanded Security Maintenance for Applications is not enabled.
+
+37 updates can be applied immediately.
+3 of these updates are standard security updates.
+To see these additional updates run: apt list --upgradable
+
+1 additional security update can be applied with ESM Apps.
+Learn more about enabling ESM Apps service at https://ubuntu.com/esm
+
+
+*** System restart required ***
+Last login: Fri Jul 17 15:13:46 2026 from 192.168.100.66
+tmm@tmm:~$ ssh peter@192.168.100.224 "sudo nginx -T 2>/dev/null | grep -A5 'hackrf\|8765\|8090'"
+The authenticity of host '192.168.100.224 (192.168.100.224)' can't be established.
+ED25519 key fingerprint is SHA256:ErgU0Y8qdoA+Oon/nuUsWSqhkpGu/+YPZC4DZAzLGbg.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '192.168.100.224' (ED25519) to the list of known hosts.
+peter@192.168.100.224's password: 
+Permission denied, please try again.
+peter@192.168.100.224's password: 
+Permission denied, please try again.
+peter@192.168.100.224's password: 
+peter@192.168.100.224: Permission denied (publickey,password).
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ ssh peter@192.168.100.224 "sudo nginx -T 2>/dev/null | grep -A5 'hackrf\|8765\|8090'"
+peter@192.168.100.224's password: 
+Permission denied, please try again.
+peter@192.168.100.224's password: 
+Permission denied, please try again.
+peter@192.168.100.224's password: 
+peter@192.168.100.224: Permission denied (publickey,password).
+tmm@tmm:~$ 
+tmm@tmm:~$ ssh admin@192.168.100.224 "sudo nginx -T | grep -A5 'hackrf\|8765\|8090'"
+admin@192.168.100.224's password: 
+Permission denied, please try again.
+admin@192.168.100.224's password: 
+Permission denied, please try again.
+admin@192.168.100.224's password: 
+
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ sudo nginx -T | grep -A5 'hackrf\|8765\|8090'
+[sudo] password for tmm: 
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+    listen 8090;
+    server_name _;
+
+    root /var/www/skyguard/public;
+    index index.html;
+
+--
+    location /hackrf-ws {
+        proxy_pass http://192.168.100.237:8765;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_read_timeout 86400s;
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ sudo systemctl status nginx | grep Active && curl -s --max-time 3 -o /dev/null -w "%{http_code}" http://192.168.100.237:8765 || echo "Pi недостъпно"
+     Active: active (running) since Tue 2026-07-21 06:41:14 UTC; 1 day 5h ago
+000Pi недостъпно
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ curl -s --max-time 3 -o /dev/null -w "%{http_code}" http://192.168.100.237:8765 && echo " — достъпно"
+000tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ sudo sed -i 's/192.168.100.237/192.168.100.252/g' /etc/nginx/sites-enabled/* /etc/nginx/nginx.conf 2>/dev/null; sudo nginx -t && sudo systemctl reload nginx && echo "RELOAD OK"
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+RELOAD OK
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ sudo nginx -T | grep "proxy_pass.*8765"
+[sudo] password for tmm: 
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+        proxy_pass http://192.168.100.252:8765;
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ df -h / && du -sh ~/skyguard /var/lib/postgresql 2>/dev/null
+Filesystem                         Size  Used Avail Use% Mounted on
+/dev/mapper/ubuntu--vg-ubuntu--lv   98G   71G   23G  77% /
+496M	/home/tmm/skyguard
+12K	/var/lib/postgresql
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ scp ~/Downloads/DroneRF.zip tmm@192.168.100.224:~/skyguard/hardware/rf-fingerprinting/
+scp: stat local "/home/tmm/Downloads/DroneRF.zip": No such file or directory
+tmm@tmm:~$ scp ~/Downloads/DroneRF tmm@192.168.100.224:~/skyguard/hardware/rf-fingerprinting/
+scp: stat local "/home/tmm/Downloads/DroneRF": No such file or directory
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ DroneRF
+DroneRF: command not found
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ scp -r ~/Downloads/DroneRF tmm@192.168.100.224:~/skyguard/hardware/rf-fingerprinting/datasets/
+scp: stat local "/home/tmm/Downloads/DroneRF": No such file or directory
+tmm@tmm:~$ scp -r tmm@tmm:~$ scp -r ~/Downloads/DroneRF tmm@192.168.100.224:~/skyguard/hardware/rf-fingerprinting/datasets/
+scp: stat local "/home/tmm/Downloads/DroneRF": No such file or directory
+tmm@tmm:~$ 
+ tmm@192.168.100.224:~/skyguard/hardware/rf-fingerprinting/datasets/
+tmm@192.168.100.224's password: 
+Permission denied, please try again.
+tmm@192.168.100.224's password: 
+Permission denied, please try again.
+tmm@192.168.100.224's password: 
+tmm@192.168.100.224: Permission denied (publickey,password).
+scp: Connection closed
+Command 'scp:' not found, did you mean:
+  command 'scpr' from deb libsc-dev (2.3.1-22)
+  command 'scp' from deb openssh-client (1:9.6p1-3ubuntu13.16)
+  command 'scp1' from deb openssh-client-ssh1 (1:7.5p1-15)
+Try: sudo apt install <deb name>
+tmm@tmm:~$: command not found
+-bash: tmm@192.168.100.224:~/skyguard/hardware/rf-fingerprinting/datasets/: No such file or directory
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ ssh tmm@192.168.100.224 "mkdir -p ~/skyguard/hardware/rf-fingerprinting/datasets"
+tmm@192.168.100.224's password: 
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ ssh tmm@192.168.100.224
+cd ~/skyguard/hardware/rf-fingerprinting
+./setup.sh
+tmm@192.168.100.224's password: 
+Welcome to Ubuntu 24.04.4 LTS (GNU/Linux 6.8.0-134-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Wed Jul 22 03:48:00 PM UTC 2026
+
+  System load:           0.73
+  Usage of /:            76.1% of 97.87GB
+  Memory usage:          67%
+  Swap usage:            13%
+  Temperature:           65.0 C
+  Processes:             273
+  Users logged in:       1
+  IPv4 address for eno2: 192.168.100.224
+  IPv6 address for eno2: fdbc:b73a:6a64:433d:ba85:84ff:fe99:b371
+
+ * Strictly confined Kubernetes makes edge and IoT secure. Learn how MicroK8s
+   just raised the bar for easy, resilient and secure K8s cluster deployment.
+
+   https://ubuntu.com/engage/secure-kubernetes-at-the-edge
+
+Expanded Security Maintenance for Applications is not enabled.
+
+37 updates can be applied immediately.
+3 of these updates are standard security updates.
+To see these additional updates run: apt list --upgradable
+
+1 additional security update can be applied with ESM Apps.
+Learn more about enabling ESM Apps service at https://ubuntu.com/esm
+
+
+*** System restart required ***
+Last login: Wed Jul 22 11:50:16 2026 from 192.168.100.66
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ 
+tmm@tmm:~$ cd ~/skyguard/hardware/rf-fingerprinting && ./setup.sh
+-bash: ./setup.sh: No such file or directory
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ ls ~/skyguard/hardware/rf-fingerprinting/datasets/
+DroneRF
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ sudo apt-get install -y unrar
+[sudo] password for tmm: 
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+The following NEW packages will be installed:
+  unrar
+0 upgraded, 1 newly installed, 0 to remove and 35 not upgraded.
+Need to get 178 kB of archives.
+After this operation, 407 kB of additional disk space will be used.
+Get:1 http://bg.archive.ubuntu.com/ubuntu noble/multiverse amd64 unrar amd64 1:7.0.7-1build1 [178 kB]
+Fetched 178 kB in 0s (2,309 kB/s)
+Selecting previously unselected package unrar.
+(Reading database ... 134184 files and directories currently installed.)
+Preparing to unpack .../unrar_1%3a7.0.7-1build1_amd64.deb ...
+Unpacking unrar (1:7.0.7-1build1) ...
+Setting up unrar (1:7.0.7-1build1) ...
+update-alternatives: using /usr/bin/unrar-nonfree to provide /usr/bin/unrar (unrar) in auto mode
+Processing triggers for man-db (2.12.0-4build2) ...
+Scanning processes...                                                           
+Scanning processor microcode...                                                 
+Scanning linux images...                                                        
+
+Pending kernel upgrade!
+Running kernel version:
+  6.8.0-134-generic
+Diagnostics:
+  The currently running kernel version is not the expected kernel version
+6.8.0-136-generic.
+
+Restarting the system to load the new kernel will not be handled automatically,
+so you should consider rebooting.
+
+The processor microcode seems to be up-to-date.
+
+No services need to be restarted.
+
+No containers need to be restarted.
+
+No user sessions are running outdated binaries.
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ ls ~/skyguard/hardware/rf-fingerprinting/datasets/DroneRF/
+'AR drone'  'Background RF activites'  'Bepop drone'  'Phantom drone'
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ sudo apt-get install -y unrar && pip3 install -q scikit-learn joblib numpy scipy
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+unrar is already the newest version (1:7.0.7-1build1).
+0 upgraded, 0 newly installed, 0 to remove and 35 not upgraded.
+Command 'pip3' not found, but can be installed with:
+sudo apt install python3-pip
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ sudo apt install -y python3-pip && pip3 install -q scikit-learn joblib numpy scipy
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+The following additional packages will be installed:
+  binutils binutils-common binutils-x86-64-linux-gnu build-essential bzip2 cpp
+  cpp-13 cpp-13-x86-64-linux-gnu cpp-x86-64-linux-gnu dpkg-dev fakeroot g++
+  g++-13 g++-13-x86-64-linux-gnu g++-x86-64-linux-gnu gcc gcc-13 gcc-13-base
+  gcc-13-x86-64-linux-gnu gcc-x86-64-linux-gnu javascript-common
+  libalgorithm-diff-perl libalgorithm-diff-xs-perl libalgorithm-merge-perl
+  libasan8 libatomic1 libbinutils libcc1-0 libctf-nobfd0 libctf0 libdpkg-perl
+  libexpat1-dev libfakeroot libfile-fcntllock-perl libgcc-13-dev libgomp1
+  libgprofng0 libhwasan0 libisl23 libitm1 libjs-jquery libjs-sphinxdoc
+  libjs-underscore liblsan0 libmpc3 libpython3-dev libpython3.12-dev
+  libquadmath0 libsframe1 libstdc++-13-dev libtsan2 libubsan1
+  lto-disabled-list make python3-dev python3-wheel python3.12-dev zlib1g-dev
+Suggested packages:
+  binutils-doc gprofng-gui bzip2-doc cpp-doc gcc-13-locales cpp-13-doc
+  debian-keyring g++-multilib g++-13-multilib gcc-13-doc gcc-multilib autoconf
+  automake libtool flex bison gdb gcc-doc gcc-13-multilib gdb-x86-64-linux-gnu
+  bzr libstdc++-13-doc make-doc
+The following NEW packages will be installed:
+  binutils binutils-common binutils-x86-64-linux-gnu build-essential bzip2 cpp
+  cpp-13 cpp-13-x86-64-linux-gnu cpp-x86-64-linux-gnu dpkg-dev fakeroot g++
+  g++-13 g++-13-x86-64-linux-gnu g++-x86-64-linux-gnu gcc gcc-13 gcc-13-base
+  gcc-13-x86-64-linux-gnu gcc-x86-64-linux-gnu javascript-common
+  libalgorithm-diff-perl libalgorithm-diff-xs-perl libalgorithm-merge-perl
+  libasan8 libatomic1 libbinutils libcc1-0 libctf-nobfd0 libctf0 libdpkg-perl
+  libexpat1-dev libfakeroot libfile-fcntllock-perl libgcc-13-dev libgomp1
+  libgprofng0 libhwasan0 libisl23 libitm1 libjs-jquery libjs-sphinxdoc
+  libjs-underscore liblsan0 libmpc3 libpython3-dev libpython3.12-dev
+  libquadmath0 libsframe1 libstdc++-13-dev libtsan2 libubsan1
+  lto-disabled-list make python3-dev python3-pip python3-wheel python3.12-dev
+  zlib1g-dev
+0 upgraded, 59 newly installed, 0 to remove and 35 not upgraded.
+Need to get 76.1 MB of archives.
+After this operation, 270 MB of additional disk space will be used.
+Get:1 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 binutils-common amd64 2.42-4ubuntu2.10 [240 kB]
+Get:2 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 libsframe1 amd64 2.42-4ubuntu2.10 [15.7 kB]
+Get:3 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 libbinutils amd64 2.42-4ubuntu2.10 [577 kB]
+Get:4 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 libctf-nobfd0 amd64 2.42-4ubuntu2.10 [98.0 kB]
+Get:5 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 libctf0 amd64 2.42-4ubuntu2.10 [94.5 kB]
+Get:6 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 libgprofng0 amd64 2.42-4ubuntu2.10 [849 kB]
+Get:7 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 binutils-x86-64-linux-gnu amd64 2.42-4ubuntu2.10 [2,463 kB]
+Get:8 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 binutils amd64 2.42-4ubuntu2.10 [18.2 kB]
+Get:9 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 gcc-13-base amd64 13.3.0-6ubuntu2~24.04.1 [51.6 kB]
+Get:10 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 libisl23 amd64 0.26-3build1.1 [680 kB]
+Get:11 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 libmpc3 amd64 1.3.1-1build1.1 [54.6 kB]
+Get:12 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 cpp-13-x86-64-linux-gnu amd64 13.3.0-6ubuntu2~24.04.1 [10.7 MB]
+Get:13 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 cpp-13 amd64 13.3.0-6ubuntu2~24.04.1 [1,042 B]
+Get:14 http://bg.archive.ubuntu.com/ubuntu noble/main amd64 cpp-x86-64-linux-gnu amd64 4:13.2.0-7ubuntu1 [5,326 B]
+Get:15 http://bg.archive.ubuntu.com/ubuntu noble/main amd64 cpp amd64 4:13.2.0-7ubuntu1 [22.4 kB]
+Get:16 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 libcc1-0 amd64 14.2.0-4ubuntu2~24.04.1 [48.0 kB]
+Get:17 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 libgomp1 amd64 14.2.0-4ubuntu2~24.04.1 [148 kB]
+Get:18 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 libitm1 amd64 14.2.0-4ubuntu2~24.04.1 [29.7 kB]
+Get:19 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 libatomic1 amd64 14.2.0-4ubuntu2~24.04.1 [10.5 kB]
+Get:20 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 libasan8 amd64 14.2.0-4ubuntu2~24.04.1 [3,027 kB]
+Get:21 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 liblsan0 amd64 14.2.0-4ubuntu2~24.04.1 [1,322 kB]
+Get:22 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 libtsan2 amd64 14.2.0-4ubuntu2~24.04.1 [2,772 kB]
+Get:23 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 libubsan1 amd64 14.2.0-4ubuntu2~24.04.1 [1,184 kB]
+Get:24 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 libhwasan0 amd64 14.2.0-4ubuntu2~24.04.1 [1,641 kB]
+Get:25 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 libquadmath0 amd64 14.2.0-4ubuntu2~24.04.1 [153 kB]
+Get:26 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 libgcc-13-dev amd64 13.3.0-6ubuntu2~24.04.1 [2,681 kB]
+Get:27 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 gcc-13-x86-64-linux-gnu amd64 13.3.0-6ubuntu2~24.04.1 [21.1 MB]
+Get:28 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 gcc-13 amd64 13.3.0-6ubuntu2~24.04.1 [494 kB]
+Get:29 http://bg.archive.ubuntu.com/ubuntu noble/main amd64 gcc-x86-64-linux-gnu amd64 4:13.2.0-7ubuntu1 [1,212 B]
+Get:30 http://bg.archive.ubuntu.com/ubuntu noble/main amd64 gcc amd64 4:13.2.0-7ubuntu1 [5,018 B]
+Get:31 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 libstdc++-13-dev amd64 13.3.0-6ubuntu2~24.04.1 [2,420 kB]
+Get:32 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 g++-13-x86-64-linux-gnu amd64 13.3.0-6ubuntu2~24.04.1 [12.2 MB]
+Get:33 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 g++-13 amd64 13.3.0-6ubuntu2~24.04.1 [16.0 kB]
+Get:34 http://bg.archive.ubuntu.com/ubuntu noble/main amd64 g++-x86-64-linux-gnu amd64 4:13.2.0-7ubuntu1 [964 B]
+Get:35 http://bg.archive.ubuntu.com/ubuntu noble/main amd64 g++ amd64 4:13.2.0-7ubuntu1 [1,100 B]
+Get:36 http://bg.archive.ubuntu.com/ubuntu noble/main amd64 make amd64 4.3-4.1build2 [180 kB]
+Get:37 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 libdpkg-perl all 1.22.6ubuntu6.6 [268 kB]
+Get:38 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 bzip2 amd64 1.0.8-5.1build0.1 [34.5 kB]
+Get:39 http://bg.archive.ubuntu.com/ubuntu noble/main amd64 lto-disabled-list all 47 [12.4 kB]
+Get:40 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 dpkg-dev all 1.22.6ubuntu6.6 [1,074 kB]
+Get:41 http://bg.archive.ubuntu.com/ubuntu noble/main amd64 build-essential amd64 12.10ubuntu1 [4,928 B]
+Get:42 http://bg.archive.ubuntu.com/ubuntu noble/main amd64 libfakeroot amd64 1.33-1 [32.4 kB]
+Get:43 http://bg.archive.ubuntu.com/ubuntu noble/main amd64 fakeroot amd64 1.33-1 [67.2 kB]
+Get:44 http://bg.archive.ubuntu.com/ubuntu noble/main amd64 javascript-common all 11+nmu1 [5,936 B]
+Get:45 http://bg.archive.ubuntu.com/ubuntu noble/main amd64 libalgorithm-diff-perl all 1.201-1 [41.8 kB]
+Get:46 http://bg.archive.ubuntu.com/ubuntu noble/main amd64 libalgorithm-diff-xs-perl amd64 0.04-8build3 [11.2 kB]
+Get:47 http://bg.archive.ubuntu.com/ubuntu noble/main amd64 libalgorithm-merge-perl all 0.08-5 [11.4 kB]
+Get:48 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 libexpat1-dev amd64 2.6.1-2ubuntu0.4 [140 kB]
+Get:49 http://bg.archive.ubuntu.com/ubuntu noble/main amd64 libfile-fcntllock-perl amd64 0.22-4ubuntu5 [30.7 kB]
+Get:50 http://bg.archive.ubuntu.com/ubuntu noble/main amd64 libjs-jquery all 3.6.1+dfsg+~3.5.14-1 [328 kB]
+Get:51 http://bg.archive.ubuntu.com/ubuntu noble/main amd64 libjs-underscore all 1.13.4~dfsg+~1.11.4-3 [118 kB]
+Get:52 http://bg.archive.ubuntu.com/ubuntu noble/main amd64 libjs-sphinxdoc all 7.2.6-6 [149 kB]
+Get:53 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 zlib1g-dev amd64 1:1.3.dfsg-3.1ubuntu2.1 [894 kB]
+Get:54 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 libpython3.12-dev amd64 3.12.3-1ubuntu0.15 [5,683 kB]
+Get:55 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 libpython3-dev amd64 3.12.3-0ubuntu2.1 [10.3 kB]
+Get:56 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 python3.12-dev amd64 3.12.3-1ubuntu0.15 [498 kB]
+Get:57 http://bg.archive.ubuntu.com/ubuntu noble-updates/main amd64 python3-dev amd64 3.12.3-0ubuntu2.1 [26.7 kB]
+Get:58 http://bg.archive.ubuntu.com/ubuntu noble/universe amd64 python3-wheel all 0.42.0-2 [53.1 kB]
+Get:59 http://bg.archive.ubuntu.com/ubuntu noble-updates/universe amd64 python3-pip all 24.0+dfsg-1ubuntu1.3 [1,320 kB]
+Fetched 76.1 MB in 6s (12.0 MB/s)                                              
+Extracting templates from packages: 100%
+Selecting previously unselected package binutils-common:amd64.
+(Reading database ... 134192 files and directories currently installed.)
+Preparing to unpack .../00-binutils-common_2.42-4ubuntu2.10_amd64.deb ...
+Unpacking binutils-common:amd64 (2.42-4ubuntu2.10) ...
+Selecting previously unselected package libsframe1:amd64.
+Preparing to unpack .../01-libsframe1_2.42-4ubuntu2.10_amd64.deb ...
+Unpacking libsframe1:amd64 (2.42-4ubuntu2.10) ...
+Selecting previously unselected package libbinutils:amd64.
+Preparing to unpack .../02-libbinutils_2.42-4ubuntu2.10_amd64.deb ...
+Unpacking libbinutils:amd64 (2.42-4ubuntu2.10) ...
+Selecting previously unselected package libctf-nobfd0:amd64.
+Preparing to unpack .../03-libctf-nobfd0_2.42-4ubuntu2.10_amd64.deb ...
+Unpacking libctf-nobfd0:amd64 (2.42-4ubuntu2.10) ...
+Selecting previously unselected package libctf0:amd64.
+Preparing to unpack .../04-libctf0_2.42-4ubuntu2.10_amd64.deb ...
+Unpacking libctf0:amd64 (2.42-4ubuntu2.10) ...
+Selecting previously unselected package libgprofng0:amd64.
+Preparing to unpack .../05-libgprofng0_2.42-4ubuntu2.10_amd64.deb ...
+Unpacking libgprofng0:amd64 (2.42-4ubuntu2.10) ...
+Selecting previously unselected package binutils-x86-64-linux-gnu.
+Preparing to unpack .../06-binutils-x86-64-linux-gnu_2.42-4ubuntu2.10_amd64.deb ...
+Unpacking binutils-x86-64-linux-gnu (2.42-4ubuntu2.10) ...
+Selecting previously unselected package binutils.
+Preparing to unpack .../07-binutils_2.42-4ubuntu2.10_amd64.deb ...
+Unpacking binutils (2.42-4ubuntu2.10) ...
+Selecting previously unselected package gcc-13-base:amd64.
+Preparing to unpack .../08-gcc-13-base_13.3.0-6ubuntu2~24.04.1_amd64.deb ...
+Unpacking gcc-13-base:amd64 (13.3.0-6ubuntu2~24.04.1) ...
+Selecting previously unselected package libisl23:amd64.
+Preparing to unpack .../09-libisl23_0.26-3build1.1_amd64.deb ...
+Unpacking libisl23:amd64 (0.26-3build1.1) ...
+Selecting previously unselected package libmpc3:amd64.
+Preparing to unpack .../10-libmpc3_1.3.1-1build1.1_amd64.deb ...
+Unpacking libmpc3:amd64 (1.3.1-1build1.1) ...
+Selecting previously unselected package cpp-13-x86-64-linux-gnu.
+Preparing to unpack .../11-cpp-13-x86-64-linux-gnu_13.3.0-6ubuntu2~24.04.1_amd64.deb ...
+Unpacking cpp-13-x86-64-linux-gnu (13.3.0-6ubuntu2~24.04.1) ...
+Selecting previously unselected package cpp-13.
+Preparing to unpack .../12-cpp-13_13.3.0-6ubuntu2~24.04.1_amd64.deb ...
+Unpacking cpp-13 (13.3.0-6ubuntu2~24.04.1) ...
+Selecting previously unselected package cpp-x86-64-linux-gnu.
+Preparing to unpack .../13-cpp-x86-64-linux-gnu_4%3a13.2.0-7ubuntu1_amd64.deb ...
+Unpacking cpp-x86-64-linux-gnu (4:13.2.0-7ubuntu1) ...
+Selecting previously unselected package cpp.
+Preparing to unpack .../14-cpp_4%3a13.2.0-7ubuntu1_amd64.deb ...
+Unpacking cpp (4:13.2.0-7ubuntu1) ...
+Selecting previously unselected package libcc1-0:amd64.
+Preparing to unpack .../15-libcc1-0_14.2.0-4ubuntu2~24.04.1_amd64.deb ...
+Unpacking libcc1-0:amd64 (14.2.0-4ubuntu2~24.04.1) ...
+Selecting previously unselected package libgomp1:amd64.
+Preparing to unpack .../16-libgomp1_14.2.0-4ubuntu2~24.04.1_amd64.deb ...
+Unpacking libgomp1:amd64 (14.2.0-4ubuntu2~24.04.1) ...
+Selecting previously unselected package libitm1:amd64.
+Preparing to unpack .../17-libitm1_14.2.0-4ubuntu2~24.04.1_amd64.deb ...
+Unpacking libitm1:amd64 (14.2.0-4ubuntu2~24.04.1) ...
+Selecting previously unselected package libatomic1:amd64.
+Preparing to unpack .../18-libatomic1_14.2.0-4ubuntu2~24.04.1_amd64.deb ...
+Unpacking libatomic1:amd64 (14.2.0-4ubuntu2~24.04.1) ...
+Selecting previously unselected package libasan8:amd64.
+Preparing to unpack .../19-libasan8_14.2.0-4ubuntu2~24.04.1_amd64.deb ...
+Unpacking libasan8:amd64 (14.2.0-4ubuntu2~24.04.1) ...
+Selecting previously unselected package liblsan0:amd64.
+Preparing to unpack .../20-liblsan0_14.2.0-4ubuntu2~24.04.1_amd64.deb ...
+Unpacking liblsan0:amd64 (14.2.0-4ubuntu2~24.04.1) ...
+Selecting previously unselected package libtsan2:amd64.
+Preparing to unpack .../21-libtsan2_14.2.0-4ubuntu2~24.04.1_amd64.deb ...
+Unpacking libtsan2:amd64 (14.2.0-4ubuntu2~24.04.1) ...
+Selecting previously unselected package libubsan1:amd64.
+Preparing to unpack .../22-libubsan1_14.2.0-4ubuntu2~24.04.1_amd64.deb ...
+Unpacking libubsan1:amd64 (14.2.0-4ubuntu2~24.04.1) ...
+Selecting previously unselected package libhwasan0:amd64.
+Preparing to unpack .../23-libhwasan0_14.2.0-4ubuntu2~24.04.1_amd64.deb ...
+Unpacking libhwasan0:amd64 (14.2.0-4ubuntu2~24.04.1) ...
+Selecting previously unselected package libquadmath0:amd64.
+Preparing to unpack .../24-libquadmath0_14.2.0-4ubuntu2~24.04.1_amd64.deb ...
+Unpacking libquadmath0:amd64 (14.2.0-4ubuntu2~24.04.1) ...
+Selecting previously unselected package libgcc-13-dev:amd64.
+Preparing to unpack .../25-libgcc-13-dev_13.3.0-6ubuntu2~24.04.1_amd64.deb ...
+Unpacking libgcc-13-dev:amd64 (13.3.0-6ubuntu2~24.04.1) ...
+Selecting previously unselected package gcc-13-x86-64-linux-gnu.
+Preparing to unpack .../26-gcc-13-x86-64-linux-gnu_13.3.0-6ubuntu2~24.04.1_amd64.deb ...
+Unpacking gcc-13-x86-64-linux-gnu (13.3.0-6ubuntu2~24.04.1) ...
+Selecting previously unselected package gcc-13.
+Preparing to unpack .../27-gcc-13_13.3.0-6ubuntu2~24.04.1_amd64.deb ...
+Unpacking gcc-13 (13.3.0-6ubuntu2~24.04.1) ...
+Selecting previously unselected package gcc-x86-64-linux-gnu.
+Preparing to unpack .../28-gcc-x86-64-linux-gnu_4%3a13.2.0-7ubuntu1_amd64.deb ...
+Unpacking gcc-x86-64-linux-gnu (4:13.2.0-7ubuntu1) ...
+Selecting previously unselected package gcc.
+Preparing to unpack .../29-gcc_4%3a13.2.0-7ubuntu1_amd64.deb ...
+Unpacking gcc (4:13.2.0-7ubuntu1) ...
+Selecting previously unselected package libstdc++-13-dev:amd64.
+Preparing to unpack .../30-libstdc++-13-dev_13.3.0-6ubuntu2~24.04.1_amd64.deb ...
+Unpacking libstdc++-13-dev:amd64 (13.3.0-6ubuntu2~24.04.1) ...
+Selecting previously unselected package g++-13-x86-64-linux-gnu.
+Preparing to unpack .../31-g++-13-x86-64-linux-gnu_13.3.0-6ubuntu2~24.04.1_amd64.deb ...
+Unpacking g++-13-x86-64-linux-gnu (13.3.0-6ubuntu2~24.04.1) ...
+Selecting previously unselected package g++-13.
+Preparing to unpack .../32-g++-13_13.3.0-6ubuntu2~24.04.1_amd64.deb ...
+Unpacking g++-13 (13.3.0-6ubuntu2~24.04.1) ...
+Selecting previously unselected package g++-x86-64-linux-gnu.
+Preparing to unpack .../33-g++-x86-64-linux-gnu_4%3a13.2.0-7ubuntu1_amd64.deb ...
+Unpacking g++-x86-64-linux-gnu (4:13.2.0-7ubuntu1) ...
+Selecting previously unselected package g++.
+Preparing to unpack .../34-g++_4%3a13.2.0-7ubuntu1_amd64.deb ...
+Unpacking g++ (4:13.2.0-7ubuntu1) ...
+Selecting previously unselected package make.
+Preparing to unpack .../35-make_4.3-4.1build2_amd64.deb ...
+Unpacking make (4.3-4.1build2) ...
+Selecting previously unselected package libdpkg-perl.
+Preparing to unpack .../36-libdpkg-perl_1.22.6ubuntu6.6_all.deb ...
+Unpacking libdpkg-perl (1.22.6ubuntu6.6) ...
+Selecting previously unselected package bzip2.
+Preparing to unpack .../37-bzip2_1.0.8-5.1build0.1_amd64.deb ...
+Unpacking bzip2 (1.0.8-5.1build0.1) ...
+Selecting previously unselected package lto-disabled-list.
+Preparing to unpack .../38-lto-disabled-list_47_all.deb ...
+Unpacking lto-disabled-list (47) ...
+Selecting previously unselected package dpkg-dev.
+Preparing to unpack .../39-dpkg-dev_1.22.6ubuntu6.6_all.deb ...
+Unpacking dpkg-dev (1.22.6ubuntu6.6) ...
+Selecting previously unselected package build-essential.
+Preparing to unpack .../40-build-essential_12.10ubuntu1_amd64.deb ...
+Unpacking build-essential (12.10ubuntu1) ...
+Selecting previously unselected package libfakeroot:amd64.
+Preparing to unpack .../41-libfakeroot_1.33-1_amd64.deb ...
+Unpacking libfakeroot:amd64 (1.33-1) ...
+Selecting previously unselected package fakeroot.
+Preparing to unpack .../42-fakeroot_1.33-1_amd64.deb ...
+Unpacking fakeroot (1.33-1) ...
+Selecting previously unselected package javascript-common.
+Preparing to unpack .../43-javascript-common_11+nmu1_all.deb ...
+Unpacking javascript-common (11+nmu1) ...
+Selecting previously unselected package libalgorithm-diff-perl.
+Preparing to unpack .../44-libalgorithm-diff-perl_1.201-1_all.deb ...
+Unpacking libalgorithm-diff-perl (1.201-1) ...
+Selecting previously unselected package libalgorithm-diff-xs-perl:amd64.
+Preparing to unpack .../45-libalgorithm-diff-xs-perl_0.04-8build3_amd64.deb ...
+Unpacking libalgorithm-diff-xs-perl:amd64 (0.04-8build3) ...
+Selecting previously unselected package libalgorithm-merge-perl.
+Preparing to unpack .../46-libalgorithm-merge-perl_0.08-5_all.deb ...
+Unpacking libalgorithm-merge-perl (0.08-5) ...
+Selecting previously unselected package libexpat1-dev:amd64.
+Preparing to unpack .../47-libexpat1-dev_2.6.1-2ubuntu0.4_amd64.deb ...
+Unpacking libexpat1-dev:amd64 (2.6.1-2ubuntu0.4) ...
+Selecting previously unselected package libfile-fcntllock-perl.
+Preparing to unpack .../48-libfile-fcntllock-perl_0.22-4ubuntu5_amd64.deb ...
+Unpacking libfile-fcntllock-perl (0.22-4ubuntu5) ...
+Selecting previously unselected package libjs-jquery.
+Preparing to unpack .../49-libjs-jquery_3.6.1+dfsg+~3.5.14-1_all.deb ...
+Unpacking libjs-jquery (3.6.1+dfsg+~3.5.14-1) ...
+Selecting previously unselected package libjs-underscore.
+Preparing to unpack .../50-libjs-underscore_1.13.4~dfsg+~1.11.4-3_all.deb ...
+Unpacking libjs-underscore (1.13.4~dfsg+~1.11.4-3) ...
+Selecting previously unselected package libjs-sphinxdoc.
+Preparing to unpack .../51-libjs-sphinxdoc_7.2.6-6_all.deb ...
+Unpacking libjs-sphinxdoc (7.2.6-6) ...
+Selecting previously unselected package zlib1g-dev:amd64.
+Preparing to unpack .../52-zlib1g-dev_1%3a1.3.dfsg-3.1ubuntu2.1_amd64.deb ...
+Unpacking zlib1g-dev:amd64 (1:1.3.dfsg-3.1ubuntu2.1) ...
+Selecting previously unselected package libpython3.12-dev:amd64.
+Preparing to unpack .../53-libpython3.12-dev_3.12.3-1ubuntu0.15_amd64.deb ...
+Unpacking libpython3.12-dev:amd64 (3.12.3-1ubuntu0.15) ...
+Selecting previously unselected package libpython3-dev:amd64.
+Preparing to unpack .../54-libpython3-dev_3.12.3-0ubuntu2.1_amd64.deb ...
+Unpacking libpython3-dev:amd64 (3.12.3-0ubuntu2.1) ...
+Selecting previously unselected package python3.12-dev.
+Preparing to unpack .../55-python3.12-dev_3.12.3-1ubuntu0.15_amd64.deb ...
+Unpacking python3.12-dev (3.12.3-1ubuntu0.15) ...
+Selecting previously unselected package python3-dev.
+Preparing to unpack .../56-python3-dev_3.12.3-0ubuntu2.1_amd64.deb ...
+Unpacking python3-dev (3.12.3-0ubuntu2.1) ...
+Selecting previously unselected package python3-wheel.
+Preparing to unpack .../57-python3-wheel_0.42.0-2_all.deb ...
+Unpacking python3-wheel (0.42.0-2) ...
+Selecting previously unselected package python3-pip.
+Preparing to unpack .../58-python3-pip_24.0+dfsg-1ubuntu1.3_all.deb ...
+Unpacking python3-pip (24.0+dfsg-1ubuntu1.3) ...
+Setting up javascript-common (11+nmu1) ...
+Setting up lto-disabled-list (47) ...
+Setting up libfile-fcntllock-perl (0.22-4ubuntu5) ...
+Setting up libalgorithm-diff-perl (1.201-1) ...
+Setting up binutils-common:amd64 (2.42-4ubuntu2.10) ...
+Setting up libctf-nobfd0:amd64 (2.42-4ubuntu2.10) ...
+Setting up libgomp1:amd64 (14.2.0-4ubuntu2~24.04.1) ...
+Setting up bzip2 (1.0.8-5.1build0.1) ...
+Setting up python3-wheel (0.42.0-2) ...
+Setting up libsframe1:amd64 (2.42-4ubuntu2.10) ...
+Setting up libfakeroot:amd64 (1.33-1) ...
+Setting up fakeroot (1.33-1) ...
+update-alternatives: using /usr/bin/fakeroot-sysv to provide /usr/bin/fakeroot (fakeroot) in auto mode
+Setting up gcc-13-base:amd64 (13.3.0-6ubuntu2~24.04.1) ...
+Setting up libexpat1-dev:amd64 (2.6.1-2ubuntu0.4) ...
+Setting up make (4.3-4.1build2) ...
+Setting up libquadmath0:amd64 (14.2.0-4ubuntu2~24.04.1) ...
+Setting up libmpc3:amd64 (1.3.1-1build1.1) ...
+Setting up libatomic1:amd64 (14.2.0-4ubuntu2~24.04.1) ...
+Setting up python3-pip (24.0+dfsg-1ubuntu1.3) ...
+Setting up libdpkg-perl (1.22.6ubuntu6.6) ...
+Setting up libubsan1:amd64 (14.2.0-4ubuntu2~24.04.1) ...
+Setting up zlib1g-dev:amd64 (1:1.3.dfsg-3.1ubuntu2.1) ...
+Setting up libhwasan0:amd64 (14.2.0-4ubuntu2~24.04.1) ...
+Setting up libasan8:amd64 (14.2.0-4ubuntu2~24.04.1) ...
+Setting up libtsan2:amd64 (14.2.0-4ubuntu2~24.04.1) ...
+Setting up libjs-jquery (3.6.1+dfsg+~3.5.14-1) ...
+Setting up libbinutils:amd64 (2.42-4ubuntu2.10) ...
+Setting up libisl23:amd64 (0.26-3build1.1) ...
+Setting up libalgorithm-diff-xs-perl:amd64 (0.04-8build3) ...
+Setting up libcc1-0:amd64 (14.2.0-4ubuntu2~24.04.1) ...
+Setting up liblsan0:amd64 (14.2.0-4ubuntu2~24.04.1) ...
+Setting up libitm1:amd64 (14.2.0-4ubuntu2~24.04.1) ...
+Setting up libjs-underscore (1.13.4~dfsg+~1.11.4-3) ...
+Setting up libalgorithm-merge-perl (0.08-5) ...
+Setting up libctf0:amd64 (2.42-4ubuntu2.10) ...
+Setting up cpp-13-x86-64-linux-gnu (13.3.0-6ubuntu2~24.04.1) ...
+Setting up libpython3.12-dev:amd64 (3.12.3-1ubuntu0.15) ...
+Setting up libgprofng0:amd64 (2.42-4ubuntu2.10) ...
+Setting up python3.12-dev (3.12.3-1ubuntu0.15) ...
+Setting up libjs-sphinxdoc (7.2.6-6) ...
+Setting up libgcc-13-dev:amd64 (13.3.0-6ubuntu2~24.04.1) ...
+Setting up libstdc++-13-dev:amd64 (13.3.0-6ubuntu2~24.04.1) ...
+Setting up binutils-x86-64-linux-gnu (2.42-4ubuntu2.10) ...
+Setting up cpp-x86-64-linux-gnu (4:13.2.0-7ubuntu1) ...
+Setting up libpython3-dev:amd64 (3.12.3-0ubuntu2.1) ...
+Setting up cpp-13 (13.3.0-6ubuntu2~24.04.1) ...
+Setting up gcc-13-x86-64-linux-gnu (13.3.0-6ubuntu2~24.04.1) ...
+Setting up binutils (2.42-4ubuntu2.10) ...
+Setting up dpkg-dev (1.22.6ubuntu6.6) ...
+Setting up python3-dev (3.12.3-0ubuntu2.1) ...
+Setting up gcc-13 (13.3.0-6ubuntu2~24.04.1) ...
+Setting up cpp (4:13.2.0-7ubuntu1) ...
+Setting up g++-13-x86-64-linux-gnu (13.3.0-6ubuntu2~24.04.1) ...
+Setting up gcc-x86-64-linux-gnu (4:13.2.0-7ubuntu1) ...
+Setting up gcc (4:13.2.0-7ubuntu1) ...
+Setting up g++-x86-64-linux-gnu (4:13.2.0-7ubuntu1) ...
+Setting up g++-13 (13.3.0-6ubuntu2~24.04.1) ...
+Setting up g++ (4:13.2.0-7ubuntu1) ...
+update-alternatives: using /usr/bin/g++ to provide /usr/bin/c++ (c++) in auto mode
+Setting up build-essential (12.10ubuntu1) ...
+Processing triggers for man-db (2.12.0-4build2) ...
+Processing triggers for libc-bin (2.39-0ubuntu8.7) ...
+Scanning processes...                                                           
+Scanning processor microcode...                                                 
+Scanning linux images...                                                        
+
+Pending kernel upgrade!
+Running kernel version:
+  6.8.0-134-generic
+Diagnostics:
+  The currently running kernel version is not the expected kernel version
+6.8.0-136-generic.
+
+Restarting the system to load the new kernel will not be handled automatically,
+so you should consider rebooting.
+
+The processor microcode seems to be up-to-date.
+
+No services need to be restarted.
+
+No containers need to be restarted.
+
+No user sessions are running outdated binaries.
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
+error: externally-managed-environment
+
+× This environment is externally managed
+╰─> To install Python packages system-wide, try apt install
+    python3-xyz, where xyz is the package you are trying to
+    install.
+    
+    If you wish to install a non-Debian-packaged Python package,
+    create a virtual environment using python3 -m venv path/to/venv.
+    Then use path/to/venv/bin/python and path/to/venv/bin/pip. Make
+    sure you have python3-full installed.
+    
+    If you wish to install a non-Debian packaged Python application,
+    it may be easiest to use pipx install xyz, which will manage a
+    virtual environment for you. Make sure you have pipx installed.
+    
+    See /usr/share/doc/python3.12/README.venv for more information.
+
+note: If you believe this is a mistake, please contact your Python installation or OS distribution provider. You can override this, at the risk of breaking your Python installation or OS, by passing --break-system-packages.
+hint: See PEP 668 for the detailed specification.
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ python3 -m venv ~/skyguard-venv && ~/skyguard-venv/bin/pip install -q scikit-learn joblib numpy scipy && echo "✓ OK"
+The virtual environment was not created successfully because ensurepip is not
+available.  On Debian/Ubuntu systems, you need to install the python3-venv
+package using the following command.
+
+    apt install python3.12-venv
+
+You may need to use sudo with that command.  After installing the python3-venv
+package, recreate your virtual environment.
+
+Failing command: /home/tmm/skyguard-venv/bin/python3
+
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ sudo apt install -y python3.12-venv && python3 -m venv ~/skyguard-venv && ~/skyguard-venv/bin/pip install -q scikit-learn joblib numpy scipy && echo "✓ OK"
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+The following additional packages will be installed:
+  python3-pip-whl python3-setuptools-whl
+The following NEW packages will be installed:
+  python3-pip-whl python3-setuptools-whl python3.12-venv
+0 upgraded, 3 newly installed, 0 to remove and 35 not upgraded.
+Need to get 2,429 kB of archives.
+After this operation, 2,777 kB of additional disk space will be used.
+Get:1 http://bg.archive.ubuntu.com/ubuntu noble-updates/universe amd64 python3-pip-whl all 24.0+dfsg-1ubuntu1.3 [1,707 kB]
+Get:2 http://bg.archive.ubuntu.com/ubuntu noble-updates/universe amd64 python3-setuptools-whl all 68.1.2-2ubuntu1.2 [716 kB]
+Get:3 http://bg.archive.ubuntu.com/ubuntu noble-updates/universe amd64 python3.12-venv amd64 3.12.3-1ubuntu0.15 [5,674 B]
+Fetched 2,429 kB in 0s (12.2 MB/s)          
+Selecting previously unselected package python3-pip-whl.
+(Reading database ... 137496 files and directories currently installed.)
+Preparing to unpack .../python3-pip-whl_24.0+dfsg-1ubuntu1.3_all.deb ...
+Unpacking python3-pip-whl (24.0+dfsg-1ubuntu1.3) ...
+Selecting previously unselected package python3-setuptools-whl.
+Preparing to unpack .../python3-setuptools-whl_68.1.2-2ubuntu1.2_all.deb ...
+Unpacking python3-setuptools-whl (68.1.2-2ubuntu1.2) ...
+Selecting previously unselected package python3.12-venv.
+Preparing to unpack .../python3.12-venv_3.12.3-1ubuntu0.15_amd64.deb ...
+Unpacking python3.12-venv (3.12.3-1ubuntu0.15) ...
+Setting up python3-setuptools-whl (68.1.2-2ubuntu1.2) ...
+Setting up python3-pip-whl (24.0+dfsg-1ubuntu1.3) ...
+Setting up python3.12-venv (3.12.3-1ubuntu0.15) ...
+Scanning processes...                                                           
+Scanning processor microcode...                                                 
+Scanning linux images...                                                        
+
+Pending kernel upgrade!
+Running kernel version:
+  6.8.0-134-generic
+Diagnostics:
+  The currently running kernel version is not the expected kernel version
+6.8.0-136-generic.
+
+Restarting the system to load the new kernel will not be handled automatically,
+so you should consider rebooting.
+
+The processor microcode seems to be up-to-date.
+
+No services need to be restarted.
+
+No containers need to be restarted.
+
+No user sessions are running outdated binaries.
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
+✓ OK
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting$ cd ~/skyguard/hardware/rf-fingerprinting/datasets && mkdir -p extracted && for folder in DroneRF/*/; do name=$(basename "$folder"); if echo "$name" | grep -qi "background"; then label="background"; else label="drone"; fi; for rar in "$folder"*.rar; do [ -f "$rar" ] || continue; stem=$(basename "$rar" .rar | tr ' ' '_'); outdir="extracted/${name// /_}__${stem}"; mkdir -p "$outdir"; echo "[$label] $rar"; unrar e -y "$rar" "$outdir/" > /dev/null; for csv in "$outdir"/*.csv; do [ -f "$csv" ] && echo "$label" > "${csv}.label"; done; done; done && echo "=== Done ===" && find extracted -name "*.csv" | wc -l
+[drone] DroneRF/AR drone/RF Data_10100_H.rar
+[drone] DroneRF/AR drone/RF Data_10100_L.rar
+[drone] DroneRF/AR drone/RF Data_10101_H.rar
+[drone] DroneRF/AR drone/RF Data_10101_L.rar
+[drone] DroneRF/AR drone/RF Data_10110_H.rar
+[drone] DroneRF/AR drone/RF Data_10110_L.rar
+Read from remote host 192.168.100.224: Connection reset by peer
+Connection to 192.168.100.224 closed.
+client_loop: send disconnect: Broken pipe
+petarmladenov@Petars-MacBook-Pro ~ % ssh tmm@192.168.100.224
+tmm@192.168.100.224's password: 
+Welcome to Ubuntu 24.04.4 LTS (GNU/Linux 6.8.0-134-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Wed Jul 22 04:47:55 PM UTC 2026
+
+  System load:           0.46
+  Usage of /:            94.8% of 97.87GB
+  Memory usage:          65%
+  Swap usage:            21%
+  Temperature:           59.0 C
+  Processes:             270
+  Users logged in:       0
+  IPv4 address for eno2: 192.168.100.224
+  IPv6 address for eno2: fdbc:b73a:6a64:433d:ba85:84ff:fe99:b371
+
+  => / is using 94.8% of 97.87GB
+
+ * Strictly confined Kubernetes makes edge and IoT secure. Learn how MicroK8s
+   just raised the bar for easy, resilient and secure K8s cluster deployment.
+
+   https://ubuntu.com/engage/secure-kubernetes-at-the-edge
+
+Expanded Security Maintenance for Applications is not enabled.
+
+37 updates can be applied immediately.
+3 of these updates are standard security updates.
+To see these additional updates run: apt list --upgradable
+
+4 additional security updates can be applied with ESM Apps.
+Learn more about enabling ESM Apps service at https://ubuntu.com/esm
+
+
+*** System restart required ***
+Last login: Wed Jul 22 15:48:00 2026 from 192.168.100.224
+tmm@tmm:~$ 
+tmm@tmm:~$ cd ~/skyguard/hardware/rf-fingerprinting/datasets && ~/skyguard-venv/bin/python3 << 'EOF'
+import os, csv, numpy as np
+from pathlib import Path
+
+print("=== Processing CSVs ===")
+X, y = [], []
+for csv_file in Path("extracted").rglob("*.csv"):
+    label_file = Path(str(csv_file) + ".label")
+    if not label_file.exists():
+        continue
+    label = label_file.read_text().strip()
+    try:
+        with open(csv_file) as f:
+            reader = csv.reader(f)
+            for row in reader:
+                vals = [float(v) for v in row if v.strip()]
+                if len(vals) < 10:
+                    continue
+                arr = np.array(vals, dtype=np.float32)
+                # Features: mean, std, max, min, median, energy, peak-to-peak, skew, kurtosis
+                feat = [
+                    float(np.mean(arr)), float(np.std(arr)),
+                    float(np.max(arr)), float(np.min(arr)),
+                    float(np.median(arr)), float(np.sum(arr**2)),
+                    float(np.max(arr) - np.min(arr)),
+                    float(np.mean((arr - np.mean(arr))**3) / (np.std(arr)**3 + 1e-9)),
+                    float(np.mean((arr - np.mean(arr))**4) / (np.std(arr)**4 + 1e-9)),
+                ]
+EOFnt(f"Saved features.npz — samples: {len(y)}, drone: {sum(y)}, background: {len(y)-sum(y)}")
+=== Processing CSVs ===
+
+
+
+^CTraceback (most recent call last):
+  File "<stdin>", line 15, in <module>
+KeyboardInterrupt
+
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ cd ~/skyguard/hardware/rf-fingerprinting/datasets && ~/skyguard-venv/bin/python3 << 'EOF'
+import os, csv, numpy as np
+from pathlib import Path
+
+print("=== Processing CSVs ===")
+X, y = [], []
+for csv_file in Path("extracted").rglob("*.csv"):
+    label_file = Path(str(csv_file) + ".label")
+    if not label_file.exists():
+        continue
+    label = label_file.read_text().strip()
+    try:
+        with open(csv_file) as f:
+            reader = csv.reader(f)
+            for row in reader:
+                vals = [float(v) for v in row if v.strip()]
+                if len(vals) < 10:
+                    continue
+                arr = np.array(vals, dtype=np.float32)
+                # Features: mean, std, max, min, median, energy, peak-to-peak, skew, kurtosis
+                feat = [
+                    float(np.mean(arr)), float(np.std(arr)),
+                    float(np.max(arr)), float(np.min(arr)),
+                    float(np.median(arr)), float(np.sum(arr**2)),
+                    float(np.max(arr) - np.min(arr)),
+                    float(np.mean((arr - np.mean(arr))**3) / (np.std(arr)**3 + 1e-9)),
+                    float(np.mean((arr - np.mean(arr))**4) / (np.std(arr)**4 + 1e-9)),
+EOFnt(f"Saved features.npz — samples: {len(y)}, drone: {sum(y)}, background: {len(y)-sum(y)}")
+=== Processing CSVs ===
+^C
+
+Traceback (most recent call last):
+  File "<stdin>", line 15, in <module>
+KeyboardInterrupt
+
+
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ find ~/skyguard/hardware/rf-fingerprinting/datasets/extracted -name "*.csv" | wc -l
+200
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ cd ~/skyguard/hardware/rf-fingerprinting/datasets && ~/skyguard-venv/bin/python3 << 'EOF'
+import os, csv, numpy as np
+from pathlib import Path
+
+print("=== Processing CSVs ===")
+X, y = [], []
+for csv_file in Path("extracted").rglob("*.csv"):
+    label_file = Path(str(csv_file) + ".label")
+    if not label_file.exists():
+        continue
+    label = label_file.read_text().strip()
+    try:
+        with open(csv_file) as f:
+            reader = csv.reader(f)
+            for row in reader:
+                vals = [float(v) for v in row if v.strip()]
+                if len(vals) < 10:
+                    continue
+                arr = np.array(vals, dtype=np.float32)
+                feat = [
+                    float(np.mean(arr)), float(np.std(arr)),
+                    float(np.max(arr)), float(np.min(arr)),
+                    float(np.median(arr)), float(np.sum(arr**2)),
+                    float(np.max(arr) - np.min(arr)),
+                    float(np.mean((arr - np.mean(arr))**3) / (np.std(arr)**3 + 1e-9)),
+                    float(np.mean((arr - np.mean(arr))**4) / (np.std(arr)**4 + 1e-9)),
+                ]
+                X.append(feat)
+EOFnt(f"Saved features.npz — samples: {len(y)}, drone: {sum(y)}, background: {len(y)-sum(y)}")
+=== Processing CSVs ===
+^CTraceback (most recent call last):
+  File "<stdin>", line 15, in <module>
+KeyboardInterrupt
+
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ head -1 ~/skyguard/hardware/rf-fingerprinting/datasets/extracted/*/  2>/dev/null | head -c 500 
+wc -l ~/skyguard/hardware/rf-fingerprinting/datasets/extracted/*/*.csv | tail -5
+==> /home/tmm/skyguard/hardware/rf-fingerprinting/datasets/extracted/AR_drone__RF_Data_10100_H/ <==
+
+==> /home/tmm/skyguard/hardware/rf-fingerprinting/datasets/extracted/AR_drone__RF_Data_10100_L/ <==
+
+==> /home/tmm/skyguard/hardware/rf-fingerprinting/datasets/extracted/AR_drone__RF_Data_10101_H/ <==
+
+==> /home/tmm/skyguard/hardware/rf-fingerprinting/datasets/extracted/AR_drone__RF_Data_10101_L/ <==
+
+==> /home/tmm/skyguard/hardware/rf-fingerprinting/datasets/extracted/AR_drone__RF_Data_10110_H/ 
+
+^C
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ ls ~/skyguard/hardware/rf-fingerprinting/datasets/extracted/AR_drone__RF_Data_10100_H/
+10100H_0.csv         10100H_12.csv        10100H_15.csv        10100H_18.csv        10100H_20.csv        10100H_4.csv        10100H_7.csv
+10100H_0.csv.label   10100H_12.csv.label  10100H_15.csv.label  10100H_18.csv.label  10100H_20.csv.label  10100H_4.csv.label  10100H_7.csv.label
+10100H_10.csv        10100H_13.csv        10100H_16.csv        10100H_19.csv        10100H_2.csv         10100H_5.csv        10100H_8.csv
+10100H_10.csv.label  10100H_13.csv.label  10100H_16.csv.label  10100H_19.csv.label  10100H_2.csv.label   10100H_5.csv.label  10100H_8.csv.label
+10100H_11.csv        10100H_14.csv        10100H_17.csv        10100H_1.csv         10100H_3.csv         10100H_6.csv        10100H_9.csv
+10100H_11.csv.label  10100H_14.csv.label  10100H_17.csv.label  10100H_1.csv.label   10100H_3.csv.label   10100H_6.csv.label  10100H_9.csv.label
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ wc -l ~/skyguard/hardware/rf-fingerprinting/datasets/extracted/AR_drone__RF_Data_10100_H/10100H_0.csv && head -c 300 ~/skyguard/hardware/rf-fingerprinting/datasets/extracted/AR_drone__RF_Data_10100_H/10100H_0.csv
+1 /home/tmm/skyguard/hardware/rf-fingerprinting/datasets/extracted/AR_drone__RF_Data_10100_H/10100H_0.csv
+0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,-1.000000,0.000000,-14.000000,15.000000,-19.000000,43.000000,8.000000,17.000000,2.000000,8.000000,15.000000,9.000000,10.000000,2.000000,-5.000000,0.000000,2.000000,-3.000000,5.000000,1.000000,3.000000,0.000000,tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ cd ~/skyguard/hardware/rf-fingerprinting/datasets && ~/skyguard-venv/bin/python3 << 'EOF'
+import numpy as np
+from pathlib import Path
+
+print("=== Processing CSVs ===")
+X, y = [], []
+files = list(Path("extracted").rglob("*.csv"))
+print(f"Found {len(files)} CSV files")
+
+for i, csv_file in enumerate(files):
+    label_file = Path(str(csv_file) + ".label")
+    if not label_file.exists():
+        continue
+    label = label_file.read_text().strip()
+    try:
+        arr = np.fromstring(csv_file.read_text().strip(), sep=',', dtype=np.float32)
+        if len(arr) < 10:
+            continue
+        feat = [
+            float(np.mean(arr)), float(np.std(arr)),
+            float(np.max(arr)), float(np.min(arr)),
+            float(np.median(arr)), float(np.sum(arr**2)),
+            float(np.max(arr) - np.min(arr)),
+            float(np.mean((arr - np.mean(arr))**3) / (np.std(arr)**3 + 1e-9)),
+            float(np.mean((arr - np.mean(arr))**4) / (np.std(arr)**4 + 1e-9)),
+        ]
+        X.append(feat)
+        y.append(1 if label == "drone" else 0)
+EOFnt(f"Saved features.npz — samples: {len(y)}, drone: {sum(y)}, background: {len(y)-sum(y)}")
+=== Processing CSVs ===
+Found 200 CSV files
+  20/200 done...
+  40/200 done...
+  60/200 done...
+  80/200 done...
+  100/200 done...
+  120/200 done...
+  140/200 done...
+  160/200 done...
+
+
+  180/200 done...
+  200/200 done...
+Saved features.npz — samples: 200, drone: 162, background: 38
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ cd ~/skyguard/hardware/rf-fingerprinting/datasets && ~/skyguard-venv/bin/python3 << 'EOF'
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.model_selection import cross_val_score, train_test_split
+from sklearn.metrics import classification_report
+import joblib
+
+print("=== Loading features ===")
+data = np.load("features.npz")
+X, y = data["X"], data["y"]
+print(f"Samples: {len(y)}, drone: {sum(y)}, background: {len(y)-sum(y)}")
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+
+print("\n=== Training RandomForest ===")
+rf = RandomForestClassifier(n_estimators=200, max_depth=10, random_state=42, class_weight="balanced")
+rf.fit(X_train, y_train)
+rf_cv = cross_val_score(rf, X, y, cv=5, scoring="f1").mean()
+print(f"RF F1 (CV): {rf_cv:.3f}")
+
+print("\n=== Training GradientBoosting ===")
+gb = GradientBoostingClassifier(n_estimators=200, max_depth=4, random_state=42)
+gb.fit(X_train, y_train)
+gb_cv = cross_val_score(gb, X, y, cv=5, scoring="f1").mean()
+print(f"GB F1 (CV): {gb_cv:.3f}")
+
+best = rf if rf_cv >= gb_cv else gb
+name = "RandomForest" if rf_cv >= gb_cv else "GradientBoosting"
+EOFnt("Saved rf_model.joblib").joblib")t.predict(X_test), target_names=["background","drone"]))
+=== Loading features ===
+Samples: 200, drone: 162, background: 38
+
+=== Training RandomForest ===
+RF F1 (CV): 0.863
+
+=== Training GradientBoosting ===
+GB F1 (CV): 0.872
+
+=== Best: GradientBoosting ===
+              precision    recall  f1-score   support
+
+  background       0.50      0.75      0.60         8
+       drone       0.93      0.81      0.87        32
+
+    accuracy                           0.80        40
+   macro avg       0.71      0.78      0.73        40
+weighted avg       0.84      0.80      0.81        40
+
+Saved rf_model.joblib
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ ssh admin@192.168.100.252 "sudo systemctl restart skyguard-hackrf-bridge && sudo journalctl -u skyguard-hackrf-bridge -n 20 --no-pager"
+admin@192.168.100.252's password: 
+Jul 22 20:11:30 skyguard python3[4492]: 2026-07-22 20:11:30,643 [INFO] connection open
+Jul 22 20:11:30 skyguard python3[4492]: 2026-07-22 20:11:30,644 [INFO] WS client connected from ('192.168.100.224', 57438)  (total: 1)
+Jul 22 20:11:38 skyguard python3[4492]: 2026-07-22 20:11:38,289 [WARNING] Sysinfo POST 401
+Jul 22 20:12:08 skyguard python3[4492]: 2026-07-22 20:12:08,333 [WARNING] Sysinfo POST 401
+Jul 22 20:12:14 skyguard python3[4492]: 2026-07-22 20:12:14,720 [INFO] WS client disconnected (total: 0)
+Jul 22 20:12:15 skyguard python3[4492]: 2026-07-22 20:12:15,253 [INFO] connection open
+Jul 22 20:12:15 skyguard python3[4492]: 2026-07-22 20:12:15,254 [INFO] WS client connected from ('192.168.100.224', 36120)  (total: 1)
+Jul 22 20:12:15 skyguard python3[4492]: 2026-07-22 20:12:15,782 [INFO] WS client disconnected (total: 0)
+Jul 22 20:12:17 skyguard python3[4492]: 2026-07-22 20:12:17,269 [INFO] connection open
+Jul 22 20:12:17 skyguard python3[4492]: 2026-07-22 20:12:17,269 [INFO] WS client connected from ('192.168.100.224', 36136)  (total: 1)
+Jul 22 20:12:38 skyguard python3[4492]: 2026-07-22 20:12:38,364 [WARNING] Sysinfo POST 401
+Jul 22 20:13:08 skyguard python3[4492]: 2026-07-22 20:13:08,399 [WARNING] Sysinfo POST 401
+Jul 22 20:13:38 skyguard python3[4492]: 2026-07-22 20:13:38,427 [WARNING] Sysinfo POST 401
+Jul 22 20:14:08 skyguard python3[4492]: 2026-07-22 20:14:08,465 [WARNING] Sysinfo POST 401
+Jul 22 20:14:38 skyguard python3[4492]: 2026-07-22 20:14:38,488 [WARNING] Sysinfo POST 401
+Jul 22 20:14:43 skyguard systemd[1]: Stopping skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge...
+Jul 22 20:14:43 skyguard systemd[1]: skyguard-hackrf-bridge.service: Deactivated successfully.
+Jul 22 20:14:43 skyguard systemd[1]: Stopped skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+Jul 22 20:14:43 skyguard systemd[1]: skyguard-hackrf-bridge.service: Consumed 6min 19.949s CPU time.
+Jul 22 20:14:43 skyguard systemd[1]: Started skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ ssh admin@192.168.100.252 "sudo journalctl -u skyguard-hackrf-bridge -n 5 --no-pager"
+admin@192.168.100.252's password: 
+Jul 22 20:14:44 skyguard python3[8349]: 2026-07-22 20:14:44,109 [INFO] Alert threshold: -50 dBm  |  Warning: -60 dBm
+Jul 22 20:14:44 skyguard python3[8349]: 2026-07-22 20:14:44,172 [INFO] server listening on 0.0.0.0:8765
+Jul 22 20:14:44 skyguard python3[8349]: 2026-07-22 20:14:44,173 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz
+Jul 22 20:14:45 skyguard python3[8349]: 2026-07-22 20:14:45,498 [INFO] Suppressed bands: none
+Jul 22 20:15:14 skyguard python3[8349]: 2026-07-22 20:15:14,480 [WARNING] Sysinfo POST 401
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ [200~cd ~/skyguard && git pull origin main && PORT=25095 BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build && sudo systemctl reload nginx~
+[200~cd: command not found
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ 
+tmm@tmm:~/skyguard/hardware/rf-fingerprinting/datasets$ # На Linux сървъра:
+cd ~/skyguard && node -e "
+const { db } = require('./artifacts/api-server/dist/db');
+db.run(\"INSERT OR REPLACE INTO device_keys (key, label, active) VALUES ('sg_a637f2e7a490e894860a60f34e75b058831c5d949de666fb', 'Pi HackRF Bridge', 1)\");
+console.log('done');
+"
+node:internal/modules/cjs/loader:1210
+  throw err;
+  ^
+
+Error: Cannot find module './artifacts/api-server/dist/db'
+Require stack:
+- /home/tmm/skyguard/[eval]
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Module._load (node:internal/modules/cjs/loader:1038:27)
+    at Module.require (node:internal/modules/cjs/loader:1289:19)
+    at require (node:internal/modules/helpers:182:18)
+    at [eval]:2:16
+    at runScriptInThisContext (node:internal/vm:209:10)
+    at node:internal/process/execution:118:14
+    at [eval]-wrapper:6:24
+    at runScript (node:internal/process/execution:101:62)
+    at evalScript (node:internal/process/execution:133:3) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [ '/home/tmm/skyguard/[eval]' ]
+}
+
+Node.js v20.20.2
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ # На Linux сървъра — изпълни стъпка по стъпка:
+cd ~/skyguard
+git pull origin main
+PORT=25095 BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build
+sudo systemctl reload nginx
+remote: Enumerating objects: 18, done.
+remote: Counting objects: 100% (18/18), done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 10 (delta 8), reused 10 (delta 8), pack-reused 0 (from 0)
+Unpacking objects: 100% (10/10), 4.08 KiB | 1.02 MiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+ * branch            main       -> FETCH_HEAD
+   fc82a4b..2e96c38  main       -> origin/main
+Updating fc82a4b..2e96c38
+Fast-forward
+ artifacts/skyguard-os/src/components/radar/RadarOverlay.tsx | 232 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ artifacts/skyguard-os/src/pages/home.tsx                    |  50 +++++-------------
+ 2 files changed, 246 insertions(+), 36 deletions(-)
+ create mode 100644 artifacts/skyguard-os/src/components/radar/RadarOverlay.tsx
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2780 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.54 kB
+dist/public/assets/index-Cq_ghCIX.css  136.87 kB │ gzip:  28.93 kB
+dist/public/assets/index-B8Ky7dnm.js   831.48 kB │ gzip: 252.89 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.11s
+[sudo] password for tmm: 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ # 1. Намери DATABASE_URL
+grep DATABASE_URL ~/skyguard/artifacts/api-server/.env 2>/dev/null || \
+grep -r DATABASE_URL ~/skyguard/.env 2>/dev/null
+
+# 2. Добави device-а (смени $DATABASE_URL с реалната стойност от стъпка 1)
+psql "$DATABASE_URL" -c "
+INSERT INTO devices (name, api_key_hash, api_key_prefix)
+VALUES (
+  'Pi HackRF Bridge',
+  '009d986fad329e2c2508e1fce6fe88e30afc32b178b0f1fbb9ae0c189452c7eb',
+  'sg_a637f2'
+)
+ON CONFLICT (api_key_hash) DO UPDATE SET revoked = false;
+"
+
+# 3. Провери
+psql "$DATABASE_URL" -c "SELECT id, name, api_key_prefix, revoked, last_seen_at FROM devices;"
+DATABASE_URL=postgresql://tmm@localhost:5433/skyguard
+psql: error: connection to server on socket "/var/run/postgresql/.s.PGSQL.5433" failed: FATAL:  database "tmm" does not exist
+psql: error: connection to server on socket "/var/run/postgresql/.s.PGSQL.5433" failed: FATAL:  database "tmm" does not exist
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ cd ~/skyguard
+git pull origin main
+PORT=25095 BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build
+sudo systemctl reload nginx
+From https://github.com/mladenovpeter-maker/skyguard
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2780 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.54 kB
+dist/public/assets/index-Cq_ghCIX.css  136.87 kB │ gzip:  28.93 kB
+dist/public/assets/index-B8Ky7dnm.js   831.48 kB │ gzip: 252.89 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.15s
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ psql "postgresql://tmm@localhost:5433/skyguard" -c "
+INSERT INTO devices (name, api_key_hash, api_key_prefix)
+VALUES (
+  'Pi HackRF Bridge',
+  '009d986fad329e2c2508e1fce6fe88e30afc32b178b0f1fbb9ae0c189452c7eb',
+  'sg_a637f2'
+)
+ON CONFLICT (api_key_hash) DO UPDATE SET revoked = false;
+"
+INSERT 0 1
+tmm@tmm:~/skyguard$ psql "postgresql://tmm@localhost:5433/skyguard" -c "SELECT id, name, api_key_prefix, revoked, last_seen_at FROM devices;"
+ id |       name       | api_key_prefix | revoked |        last_seen_at        
+----+------------------+----------------+---------+----------------------------
+  1 | Sparrow Pi3      | sg_f4e57a      | t       | 
+  2 | WIFI             | sg_30722e      | f       | 2026-07-22 17:51:50.568+00
+  3 | Pi HackRF Bridge | sg_a637f2      | f       | 
+(3 rows)
+
+tmm@tmm:~/skyguard$ # На Pi:
+sudo systemctl restart skyguard-hackrf-bridge
+sudo journalctl -u skyguard-hackrf-bridge -n 20 --no-pager
+Failed to restart skyguard-hackrf-bridge.service: Unit skyguard-hackrf-bridge.service not found.
+-- No entries --
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ grep "RadarOverlay" ~/skyguard/artifacts/skyguard-os/src/pages/home.tsx
+import { RadarOverlay } from "@/components/radar/RadarOverlay";
+        <RadarOverlay
+tmm@tmm:~/skyguard$ grep "RadarOverlay" ~/skyguard/artifacts/skyguard-os/src/pages/home.tsx
+import { RadarOverlay } from "@/components/radar/RadarOverlay";
+        <RadarOverlay
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ cd ~/skyguard && git fetch --all && git reset --hard origin/main
+PORT=25095 BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build
+sudo systemctl reload nginx
+HEAD is now at 2e96c38 Extract radar overlay component from home page
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2780 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.54 kB
+dist/public/assets/index-Cq_ghCIX.css  136.87 kB │ gzip:  28.93 kB
+dist/public/assets/index-B8Ky7dnm.js   831.48 kB │ gzip: 252.89 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 4.85s
+[sudo] password for tmm: 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ psql "postgresql://tmm@localhost:5433/skyguard" -c "
+-- Fix null created_at for old device rows
+UPDATE devices SET created_at = NOW() WHERE created_at IS NULL;
+
+-- Create home_config table if missing
+CREATE TABLE IF NOT EXISTS home_config (
+  id                    SERIAL PRIMARY KEY,
+  property_name         TEXT NOT NULL,
+  lat                   DOUBLE PRECISION NOT NULL,
+  lng                   DOUBLE PRECISION NOT NULL,
+  geofence_radius_meters DOUBLE PRECISION NOT NULL,
+  updated_at            TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+"
+psql: error: connection to server at "localhost" (127.0.0.1), port 5433 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ # Провери статуса
+sudo systemctl status postgresql
+
+# Рестартирай
+sudo systemctl restart postgresql
+
+# Провери дали вече слуша на 5433
+sudo ss -tlnp | grep 5433
+[sudo] password for tmm: 
+● postgresql.service - PostgreSQL RDBMS
+     Loaded: loaded (/usr/lib/systemd/system/postgresql.service; enabled; preset: enabled)
+     Active: active (exited) since Fri 2026-07-17 02:56:58 UTC; 6 days ago
+   Main PID: 3571956 (code=exited, status=0/SUCCESS)
+        CPU: 3ms
+
+Notice: journal has been rotated since unit was started, output may be incomplete.
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ pg_lsclusters
+Ver Cluster Port Status Owner    Data directory              Log file
+16  main    5433 down   postgres /var/lib/postgresql/16/main /var/log/postgresql/postgresql-16-main.log
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ sudo pg_ctlcluster 16 main start
+pg_lsclusters
+Job for postgresql@16-main.service failed because the service did not take the steps required by its unit configuration.
+See "systemctl status postgresql@16-main.service" and "journalctl -xeu postgresql@16-main.service" for details.
+Ver Cluster Port Status Owner    Data directory              Log file
+16  main    5433 down   postgres /var/lib/postgresql/16/main /var/log/postgresql/postgresql-16-main.log
+tmm@tmm:~/skyguard$ sudo ss -tlnp | grep 5433
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ sudo journalctl -xeu postgresql@16-main.service --no-pager | tail -30
+░░ Defined-By: systemd
+░░ Support: http://www.ubuntu.com/support
+░░ 
+░░ A start job for unit postgresql@16-main.service has finished with a failure.
+░░ 
+░░ The job identifier is 343343 and the job result is failed.
+Jul 23 04:49:41 tmm systemd[1]: Starting postgresql@16-main.service - PostgreSQL Cluster 16-main...
+░░ Subject: A start job for unit postgresql@16-main.service has begun execution
+░░ Defined-By: systemd
+░░ Support: http://www.ubuntu.com/support
+░░ 
+░░ A start job for unit postgresql@16-main.service has begun execution.
+░░ 
+░░ The job identifier is 343345.
+Jul 23 04:49:41 tmm postgresql@16-main[135730]: Error: /usr/lib/postgresql/16/bin/pg_ctl /usr/lib/postgresql/16/bin/pg_ctl start -D /var/lib/postgresql/16/main -l /var/log/postgresql/postgresql-16-main.log -s -o  -c config_file="/etc/postgresql/16/main/postgresql.conf"  exited with status 1:
+Jul 23 04:49:41 tmm systemd[1]: postgresql@16-main.service: Can't open PID file /run/postgresql/16-main.pid (yet?) after start: No such file or directory
+Jul 23 04:49:41 tmm systemd[1]: postgresql@16-main.service: Failed with result 'protocol'.
+░░ Subject: Unit failed
+░░ Defined-By: systemd
+░░ Support: http://www.ubuntu.com/support
+░░ 
+░░ The unit postgresql@16-main.service has entered the 'failed' state with result 'protocol'.
+Jul 23 04:49:41 tmm systemd[1]: Failed to start postgresql@16-main.service - PostgreSQL Cluster 16-main.
+░░ Subject: A start job for unit postgresql@16-main.service has failed
+░░ Defined-By: systemd
+░░ Support: http://www.ubuntu.com/support
+░░ 
+░░ A start job for unit postgresql@16-main.service has finished with a failure.
+░░ 
+░░ The job identifier is 343345 and the job result is failed.
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ sudo tail -50 /var/log/postgresql/postgresql-16-main.log
+2026-07-22 20:29:02.794 UTC [3571889] LOG:  checkpoint complete: wrote 42 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=4.121 s, sync=0.007 s, total=4.140 s; sync files=9, longest=0.004 s, average=0.001 s; distance=304 kB, estimate=326 kB; lsn=0/9B04B40, redo lsn=0/9B04B08
+2026-07-22 20:33:58.885 UTC [3571889] LOG:  checkpoint starting: time
+2026-07-22 20:34:02.719 UTC [3571889] LOG:  checkpoint complete: wrote 39 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=3.814 s, sync=0.007 s, total=3.834 s; sync files=9, longest=0.004 s, average=0.001 s; distance=301 kB, estimate=324 kB; lsn=0/9B4FFE0, redo lsn=0/9B4FF70
+2026-07-22 20:38:58.819 UTC [3571889] LOG:  checkpoint starting: time
+2026-07-22 20:39:17.599 UTC [3571889] LOG:  checkpoint complete: wrote 188 buffers (1.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=18.761 s, sync=0.007 s, total=18.780 s; sync files=12, longest=0.003 s, average=0.001 s; distance=306 kB, estimate=322 kB; lsn=0/9BC0A60, redo lsn=0/9B9C9D8
+2026-07-22 20:43:58.699 UTC [3571889] LOG:  checkpoint starting: time
+2026-07-22 20:44:02.835 UTC [3571889] LOG:  checkpoint complete: wrote 42 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=4.118 s, sync=0.006 s, total=4.137 s; sync files=8, longest=0.004 s, average=0.001 s; distance=320 kB, estimate=322 kB; lsn=0/9BECC98, redo lsn=0/9BECC28
+2026-07-22 20:48:58.932 UTC [3571889] LOG:  checkpoint starting: time
+2026-07-22 20:49:03.170 UTC [3571889] LOG:  checkpoint complete: wrote 43 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=4.218 s, sync=0.007 s, total=4.239 s; sync files=9, longest=0.004 s, average=0.001 s; distance=331 kB, estimate=331 kB; lsn=0/9C3F900, redo lsn=0/9C3F8C8
+2026-07-22 20:53:58.271 UTC [3571889] LOG:  checkpoint starting: time
+2026-07-22 20:54:02.105 UTC [3571889] LOG:  checkpoint complete: wrote 39 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=3.816 s, sync=0.006 s, total=3.835 s; sync files=8, longest=0.004 s, average=0.001 s; distance=303 kB, estimate=328 kB; lsn=0/9C8B768, redo lsn=0/9C8B730
+2026-07-22 20:58:58.199 UTC [3571889] LOG:  checkpoint starting: time
+2026-07-22 20:59:02.637 UTC [3571889] LOG:  checkpoint complete: wrote 45 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=4.419 s, sync=0.007 s, total=4.438 s; sync files=9, longest=0.004 s, average=0.001 s; distance=335 kB, estimate=335 kB; lsn=0/9CDF500, redo lsn=0/9CDF4C8
+2026-07-22 21:03:58.679 UTC [3571889] LOG:  checkpoint starting: time
+2026-07-22 21:04:02.816 UTC [3571889] LOG:  checkpoint complete: wrote 42 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=4.119 s, sync=0.007 s, total=4.138 s; sync files=9, longest=0.004 s, average=0.001 s; distance=338 kB, estimate=338 kB; lsn=0/9D33D50, redo lsn=0/9D33CE0
+2026-07-22 21:08:58.916 UTC [3571889] LOG:  checkpoint starting: time
+2026-07-22 21:09:03.253 UTC [3571889] LOG:  checkpoint complete: wrote 44 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=4.319 s, sync=0.006 s, total=4.337 s; sync files=9, longest=0.004 s, average=0.001 s; distance=330 kB, estimate=337 kB; lsn=0/9D881F8, redo lsn=0/9D868A0
+2026-07-22 21:13:58.280 UTC [3571889] LOG:  checkpoint starting: time
+2026-07-22 21:14:02.217 UTC [3571889] LOG:  checkpoint complete: wrote 40 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=3.918 s, sync=0.006 s, total=3.937 s; sync files=8, longest=0.003 s, average=0.001 s; distance=323 kB, estimate=335 kB; lsn=0/9DD7658, redo lsn=0/9DD75E8
+2026-07-22 21:18:58.304 UTC [3571889] LOG:  checkpoint starting: time
+2026-07-22 21:19:36.332 UTC [3571889] LOG:  checkpoint complete: wrote 380 buffers (2.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=38.010 s, sync=0.007 s, total=38.029 s; sync files=11, longest=0.003 s, average=0.001 s; distance=365 kB, estimate=365 kB; lsn=0/9E63278, redo lsn=0/9E32D08
+2026-07-22 21:23:58.432 UTC [3571889] LOG:  checkpoint starting: time
+2026-07-22 21:24:02.365 UTC [3571889] LOG:  checkpoint complete: wrote 40 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=3.915 s, sync=0.006 s, total=3.933 s; sync files=9, longest=0.003 s, average=0.001 s; distance=326 kB, estimate=361 kB; lsn=0/9E84580, redo lsn=0/9E84548
+2026-07-22 21:28:58.465 UTC [3571889] LOG:  checkpoint starting: time
+2026-07-22 21:29:02.402 UTC [3571889] LOG:  checkpoint complete: wrote 40 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=3.918 s, sync=0.006 s, total=3.937 s; sync files=8, longest=0.003 s, average=0.001 s; distance=333 kB, estimate=359 kB; lsn=0/9ED7CB0, redo lsn=0/9ED7C78
+2026-07-22 21:33:58.483 UTC [3571889] LOG:  checkpoint starting: time
+2026-07-22 21:34:03.218 UTC [3571889] LOG:  checkpoint complete: wrote 48 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=4.717 s, sync=0.006 s, total=4.736 s; sync files=9, longest=0.003 s, average=0.001 s; distance=369 kB, estimate=369 kB; lsn=0/9F34198, redo lsn=0/9F34160
+2026-07-22 21:38:58.281 UTC [3571889] LOG:  checkpoint starting: time
+2026-07-22 21:39:02.815 UTC [3571889] LOG:  checkpoint complete: wrote 46 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=4.518 s, sync=0.005 s, total=4.534 s; sync files=9, longest=0.003 s, average=0.001 s; distance=347 kB, estimate=367 kB; lsn=0/9F8B168, redo lsn=0/9F8B130
+2026-07-22 21:43:58.906 UTC [3571889] LOG:  checkpoint starting: time
+2026-07-22 21:44:03.540 UTC [3571889] LOG:  checkpoint complete: wrote 47 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=4.617 s, sync=0.006 s, total=4.635 s; sync files=9, longest=0.003 s, average=0.001 s; distance=368 kB, estimate=368 kB; lsn=0/9FE7220, redo lsn=0/9FE71B0
+2026-07-22 21:48:58.640 UTC [3571889] LOG:  checkpoint starting: time
+2026-07-22 21:49:02.777 UTC [3571889] LOG:  checkpoint complete: wrote 42 buffers (0.3%); 0 WAL file(s) added, 0 removed, 1 recycled; write=4.118 s, sync=0.005 s, total=4.138 s; sync files=8, longest=0.004 s, average=0.001 s; distance=330 kB, estimate=364 kB; lsn=0/A039D90, redo lsn=0/A039D58
+2026-07-22 21:53:58.877 UTC [3571889] LOG:  checkpoint starting: time
+2026-07-22 21:54:03.814 UTC [3571889] LOG:  checkpoint complete: wrote 50 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=4.920 s, sync=0.008 s, total=4.938 s; sync files=9, longest=0.004 s, average=0.001 s; distance=371 kB, estimate=371 kB; lsn=0/A0B5A70, redo lsn=0/A0969D8
+2026-07-22 21:58:58.914 UTC [3571889] LOG:  checkpoint starting: time
+2026-07-22 21:59:03.645 UTC [3571889] LOG:  checkpoint complete: wrote 48 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=4.716 s, sync=0.007 s, total=4.732 s; sync files=9, longest=0.003 s, average=0.001 s; distance=337 kB, estimate=367 kB; lsn=0/A1098A0, redo lsn=0/A0EB0B8
+2026-07-22 22:03:58.746 UTC [3571889] LOG:  checkpoint starting: time
+2026-07-22 22:04:03.285 UTC [3571889] LOG:  checkpoint complete: wrote 47 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=4.522 s, sync=0.006 s, total=4.540 s; sync files=8, longest=0.003 s, average=0.001 s; distance=334 kB, estimate=364 kB; lsn=0/A13EBB0, redo lsn=0/A13EB78
+2026-07-22 22:08:58.385 UTC [3571889] LOG:  checkpoint starting: time
+2026-07-22 22:09:03.023 UTC [3571889] LOG:  checkpoint complete: wrote 47 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=4.619 s, sync=0.007 s, total=4.638 s; sync files=9, longest=0.003 s, average=0.001 s; distance=367 kB, estimate=367 kB; lsn=0/A19AB00, redo lsn=0/A19AA90
+2026-07-22 22:13:58.063 UTC [3571889] LOG:  checkpoint starting: time
+2026-07-22 22:14:02.597 UTC [3571889] LOG:  checkpoint complete: wrote 46 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=4.517 s, sync=0.006 s, total=4.535 s; sync files=9, longest=0.003 s, average=0.001 s; distance=340 kB, estimate=365 kB; lsn=0/A1EFEB8, redo lsn=0/A1EFE80
+2026-07-22 22:18:58.687 UTC [3571889] LOG:  checkpoint starting: time
+2026-07-22 22:19:03.122 UTC [3571889] LOG:  checkpoint complete: wrote 45 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=4.417 s, sync=0.006 s, total=4.435 s; sync files=9, longest=0.004 s, average=0.001 s; distance=332 kB, estimate=361 kB; lsn=0/A242F30, redo lsn=0/A242EC0
+2026-07-22 22:23:58.201 UTC [3571889] LOG:  checkpoint starting: time
+2026-07-22 22:24:02.130 UTC [3571889] LOG:  checkpoint complete: wrote 40 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=3.914 s, sync=0.005 s, total=3.930 s; sync files=8, longest=0.003 s, average=0.001 s; distance=321 kB, estimate=357 kB; lsn=0/A293458, redo lsn=0/A293420
+2026-07-22 22:28:58.231 UTC [3571889] LOG:  checkpoint starting: time
+2026-07-22 22:29:03.063 UTC [3571889] LOG:  checkpoint complete: wrote 49 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=4.817 s, sync=0.004 s, total=4.833 s; sync files=9, longest=0.003 s, average=0.001 s; distance=386 kB, estimate=386 kB; lsn=0/A2F3F48, redo lsn=0/A2F3F10
+2026-07-22 22:30:18.699 UTC [3936296] tmm@skyguard ERROR:  could not etmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ df -h
+du -sh /var/lib/postgresql/ /var/log/postgresql/
+Filesystem                         Size  Used Avail Use% Mounted on
+tmpfs                              1.6G  2.5M  1.6G   1% /run
+efivarfs                           256K   91K  161K  37% /sys/firmware/efi/efivars
+/dev/mapper/ubuntu--vg-ubuntu--lv   98G   94G     0 100% /
+tmpfs                              7.8G     0  7.8G   0% /dev/shm
+tmpfs                              5.0M     0  5.0M   0% /run/lock
+/dev/sda2                          2.0G  201M  1.6G  11% /boot
+/dev/sda1                          1.1G  6.2M  1.1G   1% /boot/efi
+tmpfs                              1.6G   12K  1.6G   1% /run/user/1000
+du: cannot read directory '/var/lib/postgresql/16/main': Permission denied
+12K	/var/lib/postgresql/
+608K	/var/log/postgresql/
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ # 1. Виж кое яде място
+sudo du -sh /* 2>/dev/null | sort -rh | head -20
+
+# 2. Чисти apt кеш (обикновено ~1-3GB)
+sudo apt-get clean
+sudo apt-get autoremove -y
+
+# 3. Чисти стари kernel-и
+sudo journalctl --vacuum-size=200M
+
+# 4. Виж дали има огромни лог файлове
+sudo find /var/log -name "*.log" -size +100M -ls 2>/dev/null
+sudo find /tmp -size +100M -ls 2>/dev/null
+
+# 5. Node modules (ако имаш стари builds)
+du -sh ~/skyguard/node_modules 2>/dev/null
+du -sh ~/skyguard/*/node_modules 2>/dev/null
+
+
+^C
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+0 upgraded, 0 newly installed, 0 to remove and 35 not upgraded.
+Vacuuming done, freed 0B of archived journals from /var/log/journal.
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-00000000005da2c9-0006573dac825320.journal (4.5M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-0000000000618af0-0006573dd209f053.journal (77.8M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-000000000061a899-0006573dd2181f6c.journal (4.5M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-000000000065ed6d-0006573dfb2a2072.journal (26.8M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-000000000065ed7e-0006573dfb2d5c8f.journal (3.8M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-0000000000673dd0-0006573e07482bd8.journal (70.6M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-0000000000673e40-0006573e074b8e40.journal (4.4M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-00000000006b2ef8-0006573e2b736e85.journal (77.8M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-00000000006b3bf8-0006573e2b7c3087.journal (4.5M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-00000000006f9148-0006573e54937c17.journal (24.0M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-00000000006fa420-0006573e54afc2bc.journal (3.8M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-000000000070af25-0006573e5f4d6dcb.journal (71.0M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-000000000070af30-0006573e5f4f2430.journal (4.4M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-000000000074a00f-0006573e8360b69d.journal (71.2M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-000000000074a194-0006573e837272e9.journal (4.4M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-000000000078915d-0006573ea89e5313.journal (77.8M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-000000000078a4e8-0006573ea8ac0985.journal (4.5M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-00000000007cf458-0006573ed1bf24fb.journal (24.0M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-00000000007d0bef-0006573ed1e096e0.journal (3.8M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-00000000007e1249-0006573edc78bea7.journal (70.8M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-00000000007e1256-0006573edc7ac26a.journal (4.4M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-0000000000820330-0006573f003eacc6.journal (26.8M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-0000000000820612-0006573f00504550.journal (3.8M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-00000000008353a8-0006573f0cc1d760.journal (24.0M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-0000000000835d2f-0006573f0ccbdfe4.journal (3.8M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-0000000000847171-0006573f177bc8f0.journal (63.3M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-000000000084835f-0006573f17899519.journal (4.3M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-000000000087bc6e-0006573f35e28c47.journal (8.0M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-000000000087c4ea-0006573f3604512c.journal (3.6M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-000000000087eb48-0006573f37ac55e9.journal (8.0M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-000000000087f5cf-0006573f37d334ed.journal (3.6M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-0000000000881a54-0006573f3975bb30.journal (24.0M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-00000000008826e8-0006573f39a218e3.journal (3.8M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-0000000000893844-0006573f442fb5b9.journal (70.8M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-0000000000893852-0006573f44316956.journal (4.5M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-00000000008d29a9-0006573f69b09a50.journal (56.0M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-00000000008d2b68-0006573f69b6fba5.journal (4.1M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-00000000008fcd9d-0006573f80fd1095.journal (63.3M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-00000000008fd01c-0006573f8120d4d6.journal (4.3M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-000000000093155c-0006573fa00ce9f7.journal (70.8M).
+Vacuuming done, freed 1.0G of archived journals from /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df.
+Vacuuming done, freed 0B of archived journals from /run/log/journal.
+453M	/home/tmm/skyguard/node_modules
+20K	/home/tmm/skyguard/scripts/node_modules
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ sudo du -sh /home /var/log /var/lib /usr /opt /tmp /root 2>/dev/null | sort -rh
+
+
+^C
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ df -h / && sudo pg_ctlcluster 16 main start && psql "postgresql://tmm@localhost:5433/skyguard" -c "
+UPDATE devices SET created_at = NOW() WHERE created_at IS NULL;
+CREATE TABLE IF NOT EXISTS home_config (
+  id                     SERIAL PRIMARY KEY,
+  property_name          TEXT NOT NULL,
+  lat                    DOUBLE PRECISION NOT NULL,
+  lng                    DOUBLE PRECISION NOT NULL,
+  geofence_radius_meters DOUBLE PRECISION NOT NULL,
+  updated_at             TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+SELECT 'DB OK' as status;
+"
+Filesystem                         Size  Used Avail Use% Mounted on
+/dev/mapper/ubuntu--vg-ubuntu--lv   98G   93G  110M 100% /
+NOTICE:  relation "home_config" already exists, skipping
+UPDATE 0
+CREATE TABLE
+ status 
+--------
+ DB OK
+(1 row)
+
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ pnpm store prune && df -h /
+Removed all cached metadata files
+Removed 614 files
+Removed 2 packages
+Filesystem                         Size  Used Avail Use% Mounted on
+/dev/mapper/ubuntu--vg-ubuntu--lv   98G   93G  118M 100% /
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ cd ~/skyguard && git pull origin main
+pnpm --filter @workspace/api-server run build
+sudo systemctl restart skyguard-api
+sudo systemctl status skyguard-api --no-pager
+remote: Enumerating objects: 46, done.
+remote: Counting objects: 100% (46/46), done.
+remote: Compressing objects: 100% (10/10), done.
+remote: Total 32 (delta 22), reused 32 (delta 22), pack-reused 0 (from 0)
+Unpacking objects: 100% (32/32), 10.98 KiB | 432.00 KiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+ * branch            main       -> FETCH_HEAD
+   2e96c38..d782d0e  main       -> origin/main
+Updating 2e96c38..d782d0e
+Fast-forward
+ artifacts/skyguard-os/src/components/radar/TelemetryPanel.tsx                                  | 398 +++++++++++------------------------------------
+ artifacts/skyguard-os/src/pages/home.tsx                                                       |  59 ++++---
+ artifacts/skyguard-os/src/pages/spectrum.tsx                                                   | 258 +++++++++++++++---------------
+ .../Pasted-admin-skyguard-bridge-ssh-admin-192-168-100-252-sudo-sy_1784742373043.txt           |  25 +++
+ .../Pasted-admin-skyguard-ssh-admin-192-168-100-252-cd-skyguard-gi_1784748963818.txt           |  34 ++++
+ .../Pasted-admin-skyguard-ssh-admin-192-168-100-252-sudo-systemctl_1784742815479.txt           |  28 ++++
+ .../Pasted-tmm-tmm-skyguard-Linux-cd-skyguard-git-pull-origin-mai-_1784742524700.txt           |  38 +++++
+ hardware/hackrf-bridge/bridge.py                                                               |  86 ++++++----
+ 8 files changed, 439 insertions(+), 487 deletions(-)
+ create mode 100644 attached_assets/Pasted-admin-skyguard-bridge-ssh-admin-192-168-100-252-sudo-sy_1784742373043.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-ssh-admin-192-168-100-252-cd-skyguard-gi_1784748963818.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-ssh-admin-192-168-100-252-sudo-systemctl_1784742815479.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-Linux-cd-skyguard-git-pull-origin-mai-_1784742524700.txt
+
+> @workspace/api-server@0.0.0 build /home/tmm/skyguard/artifacts/api-server
+> node ./build.mjs
+
+
+  dist/index.mjs                       2.7mb ⚠️
+  dist/pino-worker.mjs               153.4kb
+  dist/pino-file.mjs                 142.1kb
+  dist/pino-pretty.mjs               114.4kb
+  dist/thread-stream-worker.mjs        7.3kb
+  dist/index.mjs.map                   5.0mb
+  dist/pino-worker.mjs.map           256.9kb
+  dist/pino-file.mjs.map             229.0kb
+  dist/pino-pretty.mjs.map           203.6kb
+  dist/thread-stream-worker.mjs.map   12.0kb
+
+⚡ Done in 262ms
+● skyguard-api.service - SkyGuard API Server
+     Loaded: loaded (/etc/systemd/system/skyguard-api.service; enabled; preset: enabled)
+     Active: active (running) since Thu 2026-07-23 04:56:04 UTC; 15ms ago
+   Main PID: 142427 (node)
+      Tasks: 6 (limit: 18848)
+     Memory: 2.0M (peak: 2.0M)
+        CPU: 11ms
+     CGroup: /system.slice/skyguard-api.service
+             └─142427 /usr/bin/node --enable-source-maps ./dist/index.mjs
+
+Jul 23 04:56:04 tmm systemd[1]: Started skyguard-api.service - SkyGuard API Server.
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ # Топ директории по размер (без /proc /sys /dev)
+sudo du -sh /home /var /usr /opt /root /snap /tmp 2>/dev/null | sort -rh
+
+# Конкретно в /var
+sudo du -sh /var/lib /var/log /var/cache /var/lib/docker 2>/dev/null | sort -rh
+
+# Линукс kernel образи (често ~500MB+)
+dpkg --list 'linux-image-*' | grep '^ii' | awk '{print $2}'
+^C
+72G	/var/lib
+372M	/var/log
+138M	/var/cache
+linux-image-6.8.0-134-generic
+linux-image-6.8.0-136-generic
+linux-image-generic
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ # 1. Docker (ако е инсталиран)
+sudo docker system df 2>/dev/null || echo "no docker"
+
+# 2. Snap пакети
+du -sh /snap/* 2>/dev/null | sort -rh | head -10
+
+# 3. Стари Linux kerneli (безопасни за изтриване)
+dpkg --list 'linux-image-*' | grep '^ii'
+
+# 4. Само /var/lib без сканиране на PostgreSQL
+sudo du -sh /var/lib/docker /var/lib/snapd /var/lib/apt 2>/dev/null | sort -rh
+
+# 5. Лог файлове
+sudo ls -lh /var/log/*.log /var/log/**/*.log 2>/dev/null | sort -k5 -rh | head -10
+TYPE            TOTAL     ACTIVE    SIZE      RECLAIMABLE
+Images          10        10        59.11GB   59.11GB (100%)
+Containers      11        11        125.3MB   0B (0%)
+Local Volumes   6         5         755.4MB   48.92MB (6%)
+Build Cache     415       0         46.42GB   42.44GB
+4.0K	/snap/README
+ii  linux-image-6.8.0-134-generic          6.8.0-134.134 amd64        Signed kernel image generic
+ii  linux-image-6.8.0-136-generic          6.8.0-136.136 amd64        Signed kernel image generic
+ii  linux-image-generic                    6.8.0-136.136 amd64        Generic Linux kernel image
+14G	/var/lib/docker
+188M	/var/lib/apt
+148K	/var/lib/snapd
+-rw-r--r-- 1 root     root 802K Jul 22 15:51 /var/log/dpkg.log
+-rw-r----- 1 postgres adm  403K Jul 23 04:56 /var/log/postgresql/postgresql-16-main.log
+-rw-r----- 1 syslog   adm  178K Jul 23 04:58 /var/log/auth.log
+-rw-r--r-- 1 root     root 142K Jul  9 11:19 /var/log/installer/curtin-install.log
+-rw-r--r-- 1 root     root  85K Jul 22 15:51 /var/log/apt/history.log
+-rw-r----- 1 syslog   adm   74K Jul  9 11:23 /var/log/cloud-init.log
+-rw-r--r-- 1 root     root  60K Feb 10 00:17 /var/log/bootstrap.log
+-rw-r----- 1 root     adm   55K Jul 22 15:51 /var/log/apt/term.log
+-rw-r--r-- 1 root     adm   53K Jul 21 06:41 /var/log/unattended-upgrades/unattended-upgrades-dpkg.log
+-rw-r--r-- 1 root     root  52K Jul 22 15:50 /var/log/alternatives.log
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ # 1. Build cache — БЕЗОПАСНО, само неизползван кеш (~42GB)
+sudo docker builder prune -f
+
+# Провери колко се освободи
+df -h /
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Deleted build cache objects:
+r7i3u2ahnaj26mrf4r0ecekzn
+mzw5ghhietrx30i1t8jtiop4h
+5snmrnqd6vo6xctwn24ou1qw4
+cevdf616e6zw81lhnlywu3eu4
+kkafnt2r42nvsonx76fvtozwa
+4enqdanmz8k2vdc8exo9c42at
+lqkp3u280ypligd6ylklc5g2j
+0gyw5awlg0ytrjyhhx0kf4fvx
+p3opnlxep3cukruucr6jzdt4g
+nk77fs898cmaqcr3cnpwqns00
+qbs3pttz3j6dv4tq9jbrpx9qa
+n1u7us1byqk6fazvdak24ejx7
+bjnk7f9svi28e2eb2d3jepd5m
+vfzt6aq0ze9so4xf6ux53ecco
+m4smhw6g5irsysqf9t9fkc1q6
+qtd8k89r2ls7i9yngjyxcwr02
+s4s0hnot7n9o9vs6awy7l78ja
+zc3du5bvw71swzyoyr22kzvrs
+h47o0akzng53gmx2qwpncc7hl
+64cd5furse8vcmuodv8hffewd
+b473zmjvzk4voqvctc34gplwt
+kz5z27w77lx8dfv8yv6bax02d
+ksjac9sskb31liahvhn9dgs11
+i5v2zwzcqlui08z35plewluz1
+lezfsijunsbmc8jldu1ek2sxe
+s9oy715rj3ml4trnqz50fzj6m
+wqjqddfrefk21doeloynmxohp
+vpdhcc956e6y22qo9gcly08s5
+itnu8ynpzbb991f0fvyc46uh8
+r7mofync39valqfowpnmri0dt
+kb7jw82sbru2gl3n4vwz94wsk
+v4czqnoaw74en3i7clf7kaljo
+tr1ja3y5ho0xouy59movp9uj6
+pb3g321b1dkjt6hftirg864zz
+k78tvle4124tncfav0qhtkafg
+n801uh0cw6yetixj8zz0jom40
+uscccufk3m64rnfgxohx4ug2q
+gx73s2inm6ifgy8oo6xa1dezb
+wdtkcdhbdnwu7aei101k3rz1h
+2be3eoy7yi2z05n6vbmsxskm7
+ssm9py9s05w93ak4mm23cbk0f
+fx6m83i2ktmy6ws1ptfio6auc
+fra9qrwcrblc1iecz8wnnid58
+ti8f6vzqc527f22nr5rp9ls3u
+7owhw120qgm8epdfd76vmp9nv
+tikxanfykf1nz9h12siq2jiap
+5259w6fc5v9zg9qha6lcukgwr
+xqdc6zvgtdg5hut1s75ezv9b5
+l1modrve1ygnzyxl0ivenlhmg
+eusr002td6alwsls5dn0yh7ap
+p2a9hniqvuun2n93d14xd08qe
+f9z16ipyzwra27s135y06l2ym
+1g4zzkjg3nvbluf1t81k2b0f3
+1d2yvtrp7q6jffbyhjzkrov55
+szpvz9kzh05rjnonhbex6kj6c
+czd4eonnv1g2vdsvje94m7mvd
+8hmxb81syf0db17sujhvqdsce
+uhmytgqpht7qtfz6y6d05i6hj
+icoa1umgjctrq3hor6duo1qp2
+v4y2y6mon1l3olv8rki5rg5v6
+fww85zn9nx8n2kd9gjfgxqpe0
+ivxxtnzj5kxkul9puam14m0u9
+5ihw1vjlax4tuyprnol5b4miw
+kfdj5y9x0xfe5suzpv23qtqib
+6iy0vzz80izn3qbaglgb1wn4d
+wznj7lpo2rrqo94whs4px7ol0
+ncyuqu7n6zzcot1sychbgj0wa
+mzt3pd0mroezginnsj8723go4
+oeoevovrhju690ufl6yb4ep6w
+vikgz8fhsenv4l5u6rviqtrxx
+a1adzxspnrcpoiguy9o6se0jo
+tvsojkq24wo1gqq6gfy65jgzf
+56144sqw3v1s5gd5ay1d71li4
+979oraa24phctgf0z6y85108t
+zbjiw5lvyoxhf85xiwnfh7ikv
+d1b6zzh88ch9hzdwj8f6yl6dr
+co3rrixv3qw2hwktser2ssji3
+xsnqgtwc0qnvypupqajwcdto6
+o8dku93hybii2a528vy1phpvy
+z3gtdshiq7iobmj6jksca5kna
+xyqcmbeovzmv5jb2u3qggx7qd
+yjcvvoceb4rsbdr44konaaxsm
+shhbtw5sinrat7cp5prod8xf8
+i8fyfbcqs3hitxltsia61w1vs
+z8orv1uehcznomo0n3e74aqu2
+fzkl63ep2v3amvd855yjesbu5
+7dyyy1uqb743gs2ztu5ayn4vo
+v2y7crz6ztlfgossrkjffed4y
+okq7f8gk7h9a0hdeg5o4cay1k
+uszg4qkhrklv7znnkyk2brrck
+5yeng5b8s13seezcjuv4w4elr
+1dac8slwk27wysi04s44c3qby
+trzs15yhgkwnuekr3dunpah0s
+faddynqmf4bnekrsvix0mde3l
+zz6u4bxchxaophojlygz53cz6
+pi9o0caggu8duzf686n3jd97g
+x9eyoy2s5jgs3dhly3k18ow4f
+q2h647hxpy3q209r0h08ladh3
+47q5hgv38azmfvxlak96sg6uz
+ijlrij2jvyxio9hv374wlzxb1
+l9p45wi3wjbts7duymtr7t3mq
+xhmn9z32um2h3w3xa357geemb
+upmq7ta2shcvbqmrytxnjlaoi
+ssyzqd46bawtjrg6y1lbtjh6w
+wqzm6md8jamgqxhjyxdedcfmo
+wu2mqeqxzt8x8tyycjgk258oz
+yon3tszykq4b2ftsixnymy41o
+y6k5rchhcfrelub6un7ovwn03
+2j96ltzyrrsc57wkakndisqkw
+ary1vw3uyov53qduzv9aw71wg
+tghaeso7d2wjlm0ebsu40j88x
+dhdozkho634i56x36eoccbhzu
+tjb9uy4y8wa26nzy2d063eua5
+tga10g49rtdc2y5mszy9be4fr
+4abwfnqju7r3cno8dhkuaeiv3
+04p96njx067r1968o9izdbq6p
+tc5dwqe6sla1vu2vcnbivr490
+fvr9v6i5046tkddmxv2kqjglk
+fodb9amxnzwggi7ajflzf8f6q
+sukixjq3728fi594j3warehuw
+5vqh6tqhs3rihtj9jhw7zq2s9
+qj08o7xwdvsw6853kw1gjvxtx
+hge521x5wsh9b2t8h8zfgyfye
+w6mrmmaeyevpv3a4yvoda1f0h
+hvexo3g8zg67w0n6c9mmi8jd7
+c2tzpdze33kjehe4xl1izew4m
+rauecu10vd4l0a6m6boyjsyup
+h6xaapo3brsjnl0toaqg6t67b
+zv7lw6k63afbk1bcso25bbquw
+hi5zeeredbvn74rjazeels1qs
+ym7jdw8ksg3tpdeuibu4ypz07
+vlk9xx77p11cbqtjead4ljzi1
+rg23zf3n50eh4o5tclovars2j
+s00eufjqy5h0vjvlmr4sillk0
+kyw6hpx3gmcl1bymtt9kz51hb
+gf0siexsfkhacpwgsxez4qaky
+dzh3tqlo3oca8rxyp5dr356up
+nbq80e466kzrhw2r96nsmw52r
+u4sjyqluc5j56plzhwm2eq7fu
+yl239zmpd80f5f0ywovjd6ale
+eq59j3n1vixox58ab4avvwg1t
+8j36149fw1lg36iedycis4t4a
+66iezl0fixd4bh8bp9xx3b14j
+9t3zhkikvdrfoke9z6chumxl1
+o7xmdadtkbzb9rqedixxkqdat
+gln4i20p3f7fmvyhriw4sq4km
+kk86gbt3scp5v6doe1ggogb5t
+rm8ig404cerwq7o4fyvs8pm6l
+4vim7w6bfscvfisg2441wzku5
+wbfw7thy0c4dkl0345zf5zikz
+1elzdslnis5wmpbthbfbc5au7
+qwsg4oqilwh46mgliqgoya5sn
+ua1ftj81ykwhx43e8h6k1masl
+tmmu3495cb6tcb6l4xbmkbosn
+7nagbq530r1ttjlwcwi8z91to
+9qm2l04auhaadei1qx5z0sdb4
+lhjalxc4uvnsk3qj689aunwhu
+vxwzs6baxjwt3yljg34tq0bqj
+i7zd4hlylrnx5ey5j1lu706rg
+ykizq71i50r6q804bc25gnfhn
+3icl0n11aagfa1ibr7itu3y0j
+obkx4gyhtkoclddng157kb28b
+9dvaxt5o7gu263vci7f127db8
+z94ac8d5618ujmdvmlq01xzdy
+ystkp09a642ez7r9pyqvk5g4r
+wgwgk97g2vb2hfocfibqgn2ob
+lj058hukctogvhmuidgdtkte4
+ggox4odas1d0jd1siplqntlc0
+i0tyqgwymipd4xn23jmdbrl2u
+p1xkfgfm2r70s8whp6ckp709i
+itufeezk0jdt8cynk4fxsgfwq
+gxxpcgh30txbi3u584xlwih3h
+s0qbgxhdmnbbeylhzyvro1gmw
+eutc2gj2t0dqkug758syj9pf8
+sndbisxbntnqgxm633ejo8wi4
+1hdqm1qgvm86f9yzm1dettgvq
+9knfdhfime3v68658hma9d409
+m0jbnl25w6ipimfyzsz9vs627
+725r4i8gfn8fkxl1kqcududuk
+tncuyf8nkf7v4cal3mhvytqub
+lrr4pwwtg63hb2309va2tg7yj
+p297hcsdsk5bpsi9120lioej7
+vjb7hkfjh7ax3gsah2wjwjfws
+k01n6w88wr5gcf9h8qbb9f22q
+tj2yla5l5kq0ex2xwbn987mi7
+xtj76qm4q3iyp4yopj209n85e
+ur36g97ohvvtkh4kpqmceoh19
+kvmspbyxrypq6jl3kgmeipe8z
+sdhx7s6fg6lbvwjodi0ulzv2q
+n3696tm6i84av367xdjrbycqb
+rkuwx2xd9dwb3gl5exficv3a7
+xitvq6jhhy62tutwu1kazgl3n
+ifng98atyrtanm1rnd4bfai1i
+tbnnj9oh44dikqfskeel0c9pj
+nxm63zhdd3kl86kk1sfays5up
+y1n63ga3bjyqx8ddo2jl1p42r
+yv6csjhg090l1k6gzhq05aiye
+rwd3240nopdku0cc2utj2z4sj
+646wgwgv6dj4g9gcfzmtpiqgm
+r6x385a691gvgguqh53751g8u
+yois5j8osgc5u9tz57ud4wc09
+gtfx9l52htzsmsqobl1d5nfup
+ccyd9s86jdnf3xq2t20lpcdsq
+92hx21gmbl8e1ma2u211n44vb
+gk3knvyz8b134d5c0jpqdcks4
+aeyiwmdfbx3pj5yyiybyxmwpq
+mjh5wc40ryfqpc33xo0ld1p33
+pg2thf8jk9vv247wnbnwn4yrc
+3tfrctvt8w1aftjyo5azfxnx7
+ofrqdrwjtwzogt7yu9r9t6w7f
+y8e6nsbw5h3p7xo9pojoo0mbl
+rrfju1di3hcczrsy6qk4f5hf3
+j0ip8i96r0ytstn2bra3h8zy3
+q1fk8aoply68i3f9le3suucts
+ug40n1pvq4e7z25qc7c0gbegx
+qvwffxb1evllt6lpleea1in67
+jetlxqoripi434pe88dhg4f5f
+pwygmwt4bgn3595b8o4ci58cf
+sq9lwtkfs5b6q7swcfittbbvu
+7b1m6loa8y9zqi7ibhe6jh46m
+7c1ebri5o5ld9m8gdi7euewno
+abqos7gam2u7mv8ljzokfvnbc
+ivuld0ilhh0rnaa0h6441jw1r
+q00ekt9ot5kh5izd7ptb7donu
+lv3vf32jnxurkllik0peix8ck
+rq2f4kay3n9lub8yg2ybv6nh0
+jt9b1kci3y5qm3rqfhencer6s
+t6w9m85mn2vry636r4c4ie0kr
+oahk45dwr0i5h1uqqdv6uqta5
+yl1k17jl3j6i6pmd4ezvsmfvn
+jsiyg0z51of6hloibm7t8ofqq
+h2945nklfa3wprsy3uk83n54g
+vss2rztuw1iz9qlmzw0rdijqs
+hp5l721zc53eoknk4a0u4jq5x
+ipo20lac0dd7czucvbdw9c5oo
+xgvk1779rokb2nhjo1pso9817
+df3ea6l8lh2ge367mwkzisqkj
+cdnawva73xvh514dy6o72f1i6
+cpel8aq5m6mg27lzmohk9f2rm
+lh28k4308s35i44ew0bs08zq2
+snoi0cq039hvd4b6jok0mc0ii
+9juh70hlrhr334tqs9hdv5cqo
+87rh0515alre4yi6qtr1elidt
+2fezb58cbs6rmj2q6c5yqwprl
+j2qs0133sb47yy4oq0z1jroa6
+0sv0dcjt3lhnn0jmo83ejw87r
+ssr8g65x139m0ze9ty1k1uzxh
+nvrehnu3rc4n55ee4ncx16kbb
+df1zvk3wogfwoy42epy9uam3o
+l01i00ccqaas5ncrjqv969vpb
+phb00phkta7b7gvtpunzukik2
+m7x7pfxuplbhwmv0bf1kpv89u
+mg4gelfr3dtktevpab9bld86d
+nclu4lezcijhcpke15sytzpr5
+sw4oqjbuh586d4hz3k833ayyx
+te7kotacbos3ukprv5roze8xo
+t0fas52hg1gb8v65muokhv70l
+qpe440uxpdiykup9bm5f9e3bz
+7grnui9khk48jesk3kndmgwgc
+juw80vbqsf229l53eagmc1odm
+znza1pslx50h28fhxcu2jpo9c
+vn4rqe1w8dbr7ped05beqdize
+lfby8s2q7q575sgxlwfzvjw5s
+5g10dforkh9sfx0r3jh8xpha0
+cjv0khvjuei2gcgd61aohwl9n
+m70fc314hv4bmrackq74wbu3x
+jgzz3mn8u7ybe89wi6ii0d9te
+fj6rmutuwjn8vlfrz4ra0ahq6
+84abzmu6tgu31awt96jukrg5g
+4dfvw80a36z24kfntzfgsvp0s
+j5qmdamr5tt0pvca6ntdts51z
+jyt0wgsc7jayjgxv9kd2al7yz
+khlkav4kn1o8hcll4e16zw4jc
+vf973siy98bhnmxm7ct7j1snd
+yfxpr1dssp4teqyq3e9cfdw3n
+x0cey536r82uvyut7vwzs4dtb
+vtuwoolqs2h6ybie5m8sjy1bz
+a4wp8wywo9uyjyc5m27d8l0pu
+ae2jbmle3igoku37asuigu0q1
+f92v4cdju9cligbgf5a5y16jw
+i9khm33lkg6xuizrhh408yaez
+q4qkd3qzdyrd4kcxodpaayrr4
+qc2hyfm5wzne4ofhxza69daq2
+2c2frmkn75n912v20c4qcr899
+mhtvl3b46db2lgldcmakwg8wh
+ixuluzk79tswa75jfy0tg4c8e
+iphvdx7pky08iqg5czu2l9oyj
+y43yb8fyvhlldqlwgz46cscml
+o82xq884olt16n7s6gaf2zatz
+0a0vyoszr576x7yvqmx2cx07g
+t1vinnhpzk8o1389kqmzz7sl4
+bycu7652a7k2so1cwkv0o95em
+lrtxsoc4lki7vvcn50k4150bx
+cns95xupclaaqtoqfyz9re4g7
+9hcvjb4a3as8f8epvzvj5epne
+yo1bt626d3d03np1tiftaz57g
+4fqx8k70kklvzviw4z2v7rqss
+tdyrjgxjuh3r4by2ihi5vrss1
+eilnrp8awqn6kyncm2c1y48tw
+z3vyiyyh69060iqjwbu7cd6u1
+4n19z25uzudpyiv6n561mpmb1
+m3cxthctrtfjjzytmtpvedw46
+93be63kar1w5dpffuoyrny34w
+k7evqc6epvzgn84zkbuutj1xh
+o853ue9kr7if0076l812dikcw
+jxl0n3gb19e5iwo3zvv15ywi2
+7e9wv893bhfsuh4inzu7jlkjj
+0p1ethzhtqdv19ebz17na0djk
+y613alvhzlq5z1fq7g3lhaj4j
+zd23x7yqc7lcnzjzsa884zhgb
+vd8q0egzn3o1w7y0gorfpal5t
+z0ortgszfbvx2rvfuqs2pqexn
+eqybmbg2rifa285q95fd0g3e3
+kuq8k93lmn3ccux98h8d9vx1o
+qgpnpym1wrifhsgvgbzdip81s
+9ile3dqzaix9lfusl6xdm9w4y
+z2flf537lbx0x1quqzrd1xjac
+damq9tmp48n55a6djrvxkos92
+n18xx6o0xdfkxucbne8uaepmt
+numk6dm3k3179fch67cw87vbr
+ecap5h1o6j5b4jf36uof7mjf8
+afliasqstkk8xosusau7eq9y8
+iwsdgkbo5b7ljgckjnrqabphc
+1vfzis7cx3tsn3b9888s1vry9
+v7541d2ija0g7ofcuxb6a8hrf
+vcw8rlec0gdkqvv88fm5bat1e
+tjhasjase69ohynwy9hqsvgk4
+3b8yagxoj6omwn2f8v3sz971j
+u4ctn5jrp918h2akdbtbq4ldi
+a1vuv1a067k51zc2goc906b38
+u16ib3gjnn1h0dqi0sqwj4rzm
+ci4px4d9mcuoepf6kzxz341ef
+lexw6ol7oxlv7q9ea06jahxhe
+w3kbi8slzeabfpxs6j5iz71qt
+tj4qmo4cd0iyn07ohepry806w
+sxchamfunl4u2sfgugy78ipfe
+xeg22iwh6gzg9tz2pivkwqr6v
+id4qog4psli8h1itcukgh8t5a
+a5z2x1t5su1v8ip87xhwqv2ww
+blzrbyb4c9tgfa4npvreq35je
+scntm6wmw9sf7ovmf7c7e8oao
+qskj0pjxqxza8zzzl4f5aribr
+29jgthfnrgh752grvcjtdd3jj
+rh19gh2d9x1ikl7yg5apkebdg
+6jnx74resy796ca07bmbw0abc
+b26272n4fgwfunq64nu2tvo5n
+vsn09auoztx2zdpzc0anx562q
+tqmljse08gth4p785imexg1u8
+hmmdcga43lsuuz9pko3ixi02h
+ldhe6tmo13r6gujmejbdmc7i8
+r6zav4zfgzo8molxrukj9dao6
+xr28woqu8adssrczs8akieaqo
+tib5ogvw8gwpd96x4cz007qic
+lr5o6k89bx9ode6ea29e5oetu
+r81jnvfu0tndy4ojfli51ct7n
+vp4jg1z6a88cruzu1gjwwxjva
+eivx43jznih9ia66uz97yq15j
+m8jypvi5zlsjgdx815g00em60
+oli83mj8do8vxxvzrun3l9sva
+m9iyttizkoasv305w5m9peixk
+wumnyndecm0326j1ldlnn710x
+eaqfby6t1dubpyif75oicifs0
+j2qq17mganj0hbowhmcpxg75r
+flae70tncw2lpuz81zg8slbtz
+ndzzocobyghfwa4mzleisnzr7
+suxy71pbug0q3fk9i6ydli450
+huwlyw1e27m6nze4t415jd83q
+gsjioixkqkvj49d9e7j8pkn2w
+tn0hhchy0s1cohizx77q6ikvk
+ywzjtfuejqg213sj0qq79nrs5
+whq0hy83r43zjp1ns64bkfrjt
+yqez6sawbq8rnw5kqj5i5p59a
+t8bsu1b9ml95v96ielolpka5g
+ujtg0t0qe642fw63polt9jv5m
+ltb2678kk5im2ds1pcln2ci8b
+d8nl3u0ikf19zzl311cjd7f66
+
+Total reclaimed space: 42.44GB
+Filesystem                         Size  Used Avail Use% Mounted on
+/dev/mapper/ubuntu--vg-ubuntu--lv   98G   54G   40G  58% /
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ sudo apt purge -y linux-image-6.8.0-134-generic && sudo update-grub && df -h /
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+The following packages will be REMOVED:
+  linux-image-6.8.0-134-generic*
+0 upgraded, 0 newly installed, 1 to remove and 35 not upgraded.
+After this operation, 15.1 MB disk space will be freed.
+(Reading database ... 137512 files and directories currently installed.)
+Removing linux-image-6.8.0-134-generic (6.8.0-134.134) ...
+E: Aborting removal of the running kernel
+dpkg: error processing package linux-image-6.8.0-134-generic (--remove):
+ installed linux-image-6.8.0-134-generic package pre-removal script subprocess returned error exit status 1
+dpkg: too many errors, stopping
+Errors were encountered while processing:
+ linux-image-6.8.0-134-generic
+Processing was halted because there were too many errors.
+E: Sub-process /usr/bin/dpkg returned an error code (1)
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ ls -lh ~/skyguard/hardware/rf-fingerprinting/rf_model.joblib
+ls -lh ~/skyguard/hardware/rf-fingerprinting/datasets/ 2>/dev/null | head -5
+du -sh ~/skyguard/hardware/rf-fingerprinting/datasets/ 2>/dev/null
+-rw-rw-r-- 1 tmm tmm 446K Jul 22 17:29 /home/tmm/skyguard/hardware/rf-fingerprinting/rf_model.joblib
+total 16K
+drwxr-xr-x  6 tmm tmm 4.0K Jul 22 15:45 DroneRF
+drwxrwxr-x 25 tmm tmm 4.0K Jul 22 15:54 extracted
+-rw-rw-r--  1 tmm tmm 4.9K Jul 22 17:29 features.npz
+22G	/home/tmm/skyguard/hardware/rf-fingerprinting/datasets/
+tmm@tmm:~/skyguard$ rm -rf ~/skyguard/hardware/rf-fingerprinting/datasets/
+df -h /
+Filesystem                         Size  Used Avail Use% Mounted on
+/dev/mapper/ubuntu--vg-ubuntu--lv   98G   32G   62G  35% /
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ ssh admin@192.168.100.252 "
+echo '=== Model file ===' && \
+ls -lh ~/skyguard/hardware/rf-fingerprinting/rf_model.joblib 2>/dev/null || echo 'MODEL MISSING' && \
+echo '=== classify.py ===' && \
+ls -lh ~/skyguard/hardware/rf-fingerprinting/classify.py 2>/dev/null || echo 'classify.py MISSING' && \
+echo '=== scikit-learn in venv ===' && \
+/home/admin/hackrf_sweep/venv/bin/python3 -c 'import sklearn, joblib, numpy; print(\"OK sklearn\", sklearn.__version__)' 2>&1
+"
+admin@192.168.100.252's password: 
+=== Model file ===
+-rw-rw-r-- 1 admin admin 446K Jul 22 20:29 /home/admin/skyguard/hardware/rf-fingerprinting/rf_model.joblib
+=== classify.py ===
+-rw-rw-r-- 1 admin admin 3.0K Jul 22 20:47 /home/admin/skyguard/hardware/rf-fingerprinting/classify.py
+=== scikit-learn in venv ===
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import sklearn, joblib, numpy; print("OK sklearn", sklearn.__version__)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'sklearn'
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ ssh admin@192.168.100.252 "
+/home/admin/hackrf_sweep/venv/bin/pip install scikit-learn joblib numpy --quiet && \
+sudo systemctl restart skyguard-hackrf-bridge && \
+sleep 4 && \
+sudo journalctl -u skyguard-hackrf-bridge -n 8 --no-pager
+"
+admin@192.168.100.252's password: 
+  DEPRECATION: Wheel filename 'joblib-0.7.0d-py3-none-any.whl' is not correctly normalised. Future versions of pip will raise the following error:
+  Invalid wheel filename (invalid version): 'joblib-0.7.0d-py3-none-any'
+  
+   pip 25.3 will enforce this behaviour change. A possible replacement is to rename the wheel to use a correctly normalised name (this may require updating the version in the project metadata). Discussion can be found at https://github.com/pypa/pip/issues/12938
+Jul 23 08:19:03 skyguard python3[22178]: 2026-07-23 08:19:03,026 [INFO] Restarting hackrf_sweep in 5s…
+Jul 23 08:19:08 skyguard python3[22178]: 2026-07-23 08:19:08,031 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz  (watchdog=45s)
+Jul 23 08:19:45 skyguard python3[22178]: 2026-07-23 08:19:45,702 [INFO] Suppressed bands: none
+Jul 23 08:20:21 skyguard systemd[1]: Stopping skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge...
+Jul 23 08:20:21 skyguard systemd[1]: skyguard-hackrf-bridge.service: Deactivated successfully.
+Jul 23 08:20:21 skyguard systemd[1]: Stopped skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+Jul 23 08:20:21 skyguard systemd[1]: skyguard-hackrf-bridge.service: Consumed 3min 19.050s CPU time.
+Jul 23 08:20:21 skyguard systemd[1]: Started skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ ssh admin@192.168.100.252 "sudo journalctl -u skyguard-hackrf-bridge -n 10 --no-pager"
+admin@192.168.100.252's password: 
+Jul 23 08:20:32 skyguard python3[22550]: 2026-07-23 08:20:32,895 [INFO] Loaded 10 frequency bands from /home/admin/skyguard/hardware/hackrf-bridge/frequencies.json
+Jul 23 08:20:32 skyguard python3[22550]: 2026-07-23 08:20:32,897 [INFO] Loaded 15 drone signatures from /home/admin/skyguard/hardware/hackrf-bridge/drone_signatures.json
+Jul 23 08:20:32 skyguard python3[22550]: 2026-07-23 08:20:32,906 [INFO] SkyGuard HackRF Bridge starting.
+Jul 23 08:20:32 skyguard python3[22550]: 2026-07-23 08:20:32,907 [INFO] WebSocket server on ws://0.0.0.0:8765
+Jul 23 08:20:32 skyguard python3[22550]: 2026-07-23 08:20:32,907 [INFO] Posting RF alerts to http://192.168.100.224:3001/api/rf-alerts
+Jul 23 08:20:32 skyguard python3[22550]: 2026-07-23 08:20:32,908 [INFO] Alert threshold: -50 dBm  |  Warning: -60 dBm
+Jul 23 08:20:32 skyguard python3[22550]: 2026-07-23 08:20:32,989 [INFO] server listening on 0.0.0.0:8765
+Jul 23 08:20:32 skyguard python3[22550]: 2026-07-23 08:20:32,990 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz  (watchdog=45s)
+Jul 23 08:20:34 skyguard python3[22550]: 2026-07-23 08:20:34,210 [INFO] Suppressed bands: none
+Jul 23 08:21:34 skyguard python3[22550]: 2026-07-23 08:21:34,533 [INFO] Suppressed bands: none
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ ssh admin@192.168.100.252 "sudo journalctl -u skyguard-hackrf-bridge -n 15 --no-pager"
+admin@192.168.100.252's password: 
+Jul 23 08:23:02 skyguard python3[22637]: 2026-07-23 08:23:02,776 [INFO] Posting RF alerts to http://192.168.100.224:3001/api/rf-alerts
+Jul 23 08:23:02 skyguard python3[22637]: 2026-07-23 08:23:02,776 [INFO] Alert threshold: -50 dBm  |  Warning: -60 dBm
+Jul 23 08:23:02 skyguard python3[22637]: 2026-07-23 08:23:02,825 [INFO] server listening on 0.0.0.0:8765
+Jul 23 08:23:02 skyguard python3[22637]: 2026-07-23 08:23:02,825 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz  (watchdog=45s)
+Jul 23 08:23:04 skyguard python3[22637]: 2026-07-23 08:23:04,073 [INFO] Suppressed bands: none
+Jul 23 08:23:47 skyguard python3[22637]: 2026-07-23 08:23:47,763 [WARNING] hackrf_sweep exited after 31744 sweeps — restarting
+Jul 23 08:23:47 skyguard python3[22637]: 2026-07-23 08:23:47,764 [INFO] Restarting hackrf_sweep in 5s…
+Jul 23 08:23:52 skyguard python3[22637]: 2026-07-23 08:23:52,770 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz  (watchdog=45s)
+Jul 23 08:24:02 skyguard python3[22637]: 2026-07-23 08:24:02,537 [WARNING] hackrf_sweep exited after 5632 sweeps — restarting
+Jul 23 08:24:02 skyguard python3[22637]: 2026-07-23 08:24:02,538 [INFO] Restarting hackrf_sweep in 5s…
+Jul 23 08:24:07 skyguard python3[22637]: 2026-07-23 08:24:07,543 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz  (watchdog=45s)
+Jul 23 08:24:08 skyguard python3[22637]: 2026-07-23 08:24:08,961 [INFO] Suppressed bands: none
+Jul 23 08:24:17 skyguard python3[22637]: 2026-07-23 08:24:17,211 [WARNING] hackrf_sweep exited after 5824 sweeps — restarting
+Jul 23 08:24:17 skyguard python3[22637]: 2026-07-23 08:24:17,212 [INFO] Restarting hackrf_sweep in 5s…
+Jul 23 08:24:22 skyguard python3[22637]: 2026-07-23 08:24:22,216 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz  (watchdog=45s)
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ ssh admin@192.168.100.252 "sudo journalctl -u skyguard-hackrf-bridge --since '08:22:00' --no-pager | grep -i 'fingerprint\|RF finger\|classify\|sklearn'"
+admin@192.168.100.252's password: 
+Jul 23 08:23:02 skyguard python3[22637]: 2026-07-23 08:23:02,767 [INFO] RF fingerprinting model loaded from /home/admin/skyguard/hardware/rf-fingerprinting/rf_model.joblib
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ ssh tmm@192.168.100.224 "cd ~/skyguard && git pull origin main && pnpm --filter @workspace/skyguard-os run build"
+tmm@192.168.100.224's password: 
+Permission denied, please try again.
+tmm@192.168.100.224's password: 
+From https://github.com/mladenovpeter-maker/skyguard
+ * branch            main       -> FETCH_HEAD
+   d782d0e..5e91e59  main       -> origin/main
+Updating d782d0e..5e91e59
+Fast-forward
+ artifacts/api-server/src/routes/devices.ts         |     2 +-
+ artifacts/skyguard-dome/public/model.stl           | 63176 +++++++++----------
+ ...enshot_2026-07-23_at_07.42.19_1784781743153.png |   Bin 0 -> 196483 bytes
+ ...enshot_2026-07-23_at_07.42.46_1784781770004.png |   Bin 0 -> 210851 bytes
+ ...enshot_2026-07-23_at_07.43.15_1784781799001.png |   Bin 0 -> 302397 bytes
+ 5 files changed, 31589 insertions(+), 31589 deletions(-)
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_07.42.19_1784781743153.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_07.42.46_1784781770004.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_07.43.15_1784781799001.png
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+failed to load config from /home/tmm/skyguard/artifacts/skyguard-os/vite.config.ts
+error during build:
+Error: PORT environment variable is required but was not provided.
+    at file:///home/tmm/skyguard/artifacts/skyguard-os/node_modules/.vite-temp/vite.config.ts.timestamp-1784784738544-47ea3105f1d9c.mjs:10:9
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+    at async loadConfigFromBundledFile (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35996:12)
+    at async bundleAndLoadConfigFile (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35884:17)
+    at async loadConfigFromFile (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35851:42)
+    at async resolveConfig (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35500:22)
+    at async createBuilder (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:33955:19)
+    at async CAC.<anonymous> (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/cli.js:629:10)
+/home/tmm/skyguard/artifacts/skyguard-os:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/skyguard-os@0.0.0 build: `vite build --config vite.config.ts`
+Exit status 1
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ ssh tmm@192.168.100.224 "ls -lht ~/skyguard/artifacts/skyguard-os/dist/ | head -5"
+tmm@192.168.100.224's password: 
+total 4.0K
+drwxrwxr-x 3 tmm tmm 4.0K Jul 22 19:28 public
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ ssh tmm@192.168.100.224 "cd ~/skyguard && git pull origin main && BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build"
+tmm@192.168.100.224's password: 
+From https://github.com/mladenovpeter-maker/skyguard
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+failed to load config from /home/tmm/skyguard/artifacts/skyguard-os/vite.config.ts
+error during build:
+Error: PORT environment variable is required but was not provided.
+    at file:///home/tmm/skyguard/artifacts/skyguard-os/node_modules/.vite-temp/vite.config.ts.timestamp-1784784811451-422069f23f7a4.mjs:10:9
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+    at async loadConfigFromBundledFile (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35996:12)
+    at async bundleAndLoadConfigFile (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35884:17)
+    at async loadConfigFromFile (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35851:42)
+    at async resolveConfig (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35500:22)
+    at async createBuilder (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:33955:19)
+    at async CAC.<anonymous> (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/cli.js:629:10)
+/home/tmm/skyguard/artifacts/skyguard-os:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/skyguard-os@0.0.0 build: `vite build --config vite.config.ts`
+Exit status 1
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ ssh tmm@192.168.100.224 "cd ~/skyguard && git pull origin main && BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build"
+tmm@192.168.100.224's password: 
+From https://github.com/mladenovpeter-maker/skyguard
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+failed to load config from /home/tmm/skyguard/artifacts/skyguard-os/vite.config.ts
+error during build:
+Error: PORT environment variable is required but was not provided.
+    at file:///home/tmm/skyguard/artifacts/skyguard-os/node_modules/.vite-temp/vite.config.ts.timestamp-1784784890133-8b70e9ab25263.mjs:10:9
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+    at async loadConfigFromBundledFile (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35996:12)
+    at async bundleAndLoadConfigFile (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35884:17)
+    at async loadConfigFromFile (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35851:42)
+    at async resolveConfig (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35500:22)
+    at async createBuilder (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:33955:19)
+    at async CAC.<anonymous> (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/cli.js:629:10)
+/home/tmm/skyguard/artifacts/skyguard-os:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/skyguard-os@0.0.0 build: `vite build --config vite.config.ts`
+Exit status 1
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ cd ~/skyguard && git pull origin main && BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build
+From https://github.com/mladenovpeter-maker/skyguard
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+failed to load config from /home/tmm/skyguard/artifacts/skyguard-os/vite.config.ts
+error during build:
+Error: PORT environment variable is required but was not provided.
+    at file:///home/tmm/skyguard/artifacts/skyguard-os/node_modules/.vite-temp/vite.config.ts.timestamp-1784784895668-e225910ebaa96.mjs:10:9
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+    at async loadConfigFromBundledFile (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35996:12)
+    at async bundleAndLoadConfigFile (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35884:17)
+    at async loadConfigFromFile (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35851:42)
+    at async resolveConfig (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35500:22)
+    at async createBuilder (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:33955:19)
+    at async CAC.<anonymous> (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/cli.js:629:10)
+/home/tmm/skyguard/artifacts/skyguard-os:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/skyguard-os@0.0.0 build: `vite build --config vite.config.ts`
+Exit status 1
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ rm -rf ~/skyguard/artifacts/skyguard-os/node_modules/.vite-temp && BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+failed to load config from /home/tmm/skyguard/artifacts/skyguard-os/vite.config.ts
+error during build:
+Error: PORT environment variable is required but was not provided.
+    at file:///home/tmm/skyguard/artifacts/skyguard-os/node_modules/.vite-temp/vite.config.ts.timestamp-1784784933643-17a7859ce629a.mjs:10:9
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+    at async loadConfigFromBundledFile (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35996:12)
+    at async bundleAndLoadConfigFile (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35884:17)
+    at async loadConfigFromFile (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35851:42)
+    at async resolveConfig (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35500:22)
+    at async createBuilder (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:33955:19)
+    at async CAC.<anonymous> (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/cli.js:629:10)
+/home/tmm/skyguard/artifacts/skyguard-os:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/skyguard-os@0.0.0 build: `vite build --config vite.config.ts`
+Exit status 1
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ git pull origin main && rm -rf artifacts/skyguard-os/node_modules/.vite-temp && BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build
+From https://github.com/mladenovpeter-maker/skyguard
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+failed to load config from /home/tmm/skyguard/artifacts/skyguard-os/vite.config.ts
+error during build:
+Error: PORT environment variable is required but was not provided.
+    at file:///home/tmm/skyguard/artifacts/skyguard-os/node_modules/.vite-temp/vite.config.ts.timestamp-1784784965452-15b35f14c5897.mjs:10:9
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+    at async loadConfigFromBundledFile (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35996:12)
+    at async bundleAndLoadConfigFile (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35884:17)
+    at async loadConfigFromFile (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35851:42)
+    at async resolveConfig (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35500:22)
+    at async createBuilder (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:33955:19)
+    at async CAC.<anonymous> (file:///home/tmm/skyguard/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.0_yaml@2.9.0/node_modules/vite/dist/node/cli.js:629:10)
+/home/tmm/skyguard/artifacts/skyguard-os:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/skyguard-os@0.0.0 build: `vite build --config vite.config.ts`
+Exit status 1
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ head -15 artifacts/skyguard-os/vite.config.ts && echo "---" && git log --oneline -3
+import path from 'path';
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
+import { defineConfig } from 'vite';
+
+import runtimeErrorOverlay from '@replit/vite-plugin-runtime-error-modal';
+
+const rawPort = process.env.PORT;
+
+if (!rawPort) {
+  throw new Error(
+    'PORT environment variable is required but was not provided.',
+  );
+}
+
+---
+5e91e59 (HEAD -> main, origin/main, origin/HEAD) Update device route and skyguard dome model
+d782d0e Add skyguard ssh admin documentation asset
+298525f fix: hackrf_sweep watchdog + auto-restart loop (prevents pipe deadlock freeze)
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ git pull origin main && BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build
+remote: Enumerating objects: 30, done.
+remote: Counting objects: 100% (30/30), done.
+remote: Compressing objects: 100% (4/4), done.
+remote: Total 16 (delta 12), reused 16 (delta 12), pack-reused 0 (from 0)
+Unpacking objects: 100% (16/16), 6.96 KiB | 791.00 KiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+ * branch            main       -> FETCH_HEAD
+   5e91e59..11fdd53  main       -> origin/main
+Updating 5e91e59..11fdd53
+Fast-forward
+ artifacts/skyguard-os/src/pages/home.tsx                  | 398 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----------
+ artifacts/skyguard-os/vite.config.ts                      | 115 ++++++++++++++---------------
+ hardware/ambient-scanner/.env.example                     |   2 +-
+ hardware/ambient-scanner/skyguard-ambient-scanner.service |   6 +-
+ hardware/droneID-scanner/skyguard-droneID-scanner.service |   8 +-
+ hardware/hackrf-bridge/bridge.py                          |   7 +-
+ 6 files changed, 425 insertions(+), 111 deletions(-)
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2778 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.54 kB
+dist/public/assets/index-DLrGPShN.css  139.61 kB │ gzip:  28.98 kB
+dist/public/assets/index-C6Ii1uko.js   827.72 kB │ gzip: 251.21 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.09s
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ sudo nginx -s reload
+[sudo] password for tmm: 
+2026/07/23 05:38:55 [notice] 187830#187830: signal process started
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ git pull origin main && BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build && sudo nginx -s reload
+remote: Enumerating objects: 13, done.
+remote: Counting objects: 100% (13/13), done.
+remote: Compressing objects: 100% (1/1), done.
+remote: Total 7 (delta 6), reused 7 (delta 6), pack-reused 0 (from 0)
+Unpacking objects: 100% (7/7), 606 bytes | 303.00 KiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+ * branch            main       -> FETCH_HEAD
+   11fdd53..554af3c  main       -> origin/main
+Updating 11fdd53..554af3c
+Fast-forward
+ artifacts/skyguard-os/src/pages/home.tsx | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2778 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.54 kB
+dist/public/assets/index-DLrGPShN.css  139.61 kB │ gzip:  28.98 kB
+dist/public/assets/index-D2qKXmKb.js   827.74 kB │ gzip: 251.21 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.14s
+[sudo] password for tmm: 
+2026/07/23 09:06:43 [notice] 404875#404875: signal process started
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ git pull origin main && BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build && sudo nginx -s reload
+remote: Enumerating objects: 15, done.
+remote: Counting objects: 100% (15/15), done.
+remote: Compressing objects: 100% (3/3), done.
+remote: Total 8 (delta 5), reused 8 (delta 5), pack-reused 0 (from 0)
+Unpacking objects: 100% (8/8), 731 bytes | 365.00 KiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+ * branch            main       -> FETCH_HEAD
+   554af3c..8eba998  main       -> origin/main
+Updating 554af3c..8eba998
+Fast-forward
+ artifacts/skyguard-os/src/components/layout/Shell.tsx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2778 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.55 kB
+dist/public/assets/index-BTRqQABq.css  139.64 kB │ gzip:  28.99 kB
+dist/public/assets/index-lPTzL8HV.js   827.75 kB │ gzip: 251.21 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.15s
+2026/07/23 09:10:18 [notice] 408699#408699: signal process started
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ git pull origin main && BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build && sudo nginx -s reload
+remote: Enumerating objects: 13, done.
+remote: Counting objects: 100% (13/13), done.
+remote: Compressing objects: 100% (1/1), done.
+remote: Total 7 (delta 6), reused 7 (delta 6), pack-reused 0 (from 0)
+Unpacking objects: 100% (7/7), 891 bytes | 127.00 KiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+ * branch            main       -> FETCH_HEAD
+   8eba998..06679bf  main       -> origin/main
+Updating 8eba998..06679bf
+Fast-forward
+ artifacts/skyguard-os/src/pages/home.tsx | 23 +++++++++++++----------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2778 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.54 kB
+dist/public/assets/index-Dwmsxp87.css  139.62 kB │ gzip:  28.98 kB
+dist/public/assets/index-CuRC1r8U.js   828.00 kB │ gzip: 251.30 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 4.92s
+2026/07/23 09:15:44 [notice] 414362#414362: signal process started
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ git pull origin main && BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build && sudo nginx -s reload
+remote: Enumerating objects: 7, done.
+remote: Counting objects: 100% (7/7), done.
+remote: Total 7 (delta 6), reused 7 (delta 6), pack-reused 0 (from 0)
+Unpacking objects: 100% (7/7), 620 bytes | 206.00 KiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+ * branch            main       -> FETCH_HEAD
+   06679bf..71535cc  main       -> origin/main
+Updating 06679bf..71535cc
+Fast-forward
+ artifacts/skyguard-os/src/pages/home.tsx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2778 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.54 kB
+dist/public/assets/index-Dwmsxp87.css  139.62 kB │ gzip:  28.98 kB
+dist/public/assets/index-DB-NfbLb.js   828.03 kB │ gzip: 251.30 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.12s
+2026/07/23 09:22:47 [notice] 421763#421763: signal process started
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ sudo systemctl restart skyguard-api
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ cd ~/skyguard && pnpm --filter @workspace/api-server run dev &
+[1] 426468
+tmm@tmm:~/skyguard$ 
+> @workspace/api-server@0.0.0 dev /home/tmm/skyguard/artifacts/api-server
+> export NODE_ENV=development && pnpm run build && pnpm run start
+
+
+> @workspace/api-server@0.0.0 build /home/tmm/skyguard/artifacts/api-server
+> node ./build.mjs
+
+
+  dist/index.mjs                       2.7mb ⚠️
+  dist/pino-worker.mjs               153.4kb
+  dist/pino-file.mjs                 142.1kb
+  dist/pino-pretty.mjs               114.4kb
+  dist/thread-stream-worker.mjs        7.3kb
+  dist/index.mjs.map                   5.0mb
+  dist/pino-worker.mjs.map           256.9kb
+  dist/pino-file.mjs.map             229.0kb
+  dist/pino-pretty.mjs.map           203.6kb
+  dist/thread-stream-worker.mjs.map   12.0kb
+
+⚡ Done in 244ms
+
+> @workspace/api-server@0.0.0 start /home/tmm/skyguard/artifacts/api-server
+> node --enable-source-maps ./dist/index.mjs
+
+/home/tmm/skyguard/lib/db/src/index.ts:8
+  throw new Error(
+        ^
+
+
+Error: DATABASE_URL must be set. Did you forget to provision a database?
+    at <anonymous> (/home/tmm/skyguard/lib/db/src/index.ts:8:9)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v20.20.2
+ ELIFECYCLE  Command failed with exit code 1.
+/home/tmm/skyguard/artifacts/api-server:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/api-server@0.0.0 dev: `export NODE_ENV=development && pnpm run build && pnpm run start`
+Exit status 1
+
+[1]+  Exit 1                  cd ~/skyguard && pnpm --filter @workspace/api-server run dev
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ kill %1
+-bash: kill: %1: no such job
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ sudo systemctl status skyguard-api --no-pager
+● skyguard-api.service - SkyGuard API Server
+     Loaded: loaded (/etc/systemd/system/skyguard-api.service; enabled; preset: enabled)
+     Active: active (running) since Thu 2026-07-23 09:27:11 UTC; 12min ago
+   Main PID: 426433 (node)
+      Tasks: 11 (limit: 18848)
+     Memory: 92.9M (peak: 109.7M)
+        CPU: 4.499s
+     CGroup: /system.slice/skyguard-api.service
+             └─426433 /usr/bin/node --enable-source-maps ./dist/index.mjs
+
+Jul 23 09:39:56 tmm node[426433]: {"level":30,"time":1784799596699,"pid":426433,"hostname":"tmm","req":{"id":428,"method":"GET","url":"/api/ble-status"…t completed"}
+Jul 23 09:39:56 tmm node[426433]: {"level":30,"time":1784799596702,"pid":426433,"hostname":"tmm","req":{"id":429,"method":"GET","url":"/api/pi-status"}…t completed"}
+Jul 23 09:39:56 tmm node[426433]: {"level":30,"time":1784799596710,"pid":426433,"hostname":"tmm","req":{"id":430,"method":"GET","url":"/api/home"},"res…t completed"}
+Jul 23 09:39:56 tmm node[426433]: {"level":30,"time":1784799596715,"pid":426433,"hostname":"tmm","req":{"id":431,"method":"GET","url":"/api/status"},"r…t completed"}
+Jul 23 09:39:56 tmm node[426433]: {"level":30,"time":1784799596716,"pid":426433,"hostname":"tmm","req":{"id":432,"method":"GET","url":"/api/rf-alerts/r…t completed"}
+Jul 23 09:39:57 tmm node[426433]: {"level":30,"time":1784799597748,"pid":426433,"hostname":"tmm","req":{"id":433,"method":"GET","url":"/api/home"},"res…t completed"}
+Jul 23 09:39:58 tmm node[426433]: {"level":30,"time":1784799598802,"pid":426433,"hostname":"tmm","req":{"id":434,"method":"GET","url":"/api/detections/…t completed"}
+Jul 23 09:39:58 tmm node[426433]: {"level":30,"time":1784799598805,"pid":426433,"hostname":"tmm","req":{"id":435,"method":"GET","url":"/api/status"},"r…t completed"}
+Jul 23 09:39:59 tmm node[426433]: {"level":30,"time":1784799599848,"pid":426433,"hostname":"tmm","req":{"id":436,"method":"GET","url":"/api/home"},"res…t completed"}
+Jul 23 09:39:59 tmm node[426433]: {"level":30,"time":1784799599850,"pid":426433,"hostname":"tmm","req":{"id":437,"method":"GET","url":"/api/detections/…t completed"}
+Hint: Some lines were ellipsized, use -l to show in full.
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ sudo journalctl -u skyguard-api -n 30 --no-pager -l
+[sudo] password for tmm: 
+Jul 23 10:39:44 tmm node[426433]: {"level":30,"time":1784803184367,"pid":426433,"hostname":"tmm","req":{"id":1443,"method":"GET","url":"/api/status"},"res":{"statusCode":200},"responseTime":13,"msg":"request completed"}
+Jul 23 10:39:44 tmm node[426433]: {"level":30,"time":1784803184369,"pid":426433,"hostname":"tmm","req":{"id":1444,"method":"GET","url":"/api/home"},"res":{"statusCode":200},"responseTime":10,"msg":"request completed"}
+Jul 23 10:39:44 tmm node[426433]: {"level":30,"time":1784803184370,"pid":426433,"hostname":"tmm","req":{"id":1445,"method":"GET","url":"/api/detections/active"},"res":{"statusCode":200},"responseTime":9,"msg":"request completed"}
+Jul 23 10:39:45 tmm node[426433]: {"level":30,"time":1784803185418,"pid":426433,"hostname":"tmm","req":{"id":1446,"method":"GET","url":"/api/known-rf-sources"},"res":{"statusCode":200},"responseTime":6,"msg":"request completed"}
+Jul 23 10:39:45 tmm node[426433]: {"level":30,"time":1784803185810,"pid":426433,"hostname":"tmm","req":{"id":1447,"method":"GET","url":"/api/status"},"res":{"statusCode":401},"responseTime":5,"msg":"request completed"}
+Jul 23 10:39:48 tmm node[426433]: {"level":30,"time":1784803188963,"pid":426433,"hostname":"tmm","req":{"id":1448,"method":"POST","url":"/api/ambient"},"count":17,"msg":"Ambient batch ingested"}
+Jul 23 10:39:48 tmm node[426433]: {"level":30,"time":1784803188964,"pid":426433,"hostname":"tmm","req":{"id":1448,"method":"POST","url":"/api/ambient"},"res":{"statusCode":200},"responseTime":7,"msg":"request completed"}
+Jul 23 10:39:49 tmm node[426433]: {"level":30,"time":1784803189510,"pid":426433,"hostname":"tmm","req":{"id":1449,"method":"GET","url":"/api/ble-status"},"res":{"statusCode":204},"responseTime":3,"msg":"request completed"}
+Jul 23 10:39:49 tmm node[426433]: {"level":30,"time":1784803189515,"pid":426433,"hostname":"tmm","req":{"id":1450,"method":"GET","url":"/api/pi-status"},"res":{"statusCode":200},"responseTime":3,"msg":"request completed"}
+Jul 23 10:39:49 tmm node[426433]: {"level":30,"time":1784803189832,"pid":426433,"hostname":"tmm","req":{"id":1451,"method":"GET","url":"/api/status"},"res":{"statusCode":401},"responseTime":4,"msg":"request completed"}
+Jul 23 10:39:52 tmm node[426433]: {"level":30,"time":1784803192854,"pid":426433,"hostname":"tmm","req":{"id":1452,"method":"GET","url":"/api/status"},"res":{"statusCode":401},"responseTime":3,"msg":"request completed"}
+Jul 23 10:39:53 tmm node[426433]: {"level":30,"time":1784803193961,"pid":426433,"hostname":"tmm","req":{"id":1453,"method":"GET","url":"/api/status"},"res":{"statusCode":401},"responseTime":2,"msg":"request completed"}
+Jul 23 10:39:55 tmm node[426433]: {"level":30,"time":1784803195981,"pid":426433,"hostname":"tmm","req":{"id":1454,"method":"GET","url":"/api/status"},"res":{"statusCode":401},"responseTime":3,"msg":"request completed"}
+Jul 23 10:39:59 tmm node[426433]: {"level":30,"time":1784803199998,"pid":426433,"hostname":"tmm","req":{"id":1455,"method":"GET","url":"/api/status"},"res":{"statusCode":401},"responseTime":3,"msg":"request completed"}
+Jul 23 10:40:03 tmm node[426433]: {"level":30,"time":1784803203020,"pid":426433,"hostname":"tmm","req":{"id":1456,"method":"GET","url":"/api/status"},"res":{"statusCode":401},"responseTime":3,"msg":"request completed"}
+Jul 23 10:40:04 tmm node[426433]: {"level":30,"time":1784803204012,"pid":426433,"hostname":"tmm","req":{"id":1457,"method":"POST","url":"/api/ambient"},"count":17,"msg":"Ambient batch ingested"}
+Jul 23 10:40:04 tmm node[426433]: {"level":30,"time":1784803204013,"pid":426433,"hostname":"tmm","req":{"id":1457,"method":"POST","url":"/api/ambient"},"res":{"statusCode":200},"responseTime":19,"msg":"request completed"}
+Jul 23 10:40:04 tmm node[426433]: {"level":30,"time":1784803204129,"pid":426433,"hostname":"tmm","req":{"id":1458,"method":"GET","url":"/api/status"},"res":{"statusCode":401},"responseTime":1,"msg":"request completed"}
+Jul 23 10:40:05 tmm node[426433]: {"level":30,"time":1784803205869,"pid":426433,"hostname":"tmm","req":{"id":1459,"method":"POST","url":"/api/heartbeat"},"res":{"statusCode":200},"responseTime":8,"msg":"request completed"}
+Jul 23 10:40:06 tmm node[426433]: {"level":30,"time":1784803206142,"pid":426433,"hostname":"tmm","req":{"id":1460,"method":"GET","url":"/api/status"},"res":{"statusCode":401},"responseTime":2,"msg":"request completed"}
+Jul 23 10:40:06 tmm node[426433]: {"level":30,"time":1784803206739,"pid":426433,"hostname":"tmm","req":{"id":1461,"method":"POST","url":"/api/pi-status"},"res":{"statusCode":204},"responseTime":3,"msg":"request completed"}
+Jul 23 10:40:10 tmm node[426433]: {"level":30,"time":1784803210158,"pid":426433,"hostname":"tmm","req":{"id":1462,"method":"GET","url":"/api/status"},"res":{"statusCode":401},"responseTime":3,"msg":"request completed"}
+Jul 23 10:40:13 tmm node[426433]: {"level":30,"time":1784803213212,"pid":426433,"hostname":"tmm","req":{"id":1463,"method":"GET","url":"/api/status"},"res":{"statusCode":401},"responseTime":3,"msg":"request completed"}
+Jul 23 10:40:14 tmm node[426433]: {"level":30,"time":1784803214311,"pid":426433,"hostname":"tmm","req":{"id":1464,"method":"GET","url":"/api/status"},"res":{"statusCode":401},"responseTime":3,"msg":"request completed"}
+Jul 23 10:40:16 tmm node[426433]: {"level":30,"time":1784803216332,"pid":426433,"hostname":"tmm","req":{"id":1465,"method":"GET","url":"/api/status"},"res":{"statusCode":401},"responseTime":3,"msg":"request completed"}
+Jul 23 10:40:18 tmm node[426433]: {"level":30,"time":1784803218977,"pid":426433,"hostname":"tmm","req":{"id":1466,"method":"POST","url":"/api/ambient"},"count":18,"msg":"Ambient batch ingested"}
+Jul 23 10:40:18 tmm node[426433]: {"level":30,"time":1784803218977,"pid":426433,"hostname":"tmm","req":{"id":1466,"method":"POST","url":"/api/ambient"},"res":{"statusCode":200},"responseTime":12,"msg":"request completed"}
+Jul 23 10:40:19 tmm node[426433]: {"level":30,"time":1784803219525,"pid":426433,"hostname":"tmm","req":{"id":1467,"method":"GET","url":"/api/ble-status"},"res":{"statusCode":204},"responseTime":3,"msg":"request completed"}
+Jul 23 10:40:19 tmm node[426433]: {"level":30,"time":1784803219531,"pid":426433,"hostname":"tmm","req":{"id":1468,"method":"GET","url":"/api/pi-status"},"res":{"statusCode":200},"responseTime":4,"msg":"request completed"}
+Jul 23 10:40:20 tmm node[426433]: {"level":30,"time":1784803220350,"pid":426433,"hostname":"tmm","req":{"id":1469,"method":"GET","url":"/api/status"},"res":{"statusCode":401},"responseTime":3,"msg":"request completed"}
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ grep -A5 "8090\|server_name\|root" /etc/nginx/sites-enabled/* | head -40
+    listen 8090;
+    server_name _;
+
+    root /var/www/skyguard/public;
+    index index.html;
+
+    location /api/ {
+        proxy_pass http://127.0.0.1:3001;
+        proxy_http_version 1.1;
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ sudo nginx -T 2>/dev/null | grep -E "listen|root|alias" | head -30
+#		listen     localhost:110;
+#		listen     localhost:143;
+    listen 8090;
+    root /var/www/skyguard/public;
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ sudo rm -rf /var/www/skyguard/public && sudo ln -s /home/tmm/skyguard/artifacts/skyguard-os/dist/public /var/www/skyguard/public && sudo nginx -s reload
+2026/07/23 10:52:19 [notice] 515029#515029: signal process started
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ chmod o+x /home/tmm /home/tmm/skyguard /home/tmm/skyguard/artifacts /home/tmm/skyguard/artifacts/skyguard-os /home/tmm/skyguard/artifacts/skyguard-os/dist && sudo nginx -s reload
+2026/07/23 10:53:55 [notice] 516693#516693: signal process started
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ curl -s http://localhost:8090/ | head -5
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ git pull origin main && BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build && sudo nginx -s reload
+remote: Enumerating objects: 8, done.
+remote: Counting objects: 100% (8/8), done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 5 (delta 3), reused 5 (delta 3), pack-reused 0 (from 0)
+Unpacking objects: 100% (5/5), 490 bytes | 245.00 KiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+ * branch            main       -> FETCH_HEAD
+   71535cc..164a350  main       -> origin/main
+Updating 71535cc..164a350
+Fast-forward
+ artifacts/skyguard-os/.env | 1 +
+ 1 file changed, 1 insertion(+)
+ create mode 100644 artifacts/skyguard-os/.env
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2778 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.54 kB
+dist/public/assets/index-Dwmsxp87.css  139.62 kB │ gzip:  28.98 kB
+dist/public/assets/index-KYKAsUgK.js   828.26 kB │ gzip: 251.43 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.09s
+2026/07/23 10:59:37 [notice] 522706#522706: signal process started
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ git pull origin main && BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build && sudo nginx -s reload
+remote: Enumerating objects: 30, done.
+remote: Counting objects: 100% (30/30), done.
+remote: Compressing objects: 100% (9/9), done.
+remote: Total 19 (delta 14), reused 15 (delta 10), pack-reused 0 (from 0)
+Unpacking objects: 100% (19/19), 2.45 KiB | 139.00 KiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+ * branch            main       -> FETCH_HEAD
+   164a350..74f212b  main       -> origin/main
+Updating 164a350..74f212b
+Fast-forward
+ artifacts/skyguard-os/src/App.tsx                       |  9 ++++++---
+ artifacts/skyguard-os/src/components/layout/Shell.tsx   | 15 +++++++++++++--
+ artifacts/skyguard-os/src/components/radar/RadarMap.tsx | 10 ++++++++--
+ artifacts/skyguard-os/src/index.css                     | 88 +++++++++++++++++++++++++++++++++++++++++++++-------------------------------------------
+ 4 files changed, 72 insertions(+), 50 deletions(-)
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2779 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.54 kB
+dist/public/assets/index-CJUnS_bh.css  139.62 kB │ gzip:  29.14 kB
+dist/public/assets/index-B2oMyi-q.js   832.67 kB │ gzip: 253.11 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.09s
+2026/07/23 11:13:41 [notice] 537415#537415: signal process started
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ git pull origin main && BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build && sudo nginx -s reload
+remote: Enumerating objects: 13, done.
+remote: Counting objects: 100% (13/13), done.
+remote: Compressing objects: 100% (1/1), done.
+remote: Total 7 (delta 6), reused 7 (delta 6), pack-reused 0 (from 0)
+Unpacking objects: 100% (7/7), 2.32 KiB | 1.16 MiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+ * branch            main       -> FETCH_HEAD
+   74f212b..43482ca  main       -> origin/main
+Updating 74f212b..43482ca
+Fast-forward
+ artifacts/skyguard-os/src/pages/home.tsx | 181 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 178 insertions(+), 3 deletions(-)
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2779 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.54 kB
+dist/public/assets/index-CYBxx0CK.css  140.84 kB │ gzip:  29.26 kB
+dist/public/assets/index-5T6l0fy_.js   837.18 kB │ gzip: 254.01 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.20s
+2026/07/23 11:21:48 [notice] 545939#545939: signal process started
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ git pull origin main && BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build && sudo nginx -s reload
+remote: Enumerating objects: 13, done.
+remote: Counting objects: 100% (13/13), done.
+remote: Compressing objects: 100% (1/1), done.
+remote: Total 7 (delta 6), reused 7 (delta 6), pack-reused 0 (from 0)
+Unpacking objects: 100% (7/7), 1.28 KiB | 653.00 KiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+ * branch            main       -> FETCH_HEAD
+   43482ca..277ee51  main       -> origin/main
+Updating 43482ca..277ee51
+Fast-forward
+ artifacts/skyguard-os/src/pages/home.tsx | 92 +++++++++++++++++++++++++++++++++++++++-----------------------------------------------------
+ 1 file changed, 39 insertions(+), 53 deletions(-)
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2779 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.55 kB
+dist/public/assets/index-gOQM5VU8.css  140.59 kB │ gzip:  29.26 kB
+dist/public/assets/index-BlkCcU2o.js   836.59 kB │ gzip: 253.91 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.16s
+2026/07/23 11:29:20 [notice] 553873#553873: signal process started
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ git pull origin main && BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build && sudo nginx -s reload
+remote: Enumerating objects: 13, done.
+remote: Counting objects: 100% (13/13), done.
+remote: Compressing objects: 100% (1/1), done.
+remote: Total 7 (delta 6), reused 7 (delta 6), pack-reused 0 (from 0)
+Unpacking objects: 100% (7/7), 592 bytes | 84.00 KiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+ * branch            main       -> FETCH_HEAD
+   277ee51..ae49ee2  main       -> origin/main
+Updating 277ee51..ae49ee2
+Fast-forward
+ artifacts/skyguard-os/src/pages/home.tsx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2779 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.55 kB
+dist/public/assets/index-gOQM5VU8.css  140.59 kB │ gzip:  29.26 kB
+dist/public/assets/index-BMf625aZ.js   836.60 kB │ gzip: 253.91 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 4.89s
+2026/07/23 11:32:04 [notice] 556697#556697: signal process started
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ # На Linux сървъра (tmm@192.168.100.224)
+ls -lh ~/skyguard-datasets/ 2>/dev/null || ls -lh ~/datasets/ 2>/dev/null || find ~ -name "*.csv" -o -name "*.npy" -o -name "*.h5" 2>/dev/null | head -20
+/home/tmm/skyguard-venv/lib/python3.12/site-packages/scipy/stats/tests/data/levy_stable/stable-loc-scale-sample-data.npy
+/home/tmm/skyguard-venv/lib/python3.12/site-packages/scipy/stats/tests/data/levy_stable/stable-Z1-pdf-sample-data.npy
+/home/tmm/skyguard-venv/lib/python3.12/site-packages/scipy/stats/tests/data/levy_stable/stable-Z1-cdf-sample-data.npy
+/home/tmm/skyguard-venv/lib/python3.12/site-packages/scipy/stats/tests/data/rel_breitwigner_pdf_sample_data_ROOT.npy
+/home/tmm/skyguard-venv/lib/python3.12/site-packages/scipy/stats/tests/data/jf_skew_t_gamlss_pdf_data.npy
+/home/tmm/skyguard-venv/lib/python3.12/site-packages/scipy/signal/tests/data/GLB.Ts+dSST.csv
+/home/tmm/skyguard-venv/lib/python3.12/site-packages/scipy/interpolate/tests/data/estimate_gradients_hang.npy
+/home/tmm/skyguard-venv/lib/python3.12/site-packages/joblib/test/data/joblib_0.9.2_pickle_py27_np16.pkl_02.npy
+/home/tmm/skyguard-venv/lib/python3.12/site-packages/joblib/test/data/joblib_0.9.2_pickle_py33_np18.pkl_04.npy
+/home/tmm/skyguard-venv/lib/python3.12/site-packages/joblib/test/data/joblib_0.9.2_pickle_py35_np19.pkl_04.npy
+/home/tmm/skyguard-venv/lib/python3.12/site-packages/joblib/test/data/joblib_0.9.2_pickle_py33_np18.pkl_02.npy
+/home/tmm/skyguard-venv/lib/python3.12/site-packages/joblib/test/data/joblib_0.9.2_pickle_py35_np19.pkl_03.npy
+/home/tmm/skyguard-venv/lib/python3.12/site-packages/joblib/test/data/joblib_0.9.2_pickle_py35_np19.pkl_01.npy
+/home/tmm/skyguard-venv/lib/python3.12/site-packages/joblib/test/data/joblib_0.9.2_pickle_py34_np19.pkl_04.npy
+/home/tmm/skyguard-venv/lib/python3.12/site-packages/joblib/test/data/joblib_0.9.2_pickle_py34_np19.pkl_02.npy
+/home/tmm/skyguard-venv/lib/python3.12/site-packages/joblib/test/data/joblib_0.9.2_pickle_py27_np16.pkl_03.npy
+/home/tmm/skyguard-venv/lib/python3.12/site-packages/joblib/test/data/joblib_0.9.2_pickle_py35_np19.pkl_02.npy
+/home/tmm/skyguard-venv/lib/python3.12/site-packages/joblib/test/data/joblib_0.9.2_pickle_py33_np18.pkl_03.npy
+/home/tmm/skyguard-venv/lib/python3.12/site-packages/joblib/test/data/joblib_0.9.2_pickle_py34_np19.pkl_01.npy
+/home/tmm/skyguard-venv/lib/python3.12/site-packages/joblib/test/data/joblib_0.9.2_pickle_py27_np16.pkl_01.npy
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ # На tmm@192.168.100.224
+ls -lh ~/skyguard/hardware/rf-fingerprinting/
+ls -lh ~/skyguard/hardware/rf-fingerprinting/datasets/ 2>/dev/null || echo "няма datasets/"
+ls -lh ~/skyguard/hardware/rf-fingerprinting/rf_model.joblib 2>/dev/null || echo "няма модел"
+total 496K
+-rw-rw-r-- 1 tmm tmm 3.0K Jul 22 17:09 classify.py
+-rw-rw-r-- 1 tmm tmm 4.6K Jul 22 17:09 download_datasets.py
+-rw-rw-r-- 1 tmm tmm 4.7K Jul 22 17:09 extract_dronerf.py
+-rw-rw-r-- 1 tmm tmm 4.7K Jul 22 17:09 process_datasets.py
+-rw-rw-r-- 1 tmm tmm 3.6K Jul 22 17:09 README.md
+-rw-rw-r-- 1 tmm tmm 446K Jul 22 17:29 rf_model.joblib
+-rw-rw-r-- 1 tmm tmm 3.8K Jul 22 17:09 setup.sh
+-rw-rw-r-- 1 tmm tmm 3.4K Jul 22 17:09 train_from_datasets.py
+-rw-rw-r-- 1 tmm tmm 4.3K Jul 22 17:09 train.py
+няма datasets/
+-rw-rw-r-- 1 tmm tmm 446K Jul 22 17:29 /home/tmm/skyguard/hardware/rf-fingerprinting/rf_model.joblib
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ # От Linux сървъра — копиране на модела към Pi
+scp ~/skyguard/hardware/rf-fingerprinting/rf_model.joblib admin@192.168.100.252:~/skyguard/hardware/rf-fingerprinting/
+admin@192.168.100.252's password: 
+rf_model.joblib                                                                                                                    100%  446KB 869.0KB/s   00:00    
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ sudo journalctl -u skyguard-hackrf-bridge -n 20 --no-pager | grep -i "fingerprint\|model\|rf_model\|classify\|disabled"
+[sudo] password for tmm: 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ cd ~/skyguard && git pull origin main && sudo systemctl restart skyguard-hackrf-bridge && sleep 4 && sudo journalctl -u skyguard-hackrf-bridge --since "now -10s" -n 20 --no-pager
+remote: Enumerating objects: 9, done.
+remote: Counting objects: 100% (9/9), done.
+remote: Compressing objects: 100% (1/1), done.
+remote: Total 5 (delta 4), reused 5 (delta 4), pack-reused 0 (from 0)
+Unpacking objects: 100% (5/5), 444 bytes | 444.00 KiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+ * branch            main       -> FETCH_HEAD
+   ae49ee2..8c66354  main       -> origin/main
+Updating ae49ee2..8c66354
+Fast-forward
+ hardware/hackrf-bridge/skyguard-hackrf-bridge.service | 1 -
+ 1 file changed, 1 deletion(-)
+Failed to restart skyguard-hackrf-bridge.service: Unit skyguard-hackrf-bridge.service not found.
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ ssh tmm@192.168.100.224 "cd /var/www/skyguard && git pull && BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build && sudo nginx -s reload"
+tmm@192.168.100.224's password: 
+fatal: not a git repository (or any of the parent directories): .git
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ cd ~/skyguard && git pull && BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build && sudo nginx -s reload
+Already up to date.
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2779 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.55 kB
+dist/public/assets/index-gOQM5VU8.css  140.59 kB │ gzip:  29.26 kB
+dist/public/assets/index-BMf625aZ.js   836.60 kB │ gzip: 253.91 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.29s
+[sudo] password for tmm: 
+2026/07/23 13:29:53 [notice] 679525#679525: signal process started
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ cd ~/skyguard && git pull && BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build && sudo nginx -s reload
+remote: Enumerating objects: 15, done.
+remote: Counting objects: 100% (15/15), done.
+remote: Compressing objects: 100% (3/3), done.
+remote: Total 8 (delta 5), reused 8 (delta 5), pack-reused 0 (from 0)
+Unpacking objects: 100% (8/8), 709 bytes | 354.00 KiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+   8c66354..98b2bad  main       -> origin/main
+Updating 8c66354..98b2bad
+Fast-forward
+ artifacts/skyguard-os/src/components/layout/Shell.tsx | 2 --
+ 1 file changed, 2 deletions(-)
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2779 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.55 kB
+dist/public/assets/index-gOQM5VU8.css  140.59 kB │ gzip:  29.26 kB
+dist/public/assets/index-Qqbp1HEn.js   834.62 kB │ gzip: 253.50 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.22s
+2026/07/23 13:31:40 [notice] 681498#681498: signal process started
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ cd ~/skyguard && git pull && BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build && sudo nginx -s reload
+Already up to date.
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2779 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.55 kB
+dist/public/assets/index-gOQM5VU8.css  140.59 kB │ gzip:  29.26 kB
+dist/public/assets/index-Qqbp1HEn.js   834.62 kB │ gzip: 253.50 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.15s
+2026/07/23 13:33:32 [notice] 683471#683471: signal process started
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ cd ~/skyguard && git pull && BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build && sudo nginx -s reload
+remote: Enumerating objects: 24, done.
+remote: Counting objects: 100% (24/24), done.
+remote: Compressing objects: 100% (6/6), done.
+remote: Total 13 (delta 7), reused 13 (delta 7), pack-reused 0 (from 0)
+Unpacking objects: 100% (13/13), 3.17 KiB | 811.00 KiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+   98b2bad..e1213a2  main       -> origin/main
+Updating 98b2bad..e1213a2
+Fast-forward
+ .agents/memory/MEMORY.md                              |  5 +++--
+ .agents/memory/linux-deploy-law.md                    | 22 ++++++++++++++++++++++
+ .agents/memory/rf-datasets-todo.md                    | 43 +++++++++++++++++++++++++------------------
+ artifacts/skyguard-os/src/components/layout/Shell.tsx |  2 +-
+ 4 files changed, 51 insertions(+), 21 deletions(-)
+ create mode 100644 .agents/memory/linux-deploy-law.md
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2779 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.55 kB
+dist/public/assets/index-gOQM5VU8.css  140.59 kB │ gzip:  29.26 kB
+dist/public/assets/index-BAw_8gWA.js   834.62 kB │ gzip: 253.50 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.12s
+2026/07/23 13:34:32 [notice] 684554#684554: signal process started
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ cd ~/skyguard && git pull && BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build && sudo nginx -s reload
+remote: Enumerating objects: 13, done.
+remote: Counting objects: 100% (13/13), done.
+remote: Compressing objects: 100% (1/1), done.
+remote: Total 7 (delta 6), reused 7 (delta 6), pack-reused 0 (from 0)
+Unpacking objects: 100% (7/7), 581 bytes | 581.00 KiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+   e1213a2..9c03ebf  main       -> origin/main
+Updating e1213a2..9c03ebf
+Fast-forward
+ artifacts/skyguard-os/src/pages/admin.tsx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2779 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.55 kB
+dist/public/assets/index-gOQM5VU8.css  140.59 kB │ gzip:  29.26 kB
+dist/public/assets/index-uR7tKSdS.js   834.61 kB │ gzip: 253.49 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.08s
+2026/07/23 13:36:05 [notice] 686233#686233: signal process started
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ cd ~/skyguard && git pull && BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build && sudo nginx -s reload
+remote: Enumerating objects: 13, done.
+remote: Counting objects: 100% (13/13), done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 7 (delta 5), reused 7 (delta 5), pack-reused 0 (from 0)
+Unpacking objects: 100% (7/7), 670 bytes | 335.00 KiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+   9c03ebf..6abbe32  main       -> origin/main
+Updating 9c03ebf..6abbe32
+Fast-forward
+ artifacts/api-server/src/routes/devices.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2779 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.55 kB
+dist/public/assets/index-gOQM5VU8.css  140.59 kB │ gzip:  29.26 kB
+dist/public/assets/index-uR7tKSdS.js   834.61 kB │ gzip: 253.49 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.08s
+2026/07/23 13:37:45 [notice] 688024#688024: signal process started
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ psql -U skyguard -d skyguard -c "DELETE FROM devices WHERE name = 'Sparrow Pi3';"
+psql: error: connection to server on socket "/var/run/postgresql/.s.PGSQL.5433" failed: FATAL:  Peer authentication failed for user "skyguard"
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ sudo -u postgres psql -p 5433 -d skyguard -c "DELETE FROM devices WHERE name = 'Sparrow Pi3';"
+DELETE 1
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ grep -r "telegram\|TELEGRAM\|bot_token\|BOT_TOKEN" ~/skyguard /etc/environment ~/.env 2>/dev/null
+/home/tmm/skyguard/node_modules/.pnpm/pino@9.14.0/node_modules/pino/docs/transports.md:+ [pino-telegram-webhook](#pino-telegram-webhook)
+/home/tmm/skyguard/node_modules/.pnpm/pino@9.14.0/node_modules/pino/docs/transports.md:<a id="pino-telegram-webhook"></a>
+/home/tmm/skyguard/node_modules/.pnpm/pino@9.14.0/node_modules/pino/docs/transports.md:### pino-telegram-webhook
+/home/tmm/skyguard/node_modules/.pnpm/pino@9.14.0/node_modules/pino/docs/transports.md:[pino-telegram-webhook](https://github.com/Jhon-Mosk/pino-telegram-webhook) is a Pino v7+ transport for sending messages to [Telegram](https://telegram.org/). 
+/home/tmm/skyguard/node_modules/.pnpm/pino@9.14.0/node_modules/pino/docs/transports.md:    target: 'pino-telegram-webhook',
+/home/tmm/skyguard/node_modules/.pnpm/pino@9.14.0/node_modules/pino/docs/transports.md:The `extra` parameter is optional. Parameters that the method [`sendMessage`](https://core.telegram.org/bots/api#sendmessage) supports can be passed to it.
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ curl -s "https://api.telegram.org/bot8765801799:AAG0wKbrGttIn-W84M9eu6eZjMHjuVWPPTc/getUpdates" | grep -o '"id":[0-9-]*' | head -1
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ curl -s "https://api.telegram.org/bot8765801799:AAG0wKbrGttIn-W84M9eu6eZjMHjuVWPPTc/getUpdates" | python3 -m json.tool | grep '"id"' | head -3
+                    "id": 1590365440,
+                    "id": 1590365440,
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ echo 'TELEGRAM_BOT_TOKEN=8765801799:AAG0wKbrGttIn-W84M9eu6eZjMHjuVWPPTc' | sudo tee -a /etc/environment
+echo 'TELEGRAM_CHAT_ID=ТВОЯ_CHAT_ID' | sudo tee -a /etc/environment
+TELEGRAM_BOT_TOKEN=8765801799:AAG0wKbrGttIn-W84M9eu6eZjMHjuVWPPTc
+TELEGRAM_CHAT_ID=ТВОЯ_CHAT_ID
+tmm@tmm:~/skyguard$ echo 'TELEGRAM_BOT_TOKEN=8765801799:AAG0wKbrGttIn-W84M9eu6eZjMHjuVWPPTc' | sudo tee -a /etc/environment
+echo 'TELEGRAM_CHAT_ID=1590365440' | sudo tee -a /etc/environment
+TELEGRAM_BOT_TOKEN=8765801799:AAG0wKbrGttIn-W84M9eu6eZjMHjuVWPPTc
+TELEGRAM_CHAT_ID=1590365440
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ cd ~/skyguard && git pull && sudo systemctl restart skyguard-api
+remote: Enumerating objects: 16, done.
+remote: Counting objects: 100% (16/16), done.
+remote: Compressing objects: 100% (3/3), done.
+remote: Total 9 (delta 6), reused 9 (delta 6), pack-reused 0 (from 0)
+Unpacking objects: 100% (9/9), 2.07 KiB | 302.00 KiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+   6abbe32..952e275  main       -> origin/main
+Updating 6abbe32..952e275
+Fast-forward
+ artifacts/api-server/src/lib/telegram.ts      | 71 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ artifacts/api-server/src/routes/detections.ts | 13 +++++++++++++
+ 2 files changed, 84 insertions(+)
+ create mode 100644 artifacts/api-server/src/lib/telegram.ts
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ curl -s "https://api.telegram.org/bot8765801799:AAG0wKbrGttIn-W84M9eu6eZjMHjuVWPPTc/getUpdates" | python3 -m json.tool | grep '"id"' | head -3
+                    "id": 1590365440,
+                    "id": 1590365440,
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ curl -s "https://api.telegram.org/bot8765801799:AAG0wKbrGttIn-W84M9eu6eZjMHjuVWPPTc/getUpdates" | python3 -m json.tool | grep '"id"' | head -3
+                    "id": 1590365440,
+                    "id": 1590365440,
+                    "id": 1590365440,
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ echo 'TELEGRAM_BOT_TOKEN=8765801799:AAG0wKbrGttIn-W84M9eu6eZjMHjuVWPPTc' | sudo tee -a /etc/environment && echo 'TELEGRAM_CHAT_ID=1590365440' | sudo tee -a /etc/environment && sudo systemctl restart skyguard-api
+TELEGRAM_BOT_TOKEN=8765801799:AAG0wKbrGttIn-W84M9eu6eZjMHjuVWPPTc
+TELEGRAM_CHAT_ID=1590365440
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ sudo systemctl edit skyguard-api --force
+
+  GNU nano 7.2                                  /etc/systemd/system/skyguard-api.service.d/.#override.confa558d68dd95494cc                                           
+### Editing /etc/systemd/system/skyguard-api.service.d/override.conf
+### Anything between here and the comment below will become the contents of the drop-in file
+
+
+
+### Edits below this comment will be discarded
+
+
+### /etc/systemd/system/skyguard-api.service
+# [Unit]
+# Description=SkyGuard API Server
+# After=network.target postgresql.service
+# 
+# [Service]
+# Type=simple
+# User=tmm
+# WorkingDirectory=/home/tmm/skyguard/artifacts/api-server
+# EnvironmentFile=/home/tmm/skyguard/.env
+# Environment=PORT=3001
+# Environment=NODE_ENV=production
+# ExecStart=/usr/bin/node --enable-source-maps ./dist/index.mjs
+# Restart=always
+# RestartSec=5
+
+^G Help         ^O Write Out    ^W Where Is     ^K Cut          ^T Execute      ^C Location     M-U Undo        M-A Set Mark    M-] To Bracket  M-Q Previous
+^X Exit         ^R Read File    ^\ Replace      ^U Paste        ^J Justify      ^/ Go To Line   M-E Redo        M-6 Copy        ^Q Where Was    M-W Next

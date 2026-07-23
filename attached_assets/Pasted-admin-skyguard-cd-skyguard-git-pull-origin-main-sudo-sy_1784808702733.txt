@@ -1,0 +1,29 @@
+admin@skyguard:~ $ cd ~/skyguard && git pull origin main && sudo systemctl restart skyguard-hackrf-bridge && sleep 4 && sudo journalctl -u skyguard-hackrf-bridge -n 15 --no-pager | grep -E "fingerprint|model|Starting|starting"
+remote: Enumerating objects: 95, done.
+remote: Counting objects: 100% (64/64), done.
+remote: Compressing objects: 100% (36/36), done.
+remote: Total 95 (delta 45), reused 46 (delta 28), pack-reused 31 (from 1)
+Unpacking objects: 100% (95/95), 27.11 KiB | 87.00 KiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+ * branch            main       -> FETCH_HEAD
+   5e91e59..8c66354  main       -> origin/main
+Updating 5e91e59..8c66354
+Fast-forward
+ artifacts/skyguard-os/.env                                |   1 +
+ artifacts/skyguard-os/src/App.tsx                         |   9 +-
+ artifacts/skyguard-os/src/components/layout/Shell.tsx     |  15 +-
+ artifacts/skyguard-os/src/components/radar/RadarMap.tsx   |  10 +-
+ artifacts/skyguard-os/src/index.css                       |  88 +++++------
+ artifacts/skyguard-os/src/pages/home.tsx                  | 560 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----
+ artifacts/skyguard-os/vite.config.ts                      | 115 +++++++--------
+ hardware/ambient-scanner/.env.example                     |   2 +-
+ hardware/ambient-scanner/skyguard-ambient-scanner.service |   6 +-
+ hardware/droneID-scanner/skyguard-droneID-scanner.service |   8 +-
+ hardware/hackrf-bridge/bridge.py                          |   7 +-
+ hardware/hackrf-bridge/skyguard-hackrf-bridge.service     |   1 -
+ 12 files changed, 661 insertions(+), 161 deletions(-)
+ create mode 100644 artifacts/skyguard-os/.env
+Jul 23 15:11:29 skyguard python3[32188]: 2026-07-23 15:11:29,767 [WARNING] RF fingerprinting disabled: No module named 'numpy'
+Jul 23 15:11:29 skyguard python3[32188]: 2026-07-23 15:11:29,775 [INFO] SkyGuard HackRF Bridge starting.
+Jul 23 15:11:29 skyguard python3[32188]: 2026-07-23 15:11:29,845 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz  (watchdog=45s)
+admin@skyguard:~/skyguard $ 

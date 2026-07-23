@@ -1,0 +1,48 @@
+petarmladenov@Petars-MacBook-Pro zfw % ZEPHYR_SDK_INSTALL_DIR=$HOME/Downloads/zephyr-sdk-0.16.8 ZEPHYR_TOOLCHAIN_VARIANT=zephyr west build -b nrf52840dongle_nrf52840 zephyr/samples/bluetooth/hci_usb
+-- west build: generating a build system
+Loading Zephyr default modules (Zephyr base (cached)).
+-- Application: /Users/petarmladenov/zfw/zephyr/samples/bluetooth/hci_usb
+-- CMake version: 4.4.0
+-- Cache files will be written to: /Users/petarmladenov/Library/Caches/zephyr
+-- Zephyr version: 3.6.0 (/Users/petarmladenov/zfw/zephyr)
+-- Found west (found suitable version "1.5.0", minimum required is "0.14.0")
+-- Board: nrf52840dongle_nrf52840
+-- Found host-tools: zephyr 0.16.8 (/Users/petarmladenov/Downloads/zephyr-sdk-0.16.8)
+-- Found toolchain: zephyr 0.16.8 (/Users/petarmladenov/Downloads/zephyr-sdk-0.16.8)
+-- Found Dtc: /opt/homebrew/bin/dtc (found suitable version "1.8.1", minimum required is "1.4.6")
+-- Found BOARD.dts: /Users/petarmladenov/zfw/zephyr/boards/arm/nrf52840dongle_nrf52840/nrf52840dongle_nrf52840.dts
+-- Generated zephyr.dts: /Users/petarmladenov/zfw/build/zephyr/zephyr.dts
+-- Generated devicetree_generated.h: /Users/petarmladenov/zfw/build/zephyr/include/generated/devicetree_generated.h
+-- Including generated dts.cmake file: /Users/petarmladenov/zfw/build/zephyr/dts.cmake
+Parsing /Users/petarmladenov/zfw/zephyr/Kconfig
+Loaded configuration '/Users/petarmladenov/zfw/zephyr/boards/arm/nrf52840dongle_nrf52840/nrf52840dongle_nrf52840_defconfig'
+Merged configuration '/Users/petarmladenov/zfw/zephyr/samples/bluetooth/hci_usb/prj.conf'
+Configuration saved to '/Users/petarmladenov/zfw/build/zephyr/.config'
+Kconfig header saved to '/Users/petarmladenov/zfw/build/zephyr/include/generated/autoconf.h'
+-- Found GnuLd: /Users/petarmladenov/Downloads/zephyr-sdk-0.16.8/arm-zephyr-eabi/bin/../lib/gcc/arm-zephyr-eabi/12.2.0/../../../../arm-zephyr-eabi/bin/ld.bfd (found version "2.38")
+-- The C compiler identification is GNU 12.2.0
+-- The CXX compiler identification is GNU 12.2.0
+-- The ASM compiler identification is GNU
+-- Found assembler: /Users/petarmladenov/Downloads/zephyr-sdk-0.16.8/arm-zephyr-eabi/bin/arm-zephyr-eabi-gcc
+CMake Warning at /Users/petarmladenov/zfw/zephyr/subsys/usb/device/CMakeLists.txt:22 (message):
+  CONFIG_USB_DEVICE_VID has default value 0x2FE3.
+
+  This value is only for testing and MUST be configured for USB products.
+
+
+-- Configuring done (13.2s)
+-- Generating done (0.2s)
+-- Build files have been written to: /Users/petarmladenov/zfw/build
+-- west build: building application
+[1/201] Preparing syscall dependency handling
+
+[3/201] Generating include/generated/version.h
+-- Zephyr version: 3.6.0 (/Users/petarmladenov/zfw/zephyr), build: v3.6.0
+[200/201] Linking C executable zephyr/zephyr.elf
+Memory region         Used Size  Region Size  %age Used
+           FLASH:      124468 B      1020 KB     11.92%
+             RAM:       23752 B       256 KB      9.06%
+        IDT_LIST:          0 GB        32 KB      0.00%
+Generating files from /Users/petarmladenov/zfw/build/zephyr/zephyr.elf for board: nrf52840dongle_nrf52840
+[201/201] cd /Users/petarmladenov/zfw/build/zep.../Users/petarmladenov/zfw/build/zephyr/zephyr.el
+petarmladenov@Petars-MacBook-Pro zfw % 

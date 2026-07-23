@@ -4,7 +4,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import NotFound from '@/pages/not-found';
 import { Route, Switch, Redirect, useLocation, Router as WouterRouter } from 'wouter';
-import { ClerkProvider, Show, useClerk } from '@clerk/react';
+import { ClerkProvider, Show, useClerk, useUser } from '@clerk/react';
 import { publishableKeyFromHost } from '@clerk/react/internal';
 import { Shell } from '@/components/layout/Shell';
 import { AccessGate } from '@/components/layout/AccessGate';
@@ -70,6 +70,26 @@ function ProtectedPage({ component: Component }: { component: () => ReactElement
   );
 }
 
+function AdminPage({ component: Component }: { component: () => ReactElement }) {
+  const { user, isLoaded } = useUser();
+  if (!isLoaded) return null;
+  const isAdmin = (user?.publicMetadata as Record<string, unknown> | undefined)?.role === "admin";
+  return (
+    <>
+      <Show when="signed-in">
+        {isAdmin ? (
+          <Shell><Component /></Shell>
+        ) : (
+          <Redirect to="/" />
+        )}
+      </Show>
+      <Show when="signed-out">
+        <Redirect to="/" />
+      </Show>
+    </>
+  );
+}
+
 function ClerkQueryClientCacheInvalidator() {
   const { addListener } = useClerk();
   const queryClient = useQueryClient();
@@ -113,10 +133,10 @@ function ClerkProviderWithRoutes() {
                 <ProtectedPage component={History} />
               </Route>
               <Route path="/settings">
-                <ProtectedPage component={Settings} />
+                <AdminPage component={Settings} />
               </Route>
               <Route path="/admin">
-                <ProtectedPage component={Admin} />
+                <AdminPage component={Admin} />
               </Route>
               <Route path="/spectrum">
                 <ProtectedPage component={Spectrum} />

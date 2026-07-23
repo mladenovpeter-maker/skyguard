@@ -2,7 +2,7 @@ import { Router, type IRouter } from "express";
 import { eq } from "drizzle-orm";
 import { db, devicesTable } from "@workspace/db";
 import { CreateDeviceBody, CreateDeviceResponse, ListDevicesResponse } from "@workspace/api-zod";
-import { requireAuth } from "../middlewares/requireAuth";
+import { requireAdmin } from "../middlewares/requireAdmin";
 import { getAuth } from "@clerk/express";
 import { generateDeviceKey, hashDeviceKey, keyDisplayPrefix } from "../lib/deviceKeys";
 
@@ -19,12 +19,12 @@ function toDeviceJson(device: typeof devicesTable.$inferSelect) {
   };
 }
 
-router.get("/devices", requireAuth, async (_req, res): Promise<void> => {
+router.get("/devices", requireAdmin, async (_req, res): Promise<void> => {
   const devices = await db.select().from(devicesTable).orderBy(devicesTable.createdAt);
   res.json(ListDevicesResponse.parse(devices.map(toDeviceJson)));
 });
 
-router.post("/devices", requireAuth, async (req, res): Promise<void> => {
+router.post("/devices", requireAdmin, async (req, res): Promise<void> => {
   const parsed = CreateDeviceBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
@@ -54,7 +54,7 @@ router.post("/devices", requireAuth, async (req, res): Promise<void> => {
   );
 });
 
-router.delete("/devices/:deviceId", requireAuth, async (req, res): Promise<void> => {
+router.delete("/devices/:deviceId", requireAdmin, async (req, res): Promise<void> => {
   const deviceId = Number(req.params.deviceId);
   if (!Number.isInteger(deviceId)) {
     res.status(400).json({ error: "Invalid device id" });

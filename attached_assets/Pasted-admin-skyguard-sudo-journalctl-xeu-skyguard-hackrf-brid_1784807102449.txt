@@ -1,0 +1,150 @@
+admin@skyguard:~ $ sudo journalctl -xeu skyguard-hackrf-bridge.service -n 30 --no-pager
+Jul 23 14:44:09 skyguard systemd[1]: skyguard-hackrf-bridge.service: Control process exited, code=exited, status=1/FAILURE
+░░ Subject: Unit process exited
+░░ Defined-By: systemd
+░░ Support: https://www.debian.org/support
+░░ 
+░░ An ExecStartPre= process belonging to unit skyguard-hackrf-bridge.service has exited.
+░░ 
+░░ The process' exit code is 'exited' and its exit status is 1.
+Jul 23 14:44:09 skyguard systemd[1]: skyguard-hackrf-bridge.service: Failed with result 'exit-code'.
+░░ Subject: Unit failed
+░░ Defined-By: systemd
+░░ Support: https://www.debian.org/support
+░░ 
+░░ The unit skyguard-hackrf-bridge.service has entered the 'failed' state with result 'exit-code'.
+Jul 23 14:44:09 skyguard systemd[1]: Failed to start skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+░░ Subject: A start job for unit skyguard-hackrf-bridge.service has failed
+░░ Defined-By: systemd
+░░ Support: https://www.debian.org/support
+░░ 
+░░ A start job for unit skyguard-hackrf-bridge.service has finished with a failure.
+░░ 
+░░ The job identifier is 18529 and the job result is failed.
+Jul 23 14:44:14 skyguard systemd[1]: skyguard-hackrf-bridge.service: Scheduled restart job, restart counter is at 13.
+░░ Subject: Automatic restarting of a unit has been scheduled
+░░ Defined-By: systemd
+░░ Support: https://www.debian.org/support
+░░ 
+░░ Automatic restarting of the unit skyguard-hackrf-bridge.service has been scheduled, as the result for
+░░ the configured Restart= setting for the unit.
+Jul 23 14:44:14 skyguard systemd[1]: Starting skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge...
+░░ Subject: A start job for unit skyguard-hackrf-bridge.service has begun execution
+░░ Defined-By: systemd
+░░ Support: https://www.debian.org/support
+░░ 
+░░ A start job for unit skyguard-hackrf-bridge.service has begun execution.
+░░ 
+░░ The job identifier is 18639.
+Jul 23 14:44:14 skyguard python3[31110]:   File "<string>", line 1
+Jul 23 14:44:14 skyguard python3[31110]:     import fcntl,os,subprocess; lines=[l for l in subprocess.check_output('lsusb').decode().split('
+Jul 23 14:44:14 skyguard python3[31110]:                                                                                                   ^
+Jul 23 14:44:14 skyguard python3[31110]: SyntaxError: unterminated string literal (detected at line 1)
+Jul 23 14:44:14 skyguard systemd[1]: skyguard-hackrf-bridge.service: Control process exited, code=exited, status=1/FAILURE
+░░ Subject: Unit process exited
+░░ Defined-By: systemd
+░░ Support: https://www.debian.org/support
+░░ 
+░░ An ExecStartPre= process belonging to unit skyguard-hackrf-bridge.service has exited.
+░░ 
+░░ The process' exit code is 'exited' and its exit status is 1.
+Jul 23 14:44:14 skyguard systemd[1]: skyguard-hackrf-bridge.service: Failed with result 'exit-code'.
+░░ Subject: Unit failed
+░░ Defined-By: systemd
+░░ Support: https://www.debian.org/support
+░░ 
+░░ The unit skyguard-hackrf-bridge.service has entered the 'failed' state with result 'exit-code'.
+Jul 23 14:44:14 skyguard systemd[1]: Failed to start skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+░░ Subject: A start job for unit skyguard-hackrf-bridge.service has failed
+░░ Defined-By: systemd
+░░ Support: https://www.debian.org/support
+░░ 
+░░ A start job for unit skyguard-hackrf-bridge.service has finished with a failure.
+░░ 
+░░ The job identifier is 18639 and the job result is failed.
+Jul 23 14:44:19 skyguard systemd[1]: skyguard-hackrf-bridge.service: Scheduled restart job, restart counter is at 14.
+░░ Subject: Automatic restarting of a unit has been scheduled
+░░ Defined-By: systemd
+░░ Support: https://www.debian.org/support
+░░ 
+░░ Automatic restarting of the unit skyguard-hackrf-bridge.service has been scheduled, as the result for
+░░ the configured Restart= setting for the unit.
+Jul 23 14:44:19 skyguard systemd[1]: Starting skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge...
+░░ Subject: A start job for unit skyguard-hackrf-bridge.service has begun execution
+░░ Defined-By: systemd
+░░ Support: https://www.debian.org/support
+░░ 
+░░ A start job for unit skyguard-hackrf-bridge.service has begun execution.
+░░ 
+░░ The job identifier is 18749.
+Jul 23 14:44:20 skyguard python3[31115]:   File "<string>", line 1
+Jul 23 14:44:20 skyguard python3[31115]:     import fcntl,os,subprocess; lines=[l for l in subprocess.check_output('lsusb').decode().split('
+Jul 23 14:44:20 skyguard python3[31115]:                                                                                                   ^
+Jul 23 14:44:20 skyguard python3[31115]: SyntaxError: unterminated string literal (detected at line 1)
+Jul 23 14:44:20 skyguard systemd[1]: skyguard-hackrf-bridge.service: Control process exited, code=exited, status=1/FAILURE
+░░ Subject: Unit process exited
+░░ Defined-By: systemd
+░░ Support: https://www.debian.org/support
+░░ 
+░░ An ExecStartPre= process belonging to unit skyguard-hackrf-bridge.service has exited.
+░░ 
+░░ The process' exit code is 'exited' and its exit status is 1.
+Jul 23 14:44:20 skyguard systemd[1]: skyguard-hackrf-bridge.service: Failed with result 'exit-code'.
+░░ Subject: Unit failed
+░░ Defined-By: systemd
+░░ Support: https://www.debian.org/support
+░░ 
+░░ The unit skyguard-hackrf-bridge.service has entered the 'failed' state with result 'exit-code'.
+Jul 23 14:44:20 skyguard systemd[1]: Failed to start skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+░░ Subject: A start job for unit skyguard-hackrf-bridge.service has failed
+░░ Defined-By: systemd
+░░ Support: https://www.debian.org/support
+░░ 
+░░ A start job for unit skyguard-hackrf-bridge.service has finished with a failure.
+░░ 
+░░ The job identifier is 18749 and the job result is failed.
+Jul 23 14:44:25 skyguard systemd[1]: skyguard-hackrf-bridge.service: Scheduled restart job, restart counter is at 15.
+░░ Subject: Automatic restarting of a unit has been scheduled
+░░ Defined-By: systemd
+░░ Support: https://www.debian.org/support
+░░ 
+░░ Automatic restarting of the unit skyguard-hackrf-bridge.service has been scheduled, as the result for
+░░ the configured Restart= setting for the unit.
+Jul 23 14:44:25 skyguard systemd[1]: Starting skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge...
+░░ Subject: A start job for unit skyguard-hackrf-bridge.service has begun execution
+░░ Defined-By: systemd
+░░ Support: https://www.debian.org/support
+░░ 
+░░ A start job for unit skyguard-hackrf-bridge.service has begun execution.
+░░ 
+░░ The job identifier is 18859.
+Jul 23 14:44:25 skyguard python3[31117]:   File "<string>", line 1
+Jul 23 14:44:25 skyguard python3[31117]:     import fcntl,os,subprocess; lines=[l for l in subprocess.check_output('lsusb').decode().split('
+Jul 23 14:44:25 skyguard python3[31117]:                                                                                                   ^
+Jul 23 14:44:25 skyguard python3[31117]: SyntaxError: unterminated string literal (detected at line 1)
+Jul 23 14:44:25 skyguard systemd[1]: skyguard-hackrf-bridge.service: Control process exited, code=exited, status=1/FAILURE
+░░ Subject: Unit process exited
+░░ Defined-By: systemd
+░░ Support: https://www.debian.org/support
+░░ 
+░░ An ExecStartPre= process belonging to unit skyguard-hackrf-bridge.service has exited.
+░░ 
+░░ The process' exit code is 'exited' and its exit status is 1.
+Jul 23 14:44:25 skyguard systemd[1]: skyguard-hackrf-bridge.service: Failed with result 'exit-code'.
+░░ Subject: Unit failed
+░░ Defined-By: systemd
+░░ Support: https://www.debian.org/support
+░░ 
+░░ The unit skyguard-hackrf-bridge.service has entered the 'failed' state with result 'exit-code'.
+Jul 23 14:44:25 skyguard systemd[1]: Failed to start skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+░░ Subject: A start job for unit skyguard-hackrf-bridge.service has failed
+░░ Defined-By: systemd
+░░ Support: https://www.debian.org/support
+░░ 
+░░ A start job for unit skyguard-hackrf-bridge.service has finished with a failure.
+░░ 
+░░ The job identifier is 18859 and the job result is failed.
+admin@skyguard:~ $ # Провери дали nrfutil е наличен
+/home/admin/nrfutil-env/bin/nrfutil version 2>/dev/null || nrfutil version 2>/dev/null || echo "няма nrfutil"
+adafruit-nrfutil version 0.5.3.post16
+admin@skyguard:~ $ 

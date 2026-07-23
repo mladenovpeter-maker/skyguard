@@ -1,0 +1,34 @@
+admin@skyguard:~/skyguard $ hciconfig hci1
+hci1:	Type: Primary  Bus: USB
+	BD Address: 00:00:00:00:00:00  ACL MTU: 27:7  SCO MTU: 0:0
+	UP RUNNING 
+	RX bytes:20566 acl:0 sco:0 events:834 errors:0
+	TX bytes:790 acl:0 sco:0 commands:126 errors:0
+
+admin@skyguard:~/skyguard $ sudo journalctl -u skyguard-droneID-scanner -f -n 20
+Jul 23 16:17:54 skyguard systemd[1]: Stopping skyguard-droneID-scanner.service - SkyGuard OS — DroneID BLE Scanner (nRF52840)...
+Jul 23 16:17:54 skyguard systemd[1]: skyguard-droneID-scanner.service: Deactivated successfully.
+Jul 23 16:17:54 skyguard systemd[1]: Stopped skyguard-droneID-scanner.service - SkyGuard OS — DroneID BLE Scanner (nRF52840).
+Jul 23 16:17:54 skyguard systemd[1]: skyguard-droneID-scanner.service: Consumed 2min 6.002s CPU time.
+Jul 23 16:17:54 skyguard systemd[1]: Started skyguard-droneID-scanner.service - SkyGuard OS — DroneID BLE Scanner (nRF52840).
+Jul 23 16:17:55 skyguard python3[33870]: 2026-07-23 16:17:55,647 [INFO] SkyGuard DroneID Scanner starting.
+Jul 23 16:17:55 skyguard python3[33870]: 2026-07-23 16:17:55,648 [INFO] Adapter: hci0 | Scan window: 5s | Cycle: 2s
+Jul 23 16:17:55 skyguard python3[33870]: 2026-07-23 16:17:55,648 [INFO] API: http://192.168.100.224:3001/api/detections
+Jul 23 16:17:55 skyguard python3[33870]: /home/admin/skyguard/hardware/droneID-scanner/scanner.py:278: DeprecationWarning: the 'adapter' keyword argument is deprecated, use the 'bluez' kwarg instead with {'adapter': '<adapter_name>'}
+Jul 23 16:17:55 skyguard python3[33870]:   scanner = BleakScanner(
+Jul 23 16:21:45 skyguard systemd[1]: Stopping skyguard-droneID-scanner.service - SkyGuard OS — DroneID BLE Scanner (nRF52840)...
+Jul 23 16:21:45 skyguard systemd[1]: skyguard-droneID-scanner.service: Deactivated successfully.
+Jul 23 16:21:45 skyguard systemd[1]: Stopped skyguard-droneID-scanner.service - SkyGuard OS — DroneID BLE Scanner (nRF52840).
+Jul 23 16:21:45 skyguard systemd[1]: skyguard-droneID-scanner.service: Consumed 8.995s CPU time.
+Jul 23 16:21:45 skyguard systemd[1]: Started skyguard-droneID-scanner.service - SkyGuard OS — DroneID BLE Scanner (nRF52840).
+Jul 23 16:21:47 skyguard python3[33959]: 2026-07-23 16:21:47,154 [INFO] SkyGuard DroneID Scanner starting.
+Jul 23 16:21:47 skyguard python3[33959]: 2026-07-23 16:21:47,154 [INFO] Adapter: hci1 | Scan window: 5s | Cycle: 2s
+Jul 23 16:21:47 skyguard python3[33959]: 2026-07-23 16:21:47,155 [INFO] API: http://192.168.100.224:3001/api/detections
+Jul 23 16:21:47 skyguard python3[33959]: /home/admin/skyguard/hardware/droneID-scanner/scanner.py:278: DeprecationWarning: the 'adapter' keyword argument is deprecated, use the 'bluez' kwarg instead with {'adapter': '<adapter_name>'}
+Jul 23 16:21:47 skyguard python3[33959]:   scanner = BleakScanner(
+^C
+admin@skyguard:~/skyguard $ sudo timeout 10 hcitool -i hci1 lescan
+Set scan parameters failed: Input/output error
+admin@skyguard:~/skyguard $ sudo timeout 10 hcitool -i hci1 lescan
+Set scan parameters failed: Input/output error
+admin@skyguard:~/skyguard $ 

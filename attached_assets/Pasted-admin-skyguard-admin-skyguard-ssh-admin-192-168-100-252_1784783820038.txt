@@ -1,0 +1,68 @@
+admin@skyguard:~ $ 
+admin@skyguard:~ $ ssh admin@192.168.100.252 "
+# 1. Git pull — взима fingerprinting + поправените service файлове
+cd ~/skyguard && git pull origin main
+
+# 2. Рестартирай HackRF bridge — ще зареди RF fingerprinting модела
+sudo systemctl restart skyguard-hackrf-bridge
+
+# 3. Създай .env за ambient scanner
+cat > ~/skyguard/hardware/ambient-scanner/.env << 'EOF'
+SKYGUARD_API_BASE=http://192.168.100.224:3001
+SKYGUARD_DEVICE_KEY=sg_a637f2e7a490e894860a60f34e75b058831c5d949de666fb
+SCAN_INTERVAL_S=30
+WIFI_IFACE=wlan1
+LOG_LEVEL=INFO
+EOF
+
+# 4. Вдигни wlan1 (USB WiFi донгъл)
+sudo ip link set wlan1 up
+
+# 5. Инсталирай ambient scanner сервиза
+sudo cp ~/skyguard/hardware/ambient-scanner/skyguard-ambient-scanner.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now skyguard-ambient-scanner
+
+# 6. Провери статусите
+sleep 5
+"udo systemctl status skyguard-nrf-sniffer --no-pager | head -5d -10
+admin@192.168.100.252's password: 
+From https://github.com/mladenovpeter-maker/skyguard
+ * branch            main       -> FETCH_HEAD
+   298525f..5e91e59  main       -> origin/main
+Updating 298525f..5e91e59
+Fast-forward
+ artifacts/api-server/src/routes/devices.ts         |     2 +-
+ artifacts/skyguard-dome/public/model.stl           | 63176 +++++++++----------
+ ...92-168-100-252-cd-skyguard-gi_1784748963818.txt |    34 +
+ ...enshot_2026-07-23_at_07.42.19_1784781743153.png |   Bin 0 -> 196483 bytes
+ ...enshot_2026-07-23_at_07.42.46_1784781770004.png |   Bin 0 -> 210851 bytes
+ ...enshot_2026-07-23_at_07.43.15_1784781799001.png |   Bin 0 -> 302397 bytes
+ 6 files changed, 31623 insertions(+), 31589 deletions(-)
+ create mode 100644 attached_assets/Pasted-admin-skyguard-ssh-admin-192-168-100-252-cd-skyguard-gi_1784748963818.txt
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_07.42.19_1784781743153.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_07.42.46_1784781770004.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_07.43.15_1784781799001.png
+Jul 23 08:16:42 skyguard python3[22178]: 2026-07-23 08:16:42,449 [INFO] server listening on 0.0.0.0:8765
+Jul 23 08:16:42 skyguard python3[22178]: 2026-07-23 08:16:42,450 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz  (watchdog=45s)
+Jul 23 08:16:43 skyguard python3[22178]: 2026-07-23 08:16:43,757 [INFO] Suppressed bands: none
+Jul 23 08:16:47 skyguard python3[22178]: 2026-07-23 08:16:47,363 [WARNING] hackrf_sweep exited after 2048 sweeps — restarting
+Jul 23 08:16:47 skyguard python3[22178]: 2026-07-23 08:16:47,364 [INFO] Restarting hackrf_sweep in 5s…
+---
+● skyguard-ambient-scanner.service - SkyGuard OS Ambient RF Scanner
+     Loaded: loaded (/etc/systemd/system/skyguard-ambient-scanner.service; enabled; preset: enabled)
+     Active: active (running) since Wed 2026-07-22 12:55:11 EEST; 19h ago
+ Invocation: 6bf09dcb8e494b3e808fa8478686cf5a
+   Main PID: 798 (python3)
+      Tasks: 1 (limit: 806)
+        CPU: 5min 58.130s
+     CGroup: /system.slice/skyguard-ambient-scanner.service
+             └─798 /usr/bin/python3 /home/admin/skyguard/hardware/ambient-scanner/scanner.py
+
+---
+● skyguard-nrf-sniffer.service - SkyGuard nRF52840 BLE Remote ID Sniffer Bridge
+     Loaded: loaded (/etc/systemd/system/skyguard-nrf-sniffer.service; enabled; preset: enabled)
+     Active: active (running) since Wed 2026-07-22 15:39:55 EEST; 16h ago
+ Invocation: c7883266cc6448b68fcba765c46dd7a1
+   Main PID: 4786 (python3)
+admin@skyguard:~ $ 

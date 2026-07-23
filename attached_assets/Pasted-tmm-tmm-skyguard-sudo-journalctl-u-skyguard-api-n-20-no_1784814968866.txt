@@ -1,0 +1,22 @@
+tmm@tmm:~/skyguard$ sudo journalctl -u skyguard-api -n 20 --no-pager
+Jul 23 13:54:58 tmm node[705465]: {"level":30,"time":1784814898112,"pid":705465,"hostname":"tmm","req":{"id":14,"method":"GET","url":"/api/detections/history"},"res":{"statusCode":304},"responseTime":150,"msg":"request completed"}
+Jul 23 13:54:59 tmm node[705465]: {"level":30,"time":1784814899993,"pid":705465,"hostname":"tmm","req":{"id":15,"method":"GET","url":"/api/detections/active"},"res":{"statusCode":304},"responseTime":12,"msg":"request completed"}
+Jul 23 13:55:00 tmm node[705465]: {"level":30,"time":1784814900422,"pid":705465,"hostname":"tmm","req":{"id":16,"method":"GET","url":"/api/known-rf-sources"},"res":{"statusCode":200},"responseTime":12,"msg":"request completed"}
+Jul 23 13:55:04 tmm node[705465]: {"level":30,"time":1784814904069,"pid":705465,"hostname":"tmm","req":{"id":17,"method":"POST","url":"/api/ambient"},"count":21,"msg":"Ambient batch ingested"}
+Jul 23 13:55:04 tmm node[705465]: {"level":30,"time":1784814904070,"pid":705465,"hostname":"tmm","req":{"id":17,"method":"POST","url":"/api/ambient"},"res":{"statusCode":200},"responseTime":14,"msg":"request completed"}
+Jul 23 13:55:04 tmm node[705465]: {"level":30,"time":1784814904586,"pid":705465,"hostname":"tmm","req":{"id":18,"method":"POST","url":"/api/pi-status"},"res":{"statusCode":204},"responseTime":6,"msg":"request completed"}
+Jul 23 13:55:06 tmm node[705465]: {"level":30,"time":1784814906480,"pid":705465,"hostname":"tmm","req":{"id":19,"method":"POST","url":"/api/heartbeat"},"res":{"statusCode":200},"responseTime":12,"msg":"request completed"}
+Jul 23 13:55:11 tmm node[705465]: {"level":30,"time":1784814911194,"pid":705465,"hostname":"tmm","req":{"id":20,"method":"POST","url":"/api/ble-status"},"res":{"statusCode":204},"responseTime":14,"msg":"request completed"}
+Jul 23 13:55:19 tmm node[705465]: {"level":30,"time":1784814919088,"pid":705465,"hostname":"tmm","req":{"id":21,"method":"POST","url":"/api/ambient"},"count":21,"msg":"Ambient batch ingested"}
+Jul 23 13:55:19 tmm node[705465]: {"level":30,"time":1784814919089,"pid":705465,"hostname":"tmm","req":{"id":21,"method":"POST","url":"/api/ambient"},"res":{"statusCode":200},"responseTime":20,"msg":"request completed"}
+Jul 23 13:55:26 tmm node[705465]: {"level":30,"time":1784814926429,"pid":705465,"hostname":"tmm","req":{"id":22,"method":"POST","url":"/api/detections"},"droneId":"TEST-001","distanceFromHomeM":86.37404100959232,"msg":"Detection ingested"}
+Jul 23 13:55:26 tmm node[705465]: {"level":30,"time":1784814926430,"pid":705465,"hostname":"tmm","req":{"id":22,"method":"POST","url":"/api/detections"},"res":{"statusCode":201},"responseTime":8,"msg":"request completed"}
+Jul 23 13:55:34 tmm node[705465]: {"level":30,"time":1784814934097,"pid":705465,"hostname":"tmm","req":{"id":23,"method":"POST","url":"/api/ambient"},"count":21,"msg":"Ambient batch ingested"}
+Jul 23 13:55:34 tmm node[705465]: {"level":30,"time":1784814934097,"pid":705465,"hostname":"tmm","req":{"id":23,"method":"POST","url":"/api/ambient"},"res":{"statusCode":200},"responseTime":13,"msg":"request completed"}
+Jul 23 13:55:35 tmm node[705465]: {"level":30,"time":1784814935305,"pid":705465,"hostname":"tmm","req":{"id":24,"method":"POST","url":"/api/pi-status"},"res":{"statusCode":204},"responseTime":4,"msg":"request completed"}
+Jul 23 13:55:36 tmm node[705465]: {"level":30,"time":1784814936874,"pid":705465,"hostname":"tmm","req":{"id":25,"method":"POST","url":"/api/heartbeat"},"res":{"statusCode":200},"responseTime":6,"msg":"request completed"}
+Jul 23 13:55:39 tmm node[705465]: {"level":30,"time":1784814939416,"pid":705465,"hostname":"tmm","req":{"id":26,"method":"POST","url":"/api/ble-status"},"res":{"statusCode":204},"responseTime":6,"msg":"request completed"}
+Jul 23 13:55:49 tmm node[705465]: {"level":30,"time":1784814949076,"pid":705465,"hostname":"tmm","req":{"id":27,"method":"POST","url":"/api/ambient"},"count":19,"msg":"Ambient batch ingested"}
+Jul 23 13:55:49 tmm node[705465]: {"level":30,"time":1784814949077,"pid":705465,"hostname":"tmm","req":{"id":27,"method":"POST","url":"/api/ambient"},"res":{"statusCode":200},"responseTime":20,"msg":"request completed"}
+Jul 23 13:56:01 tmm node[705465]: {"level":30,"time":1784814961648,"pid":705465,"hostname":"tmm","req":{"id":28,"method":"GET","url":"/api/known-rf-sources"},"res":{"statusCode":200},"responseTime":6,"msg":"request completed"}
+tmm@tmm:~/skyguard$ 

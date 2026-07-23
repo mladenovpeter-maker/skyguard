@@ -1,0 +1,33 @@
+tmm@tmm:~/skyguard$ sudo journalctl -u skyguard-api -n 30 --no-pager -l
+[sudo] password for tmm: 
+Jul 23 10:39:44 tmm node[426433]: {"level":30,"time":1784803184367,"pid":426433,"hostname":"tmm","req":{"id":1443,"method":"GET","url":"/api/status"},"res":{"statusCode":200},"responseTime":13,"msg":"request completed"}
+Jul 23 10:39:44 tmm node[426433]: {"level":30,"time":1784803184369,"pid":426433,"hostname":"tmm","req":{"id":1444,"method":"GET","url":"/api/home"},"res":{"statusCode":200},"responseTime":10,"msg":"request completed"}
+Jul 23 10:39:44 tmm node[426433]: {"level":30,"time":1784803184370,"pid":426433,"hostname":"tmm","req":{"id":1445,"method":"GET","url":"/api/detections/active"},"res":{"statusCode":200},"responseTime":9,"msg":"request completed"}
+Jul 23 10:39:45 tmm node[426433]: {"level":30,"time":1784803185418,"pid":426433,"hostname":"tmm","req":{"id":1446,"method":"GET","url":"/api/known-rf-sources"},"res":{"statusCode":200},"responseTime":6,"msg":"request completed"}
+Jul 23 10:39:45 tmm node[426433]: {"level":30,"time":1784803185810,"pid":426433,"hostname":"tmm","req":{"id":1447,"method":"GET","url":"/api/status"},"res":{"statusCode":401},"responseTime":5,"msg":"request completed"}
+Jul 23 10:39:48 tmm node[426433]: {"level":30,"time":1784803188963,"pid":426433,"hostname":"tmm","req":{"id":1448,"method":"POST","url":"/api/ambient"},"count":17,"msg":"Ambient batch ingested"}
+Jul 23 10:39:48 tmm node[426433]: {"level":30,"time":1784803188964,"pid":426433,"hostname":"tmm","req":{"id":1448,"method":"POST","url":"/api/ambient"},"res":{"statusCode":200},"responseTime":7,"msg":"request completed"}
+Jul 23 10:39:49 tmm node[426433]: {"level":30,"time":1784803189510,"pid":426433,"hostname":"tmm","req":{"id":1449,"method":"GET","url":"/api/ble-status"},"res":{"statusCode":204},"responseTime":3,"msg":"request completed"}
+Jul 23 10:39:49 tmm node[426433]: {"level":30,"time":1784803189515,"pid":426433,"hostname":"tmm","req":{"id":1450,"method":"GET","url":"/api/pi-status"},"res":{"statusCode":200},"responseTime":3,"msg":"request completed"}
+Jul 23 10:39:49 tmm node[426433]: {"level":30,"time":1784803189832,"pid":426433,"hostname":"tmm","req":{"id":1451,"method":"GET","url":"/api/status"},"res":{"statusCode":401},"responseTime":4,"msg":"request completed"}
+Jul 23 10:39:52 tmm node[426433]: {"level":30,"time":1784803192854,"pid":426433,"hostname":"tmm","req":{"id":1452,"method":"GET","url":"/api/status"},"res":{"statusCode":401},"responseTime":3,"msg":"request completed"}
+Jul 23 10:39:53 tmm node[426433]: {"level":30,"time":1784803193961,"pid":426433,"hostname":"tmm","req":{"id":1453,"method":"GET","url":"/api/status"},"res":{"statusCode":401},"responseTime":2,"msg":"request completed"}
+Jul 23 10:39:55 tmm node[426433]: {"level":30,"time":1784803195981,"pid":426433,"hostname":"tmm","req":{"id":1454,"method":"GET","url":"/api/status"},"res":{"statusCode":401},"responseTime":3,"msg":"request completed"}
+Jul 23 10:39:59 tmm node[426433]: {"level":30,"time":1784803199998,"pid":426433,"hostname":"tmm","req":{"id":1455,"method":"GET","url":"/api/status"},"res":{"statusCode":401},"responseTime":3,"msg":"request completed"}
+Jul 23 10:40:03 tmm node[426433]: {"level":30,"time":1784803203020,"pid":426433,"hostname":"tmm","req":{"id":1456,"method":"GET","url":"/api/status"},"res":{"statusCode":401},"responseTime":3,"msg":"request completed"}
+Jul 23 10:40:04 tmm node[426433]: {"level":30,"time":1784803204012,"pid":426433,"hostname":"tmm","req":{"id":1457,"method":"POST","url":"/api/ambient"},"count":17,"msg":"Ambient batch ingested"}
+Jul 23 10:40:04 tmm node[426433]: {"level":30,"time":1784803204013,"pid":426433,"hostname":"tmm","req":{"id":1457,"method":"POST","url":"/api/ambient"},"res":{"statusCode":200},"responseTime":19,"msg":"request completed"}
+Jul 23 10:40:04 tmm node[426433]: {"level":30,"time":1784803204129,"pid":426433,"hostname":"tmm","req":{"id":1458,"method":"GET","url":"/api/status"},"res":{"statusCode":401},"responseTime":1,"msg":"request completed"}
+Jul 23 10:40:05 tmm node[426433]: {"level":30,"time":1784803205869,"pid":426433,"hostname":"tmm","req":{"id":1459,"method":"POST","url":"/api/heartbeat"},"res":{"statusCode":200},"responseTime":8,"msg":"request completed"}
+Jul 23 10:40:06 tmm node[426433]: {"level":30,"time":1784803206142,"pid":426433,"hostname":"tmm","req":{"id":1460,"method":"GET","url":"/api/status"},"res":{"statusCode":401},"responseTime":2,"msg":"request completed"}
+Jul 23 10:40:06 tmm node[426433]: {"level":30,"time":1784803206739,"pid":426433,"hostname":"tmm","req":{"id":1461,"method":"POST","url":"/api/pi-status"},"res":{"statusCode":204},"responseTime":3,"msg":"request completed"}
+Jul 23 10:40:10 tmm node[426433]: {"level":30,"time":1784803210158,"pid":426433,"hostname":"tmm","req":{"id":1462,"method":"GET","url":"/api/status"},"res":{"statusCode":401},"responseTime":3,"msg":"request completed"}
+Jul 23 10:40:13 tmm node[426433]: {"level":30,"time":1784803213212,"pid":426433,"hostname":"tmm","req":{"id":1463,"method":"GET","url":"/api/status"},"res":{"statusCode":401},"responseTime":3,"msg":"request completed"}
+Jul 23 10:40:14 tmm node[426433]: {"level":30,"time":1784803214311,"pid":426433,"hostname":"tmm","req":{"id":1464,"method":"GET","url":"/api/status"},"res":{"statusCode":401},"responseTime":3,"msg":"request completed"}
+Jul 23 10:40:16 tmm node[426433]: {"level":30,"time":1784803216332,"pid":426433,"hostname":"tmm","req":{"id":1465,"method":"GET","url":"/api/status"},"res":{"statusCode":401},"responseTime":3,"msg":"request completed"}
+Jul 23 10:40:18 tmm node[426433]: {"level":30,"time":1784803218977,"pid":426433,"hostname":"tmm","req":{"id":1466,"method":"POST","url":"/api/ambient"},"count":18,"msg":"Ambient batch ingested"}
+Jul 23 10:40:18 tmm node[426433]: {"level":30,"time":1784803218977,"pid":426433,"hostname":"tmm","req":{"id":1466,"method":"POST","url":"/api/ambient"},"res":{"statusCode":200},"responseTime":12,"msg":"request completed"}
+Jul 23 10:40:19 tmm node[426433]: {"level":30,"time":1784803219525,"pid":426433,"hostname":"tmm","req":{"id":1467,"method":"GET","url":"/api/ble-status"},"res":{"statusCode":204},"responseTime":3,"msg":"request completed"}
+Jul 23 10:40:19 tmm node[426433]: {"level":30,"time":1784803219531,"pid":426433,"hostname":"tmm","req":{"id":1468,"method":"GET","url":"/api/pi-status"},"res":{"statusCode":200},"responseTime":4,"msg":"request completed"}
+Jul 23 10:40:20 tmm node[426433]: {"level":30,"time":1784803220350,"pid":426433,"hostname":"tmm","req":{"id":1469,"method":"GET","url":"/api/status"},"res":{"statusCode":401},"responseTime":3,"msg":"request completed"}
+tmm@tmm:~/skyguard$ 

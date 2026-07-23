@@ -1,0 +1,36 @@
+tmm@tmm:~/skyguard$ git pull origin main && BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build
+remote: Enumerating objects: 30, done.
+remote: Counting objects: 100% (30/30), done.
+remote: Compressing objects: 100% (4/4), done.
+remote: Total 16 (delta 12), reused 16 (delta 12), pack-reused 0 (from 0)
+Unpacking objects: 100% (16/16), 6.96 KiB | 791.00 KiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+ * branch            main       -> FETCH_HEAD
+   5e91e59..11fdd53  main       -> origin/main
+Updating 5e91e59..11fdd53
+Fast-forward
+ artifacts/skyguard-os/src/pages/home.tsx                  | 398 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----------
+ artifacts/skyguard-os/vite.config.ts                      | 115 ++++++++++++++---------------
+ hardware/ambient-scanner/.env.example                     |   2 +-
+ hardware/ambient-scanner/skyguard-ambient-scanner.service |   6 +-
+ hardware/droneID-scanner/skyguard-droneID-scanner.service |   8 +-
+ hardware/hackrf-bridge/bridge.py                          |   7 +-
+ 6 files changed, 425 insertions(+), 111 deletions(-)
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2778 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.54 kB
+dist/public/assets/index-DLrGPShN.css  139.61 kB │ gzip:  28.98 kB
+dist/public/assets/index-C6Ii1uko.js   827.72 kB │ gzip: 251.21 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.09s
+tmm@tmm:~/skyguard$ 

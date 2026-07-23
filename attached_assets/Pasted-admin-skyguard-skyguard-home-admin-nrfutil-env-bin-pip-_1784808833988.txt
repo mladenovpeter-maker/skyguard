@@ -1,0 +1,27 @@
+admin@skyguard:~/skyguard $ /home/admin/nrfutil-env/bin/pip install numpy scikit-learn && sudo systemctl restart skyguard-hackrf-bridge && sleep 4 && sudo journalctl -u skyguard-hackrf-bridge -n 5 --no-pager | grep -E "fingerprint|model"
+Looking in indexes: https://pypi.org/simple, https://www.piwheels.org/simple
+Collecting numpy
+  Using cached numpy-2.5.1-cp313-cp313-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl.metadata (6.6 kB)
+Collecting scikit-learn
+  Using cached scikit_learn-1.9.0-cp313-cp313-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl.metadata (11 kB)
+Collecting scipy>=1.10.0 (from scikit-learn)
+  Using cached scipy-1.18.0-cp313-cp313-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl.metadata (62 kB)
+  DEPRECATION: Wheel filename 'joblib-0.7.0d-py3-none-any.whl' is not correctly normalised. Future versions of pip will raise the following error:
+  Invalid wheel filename (invalid version): 'joblib-0.7.0d-py3-none-any'
+  
+   pip 25.3 will enforce this behaviour change. A possible replacement is to rename the wheel to use a correctly normalised name (this may require updating the version in the project metadata). Discussion can be found at https://github.com/pypa/pip/issues/12938
+Collecting joblib>=1.4.0 (from scikit-learn)
+  Using cached https://www.piwheels.org/simple/joblib/joblib-1.5.3-py3-none-any.whl.metadata (5.5 kB)
+Collecting narwhals>=2.0.1 (from scikit-learn)
+  Using cached https://www.piwheels.org/simple/narwhals/narwhals-2.24.0-py3-none-any.whl.metadata (15 kB)
+Collecting threadpoolctl>=3.5.0 (from scikit-learn)
+  Using cached https://www.piwheels.org/simple/threadpoolctl/threadpoolctl-3.6.0-py3-none-any.whl.metadata (13 kB)
+Using cached numpy-2.5.1-cp313-cp313-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl (15.2 MB)
+Using cached scikit_learn-1.9.0-cp313-cp313-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl (8.8 MB)
+Using cached https://www.piwheels.org/simple/joblib/joblib-1.5.3-py3-none-any.whl (309 kB)
+Using cached https://www.piwheels.org/simple/narwhals/narwhals-2.24.0-py3-none-any.whl (461 kB)
+Using cached scipy-1.18.0-cp313-cp313-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl (33.9 MB)
+Using cached https://www.piwheels.org/simple/threadpoolctl/threadpoolctl-3.6.0-py3-none-any.whl (18 kB)
+Installing collected packages: threadpoolctl, numpy, narwhals, joblib, scipy, scikit-learn
+Successfully installed joblib-1.5.3 narwhals-2.24.0 numpy-2.5.1 scikit-learn-1.9.0 scipy-1.18.0 threadpoolctl-3.6.0
+admin@skyguard:~/skyguard $ 

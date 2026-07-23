@@ -1,0 +1,63 @@
+# 5. Node modules (ако имаш стари builds)
+du -sh ~/skyguard/node_modules 2>/dev/null
+du -sh ~/skyguard/*/node_modules 2>/dev/null
+
+
+^C
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+0 upgraded, 0 newly installed, 0 to remove and 35 not upgraded.
+Vacuuming done, freed 0B of archived journals from /var/log/journal.
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-00000000005da2c9-0006573dac825320.journal (4.5M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-0000000000618af0-0006573dd209f053.journal (77.8M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-000000000061a899-0006573dd2181f6c.journal (4.5M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-000000000065ed6d-0006573dfb2a2072.journal (26.8M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-000000000065ed7e-0006573dfb2d5c8f.journal (3.8M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-0000000000673dd0-0006573e07482bd8.journal (70.6M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-0000000000673e40-0006573e074b8e40.journal (4.4M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-00000000006b2ef8-0006573e2b736e85.journal (77.8M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-00000000006b3bf8-0006573e2b7c3087.journal (4.5M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-00000000006f9148-0006573e54937c17.journal (24.0M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-00000000006fa420-0006573e54afc2bc.journal (3.8M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-000000000070af25-0006573e5f4d6dcb.journal (71.0M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-000000000070af30-0006573e5f4f2430.journal (4.4M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-000000000074a00f-0006573e8360b69d.journal (71.2M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-000000000074a194-0006573e837272e9.journal (4.4M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-000000000078915d-0006573ea89e5313.journal (77.8M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-000000000078a4e8-0006573ea8ac0985.journal (4.5M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-00000000007cf458-0006573ed1bf24fb.journal (24.0M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-00000000007d0bef-0006573ed1e096e0.journal (3.8M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-00000000007e1249-0006573edc78bea7.journal (70.8M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-00000000007e1256-0006573edc7ac26a.journal (4.4M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-0000000000820330-0006573f003eacc6.journal (26.8M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-0000000000820612-0006573f00504550.journal (3.8M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-00000000008353a8-0006573f0cc1d760.journal (24.0M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-0000000000835d2f-0006573f0ccbdfe4.journal (3.8M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-0000000000847171-0006573f177bc8f0.journal (63.3M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-000000000084835f-0006573f17899519.journal (4.3M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-000000000087bc6e-0006573f35e28c47.journal (8.0M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-000000000087c4ea-0006573f3604512c.journal (3.6M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-000000000087eb48-0006573f37ac55e9.journal (8.0M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-000000000087f5cf-0006573f37d334ed.journal (3.6M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-0000000000881a54-0006573f3975bb30.journal (24.0M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-00000000008826e8-0006573f39a218e3.journal (3.8M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-0000000000893844-0006573f442fb5b9.journal (70.8M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-0000000000893852-0006573f44316956.journal (4.5M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-00000000008d29a9-0006573f69b09a50.journal (56.0M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-00000000008d2b68-0006573f69b6fba5.journal (4.1M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-00000000008fcd9d-0006573f80fd1095.journal (63.3M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/user-1000@71b95cd03c914f7c98746fdda4cc4e00-00000000008fd01c-0006573f8120d4d6.journal (4.3M).
+Deleted archived journal /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df/system@71b95cd03c914f7c98746fdda4cc4e00-000000000093155c-0006573fa00ce9f7.journal (70.8M).
+Vacuuming done, freed 1.0G of archived journals from /var/log/journal/3761a15a5e014c2ba8ef1748bc28f1df.
+Vacuuming done, freed 0B of archived journals from /run/log/journal.
+453M	/home/tmm/skyguard/node_modules
+20K	/home/tmm/skyguard/scripts/node_modules
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ 
+tmm@tmm:~/skyguard$ sudo du -sh /home /var/log /var/lib /usr /opt /tmp /root 2>/dev/null | sort -rh
+
+
+^C
+tmm@tmm:~/skyguard$ 

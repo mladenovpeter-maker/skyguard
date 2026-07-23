@@ -1,0 +1,51 @@
+admin@skyguard:/tmp $ sudo tee /etc/systemd/system/skyguard-droneID-scanner.service << 'EOF'
+[Unit]
+Description=SkyGuard OS — DroneID BLE Scanner (nRF52840)
+After=network.target bluetooth.target
+Wants=bluetooth.target
+
+[Service]
+Type=simple
+User=admin
+WorkingDirectory=/home/admin/skyguard/hardware/droneID-scanner
+EnvironmentFile=/home/admin/skyguard/hardware/droneID-scanner/.env
+ExecStart=/home/admin/hackrf_sweep/venv/bin/python3 /home/admin/skyguard/hardware/droneID-scanner/scanner.py
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+EOF
+sudo systemctl daemon-reload
+sudo systemctl start skyguard-droneID-scanner
+sleep 6
+sudo journalctl -u skyguard-droneID-scanner -n 8 --no-pager
+[Unit]
+Description=SkyGuard OS — DroneID BLE Scanner (nRF52840)
+After=network.target bluetooth.target
+Wants=bluetooth.target
+
+[Service]
+Type=simple
+User=admin
+WorkingDirectory=/home/admin/skyguard/hardware/droneID-scanner
+EnvironmentFile=/home/admin/skyguard/hardware/droneID-scanner/.env
+ExecStart=/home/admin/hackrf_sweep/venv/bin/python3 /home/admin/skyguard/hardware/droneID-scanner/scanner.py
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+Jul 23 14:58:07 skyguard systemd[1]: Started skyguard-droneID-scanner.service - SkyGuard OS — DroneID BLE Scanner (nRF52840).
+Jul 23 14:58:08 skyguard python3[31794]: Traceback (most recent call last):
+Jul 23 14:58:08 skyguard python3[31794]:   File "/home/admin/skyguard/hardware/droneID-scanner/scanner.py", line 40, in <module>
+Jul 23 14:58:08 skyguard python3[31794]:     from bleak import BleakScanner
+Jul 23 14:58:08 skyguard python3[31794]: ModuleNotFoundError: No module named 'bleak'
+Jul 23 14:58:08 skyguard systemd[1]: skyguard-droneID-scanner.service: Main process exited, code=exited, status=1/FAILURE
+Jul 23 14:58:08 skyguard systemd[1]: skyguard-droneID-scanner.service: Failed with result 'exit-code'.
+Jul 23 14:58:08 skyguard systemd[1]: skyguard-droneID-scanner.service: Consumed 1.083s CPU time.
+admin@skyguard:/tmp $ 

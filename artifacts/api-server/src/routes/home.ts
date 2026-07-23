@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { db, homeConfigTable } from "@workspace/db";
 import { GetHomeConfigResponse, UpdateHomeConfigBody, UpdateHomeConfigResponse } from "@workspace/api-zod";
 import { requireAuth } from "../middlewares/requireAuth";
+import { requireAdmin } from "../middlewares/requireAdmin";
 
 const router: IRouter = Router();
 
@@ -28,7 +29,7 @@ router.get("/home", requireAuth, async (_req, res): Promise<void> => {
   res.json(GetHomeConfigResponse.parse(home));
 });
 
-router.put("/home", requireAuth, async (req, res): Promise<void> => {
+router.put("/home", requireAdmin, async (req, res): Promise<void> => {
   const parsed = UpdateHomeConfigBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });

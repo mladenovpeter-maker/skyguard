@@ -1,0 +1,23 @@
+tmm@tmm:~/skyguard$ sudo systemctl status skyguard-api --no-pager
+● skyguard-api.service - SkyGuard API Server
+     Loaded: loaded (/etc/systemd/system/skyguard-api.service; enabled; preset: enabled)
+     Active: active (running) since Thu 2026-07-23 09:27:11 UTC; 12min ago
+   Main PID: 426433 (node)
+      Tasks: 11 (limit: 18848)
+     Memory: 92.9M (peak: 109.7M)
+        CPU: 4.499s
+     CGroup: /system.slice/skyguard-api.service
+             └─426433 /usr/bin/node --enable-source-maps ./dist/index.mjs
+
+Jul 23 09:39:56 tmm node[426433]: {"level":30,"time":1784799596699,"pid":426433,"hostname":"tmm","req":{"id":428,"method":"GET","url":"/api/ble-status"…t completed"}
+Jul 23 09:39:56 tmm node[426433]: {"level":30,"time":1784799596702,"pid":426433,"hostname":"tmm","req":{"id":429,"method":"GET","url":"/api/pi-status"}…t completed"}
+Jul 23 09:39:56 tmm node[426433]: {"level":30,"time":1784799596710,"pid":426433,"hostname":"tmm","req":{"id":430,"method":"GET","url":"/api/home"},"res…t completed"}
+Jul 23 09:39:56 tmm node[426433]: {"level":30,"time":1784799596715,"pid":426433,"hostname":"tmm","req":{"id":431,"method":"GET","url":"/api/status"},"r…t completed"}
+Jul 23 09:39:56 tmm node[426433]: {"level":30,"time":1784799596716,"pid":426433,"hostname":"tmm","req":{"id":432,"method":"GET","url":"/api/rf-alerts/r…t completed"}
+Jul 23 09:39:57 tmm node[426433]: {"level":30,"time":1784799597748,"pid":426433,"hostname":"tmm","req":{"id":433,"method":"GET","url":"/api/home"},"res…t completed"}
+Jul 23 09:39:58 tmm node[426433]: {"level":30,"time":1784799598802,"pid":426433,"hostname":"tmm","req":{"id":434,"method":"GET","url":"/api/detections/…t completed"}
+Jul 23 09:39:58 tmm node[426433]: {"level":30,"time":1784799598805,"pid":426433,"hostname":"tmm","req":{"id":435,"method":"GET","url":"/api/status"},"r…t completed"}
+Jul 23 09:39:59 tmm node[426433]: {"level":30,"time":1784799599848,"pid":426433,"hostname":"tmm","req":{"id":436,"method":"GET","url":"/api/home"},"res…t completed"}
+Jul 23 09:39:59 tmm node[426433]: {"level":30,"time":1784799599850,"pid":426433,"hostname":"tmm","req":{"id":437,"method":"GET","url":"/api/detections/…t completed"}
+Hint: Some lines were ellipsized, use -l to show in full.
+tmm@tmm:~/skyguard$ 

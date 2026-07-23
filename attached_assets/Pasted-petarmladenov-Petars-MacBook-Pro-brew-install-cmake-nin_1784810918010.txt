@@ -1,0 +1,165 @@
+petarmladenov@Petars-MacBook-Pro ~ % brew install cmake ninja dtc
+pip3 install west
+==> Auto-updating Homebrew...
+Adjust how often this is run with `$HOMEBREW_AUTO_UPDATE_SECS` or disable with
+`$HOMEBREW_NO_AUTO_UPDATE=1`. Hide these hints with `$HOMEBREW_NO_ENV_HINTS=1` (see `man brew`).
+==> Downloading https://ghcr.io/v2/homebrew/core/portable-ruby/blobs/sha256:83a3ff85d83acf0e3dd8105de0fdb01da96b7c0eaf2dfaae2ba6500ec2ae4a64
+######################################################################### 100.0%
+==> Pouring portable-ruby-4.0.6.arm64_big_sur.bottle.tar.gz
+==> Auto-updated Homebrew!
+Updated 2 taps (homebrew/core and homebrew/cask).
+==> New Formulae
+==> Downloading https://formulae.brew.sh/api/formula.jws.json
+advai-cli: CLI for managing skills and external CLIs
+apm: Dependency manager for AI agent configuration
+checksec: Security feature auditing for ELF binaries and Linux kernels
+droast: Opinionated Dockerfile linter
+dskditto: Ultra-fast duplicate file finder TUI/GUI
+lunarr: Self-hosted media streaming server and Plex alternative for movies and TV
+near: Human-friendly console utility for interacting with NEAR Protocol
+ovh-ttyrec: Enhanced (but compatible) version of the classic ttyrec
+pixtuoid: Terminal pixel-art office for AI coding agents
+rapid-mlx: Fast local AI engine for Apple Silicon with an OpenAI-compatible API
+utiluti: macOS command-line tool to work with default apps
+virtiofsd: Vhost-user virtio-fs device backend written in Rust
+wild: Very fast linker for Linux
+==> New Casks
+==> Downloading https://formulae.brew.sh/api/cask.jws.json
+arcbox: Runtime for containers, Linux virtual machines, and AI agent sandboxes
+cate: Infinite zoomable canvas with editor, terminal, and browser panels
+claude-status-bar: Menu bar status indicator for Claude Code
+cleanmymac-cli: Command-line interface for CleanMyMac
+libation: Audible audiobook manager and liberator
+linguax: Menu-bar utility for third-party mice with smooth scrolling and mapping
+neon-vision-editor: Native code and text editor
+onit-sidekick: AI chat panel
+opendisplay: Second-display utility for iPhone and iPad over USB and Wi-Fi
+openwhispr: Privacy-first voice-to-text dictation with AI agents
+perplexity: AI-powered answer engine with Personal Computer agent
+prisma-access-browser: Secure enterprise browser with built-in threat and data protection
+roslynpad: C# editor and runner based on Roslyn
+sessionwatcher: Menu bar monitor for AI coding assistant usage and limits
+
+You have 19 outdated formulae installed.
+
+==> Would install 3 formulae:
+cmake ninja dtc
+==> Downloading https://ghcr.io/v2/homebrew/core/cmake/manifests/4.4.0
+######################################################################### 100.0%
+==> Downloading https://ghcr.io/v2/homebrew/core/ninja/manifests/1.13.2
+######################################################################### 100.0%
+==> Downloading https://ghcr.io/v2/homebrew/core/dtc/manifests/1.8.1
+######################################################################### 100.0%
+==> Fetching downloads for: cmake, ninja and dtc
+✔︎ Bottle ninja (1.13.2)                              Downloaded  159.1KB/159.1KB
+✔︎ Bottle dtc (1.8.1)                                 Downloaded  145.6KB/145.6KB
+✔︎ Bottle cmake (4.4.0)                               Downloaded   19.8MB/ 19.8MB
+==> Pouring cmake--4.4.0.arm64_tahoe.bottle.tar.gz
+==> Caveats
+To install the CMake documentation, run:
+  brew install cmake-docs
+==> Summary
+🍺  /opt/homebrew/Cellar/cmake/4.4.0: 4,158 files, 67.2MB
+==> Running `brew cleanup cmake`...
+Disable this behaviour by setting `HOMEBREW_NO_INSTALL_CLEANUP=1`.
+Hide these hints with `HOMEBREW_NO_ENV_HINTS=1` (see `man brew`).
+==> Pouring ninja--1.13.2.arm64_tahoe.bottle.tar.gz
+🍺  /opt/homebrew/Cellar/ninja/1.13.2: 10 files, 436.7KB
+==> Running `brew cleanup ninja`...
+==> Pouring dtc--1.8.1.arm64_tahoe.bottle.tar.gz
+🍺  /opt/homebrew/Cellar/dtc/1.8.1: 19 files, 588.1KB
+==> Running `brew cleanup dtc`...
+==> Caveats
+Emacs Lisp files have been installed to:
+  /opt/homebrew/share/emacs/site-lisp/cmake
+zsh completions have been installed to:
+  /opt/homebrew/share/zsh/site-functions
+==> cmake
+To install the CMake documentation, run:
+  brew install cmake-docs
+error: externally-managed-environment
+
+× This environment is externally managed
+╰─> To install Python packages system-wide, try brew install
+    xyz, where xyz is the package you are trying to
+    install.
+    
+    If you wish to install a Python library that isn't in Homebrew,
+    use a virtual environment:
+    
+    python3 -m venv path/to/venv
+    source path/to/venv/bin/activate
+    python3 -m pip install xyz
+    
+    If you wish to install a Python application that isn't in Homebrew,
+    it may be easiest to use 'pipx install xyz', which will manage a
+    virtual environment for you. You can install pipx with
+    
+    brew install pipx
+    
+    You may restore the old behavior of pip by passing
+    the '--break-system-packages' flag to pip, or by adding
+    'break-system-packages = true' to your pip.conf file. The latter
+    will permanently disable this error.
+    
+    If you disable this error, we STRONGLY recommend that you additionally
+    pass the '--user' flag to pip, or set 'user = true' in your pip.conf
+    file. Failure to do this can result in a broken Homebrew installation.
+    
+    Read more about this behavior here: <https://peps.python.org/pep-0668/>
+
+note: If you believe this is a mistake, please contact your Python installation or OS distribution provider. You can override this, at the risk of breaking your Python installation or OS, by passing --break-system-packages.
+hint: See PEP 668 for the detailed specification.
+petarmladenov@Petars-MacBook-Pro ~ % 
+petarmladenov@Petars-MacBook-Pro ~ % 
+petarmladenov@Petars-MacBook-Pro ~ % mkdir ~/zfw && cd ~/zfw
+west init -m https://github.com/zephyrproject-rtos/zephyr --mr v3.6.0
+west update --narrow --depth=1
+pip3 install -r ~/zfw/zephyr/scripts/requirements-base.txt
+zsh: command not found: west
+zsh: command not found: west
+error: externally-managed-environment
+
+× This environment is externally managed
+╰─> To install Python packages system-wide, try brew install
+    xyz, where xyz is the package you are trying to
+    install.
+    
+    If you wish to install a Python library that isn't in Homebrew,
+    use a virtual environment:
+    
+    python3 -m venv path/to/venv
+    source path/to/venv/bin/activate
+    python3 -m pip install xyz
+    
+    If you wish to install a Python application that isn't in Homebrew,
+    it may be easiest to use 'pipx install xyz', which will manage a
+    virtual environment for you. You can install pipx with
+    
+    brew install pipx
+    
+    You may restore the old behavior of pip by passing
+    the '--break-system-packages' flag to pip, or by adding
+    'break-system-packages = true' to your pip.conf file. The latter
+    will permanently disable this error.
+    
+    If you disable this error, we STRONGLY recommend that you additionally
+    pass the '--user' flag to pip, or set 'user = true' in your pip.conf
+    file. Failure to do this can result in a broken Homebrew installation.
+    
+    Read more about this behavior here: <https://peps.python.org/pep-0668/>
+
+note: If you believe this is a mistake, please contact your Python installation or OS distribution provider. You can override this, at the risk of breaking your Python installation or OS, by passing --break-system-packages.
+hint: See PEP 668 for the detailed specification.
+petarmladenov@Petars-MacBook-Pro zfw % 
+petarmladenov@Petars-MacBook-Pro zfw % 
+petarmladenov@Petars-MacBook-Pro zfw % curl -L -o /tmp/sdk.tar.xz https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.16.8/zephyr-sdk-0.16.8_macos-aarch64.tar.xz
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+ 13 1060M   13  141M    0     0   9.8M      0  0:01:47  0:00:14  0:01:33 10.3M
+curl: (56) Failure writing output to destination, passed 16357 returned 3094
+petarmladenov@Petars-MacBook-Pro zfw % cd ~/zfw
+west build -b nrf52840dongle zephyr/samples/bluetooth/hci_usb
+zsh: command not found: west
+petarmladenov@Petars-MacBook-Pro zfw % 

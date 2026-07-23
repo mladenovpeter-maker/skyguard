@@ -1,0 +1,22 @@
+admin@skyguard:~/skyguard $ sudo journalctl -u skyguard-hackrf-bridge -n 20 --no-pager
+Jul 23 15:13:32 skyguard python3[32188]: 2026-07-23 15:13:32,572 [INFO] Suppressed bands: none
+Jul 23 15:13:42 skyguard systemd[1]: Stopping skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge...
+Jul 23 15:13:42 skyguard systemd[1]: skyguard-hackrf-bridge.service: Deactivated successfully.
+Jul 23 15:13:42 skyguard systemd[1]: Stopped skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+Jul 23 15:13:42 skyguard systemd[1]: skyguard-hackrf-bridge.service: Consumed 2min 12.077s CPU time.
+Jul 23 15:13:42 skyguard systemd[1]: Started skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge.
+Jul 23 15:13:53 skyguard python3[32260]: 2026-07-23 15:13:53,208 [INFO] RF fingerprinting model loaded from /home/admin/skyguard/hardware/rf-fingerprinting/rf_model.joblib
+Jul 23 15:13:53 skyguard python3[32260]: 2026-07-23 15:13:53,209 [INFO] RF fingerprinting model loaded ✓
+Jul 23 15:13:53 skyguard python3[32260]: 2026-07-23 15:13:53,210 [INFO] Loaded 10 frequency bands from /home/admin/skyguard/hardware/hackrf-bridge/frequencies.json
+Jul 23 15:13:53 skyguard python3[32260]: 2026-07-23 15:13:53,211 [INFO] Loaded 15 drone signatures from /home/admin/skyguard/hardware/hackrf-bridge/drone_signatures.json
+Jul 23 15:13:53 skyguard python3[32260]: 2026-07-23 15:13:53,217 [INFO] SkyGuard HackRF Bridge starting.
+Jul 23 15:13:53 skyguard python3[32260]: 2026-07-23 15:13:53,218 [INFO] WebSocket server on ws://0.0.0.0:8765
+Jul 23 15:13:53 skyguard python3[32260]: 2026-07-23 15:13:53,218 [INFO] Posting RF alerts to http://192.168.100.224:3001/api/rf-alerts
+Jul 23 15:13:53 skyguard python3[32260]: 2026-07-23 15:13:53,219 [INFO] Alert threshold: -50 dBm  |  Warning: -60 dBm
+Jul 23 15:13:53 skyguard python3[32260]: 2026-07-23 15:13:53,281 [INFO] server listening on 0.0.0.0:8765
+Jul 23 15:13:53 skyguard python3[32260]: 2026-07-23 15:13:53,282 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz  (watchdog=45s)
+Jul 23 15:13:54 skyguard python3[32260]: 2026-07-23 15:13:54,531 [INFO] Suppressed bands: none
+Jul 23 15:13:57 skyguard python3[32260]: 2026-07-23 15:13:57,575 [WARNING] hackrf_sweep exited after 2112 sweeps — restarting
+Jul 23 15:13:57 skyguard python3[32260]: 2026-07-23 15:13:57,575 [INFO] Restarting hackrf_sweep in 5s…
+Jul 23 15:14:02 skyguard python3[32260]: 2026-07-23 15:14:02,579 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz  (watchdog=45s)
+admin@skyguard:~/skyguard $ 

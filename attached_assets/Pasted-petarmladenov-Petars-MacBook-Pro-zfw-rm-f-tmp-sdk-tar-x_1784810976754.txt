@@ -1,0 +1,38 @@
+petarmladenov@Petars-MacBook-Pro zfw % rm -f /tmp/sdk.tar.xz && TMPDIR=~/Downloads pip3 install west --break-system-packages
+Collecting west
+  Downloading west-1.5.0-py3-none-any.whl.metadata (19 kB)
+Collecting colorama (from west)
+  Downloading colorama-0.4.6-py2.py3-none-any.whl.metadata (17 kB)
+Collecting PyYAML>=5.1 (from west)
+  Downloading pyyaml-6.0.3-cp314-cp314-macosx_11_0_arm64.whl.metadata (2.4 kB)
+Collecting pykwalify (from west)
+  Downloading pykwalify-1.8.0-py2.py3-none-any.whl.metadata (5.3 kB)
+Collecting packaging (from west)
+  Downloading packaging-26.2-py3-none-any.whl.metadata (3.5 kB)
+Collecting docopt>=0.6.2 (from pykwalify->west)
+  Downloading docopt-0.6.2.tar.gz (25 kB)
+  Installing build dependencies ... done
+  Getting requirements to build wheel ... done
+  Preparing metadata (pyproject.toml) ... done
+Collecting python-dateutil>=2.8.0 (from pykwalify->west)
+  Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+Collecting ruamel.yaml>=0.16.0 (from pykwalify->west)
+  Downloading ruamel_yaml-0.19.1-py3-none-any.whl.metadata (16 kB)
+Collecting six>=1.5 (from python-dateutil>=2.8.0->pykwalify->west)
+  Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+Downloading west-1.5.0-py3-none-any.whl (106 kB)
+Downloading pyyaml-6.0.3-cp314-cp314-macosx_11_0_arm64.whl (173 kB)
+Downloading colorama-0.4.6-py2.py3-none-any.whl (25 kB)
+Downloading packaging-26.2-py3-none-any.whl (100 kB)
+Downloading pykwalify-1.8.0-py2.py3-none-any.whl (24 kB)
+Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+Downloading ruamel_yaml-0.19.1-py3-none-any.whl (118 kB)
+Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+Building wheels for collected packages: docopt
+  Building wheel for docopt (pyproject.toml) ... done
+  Created wheel for docopt: filename=docopt-0.6.2-py2.py3-none-any.whl size=13782 sha256=248bbbdfb224e0b1d4355399a22307a2ced5ac18180d639238ab241657fd9c5e
+  Stored in directory: /Users/petarmladenov/Library/Caches/pip/wheels/79/6f/5f/26c3d1a144117ef52122d67c32b9f3c297c3dec4fea00a31ac
+Successfully built docopt
+Installing collected packages: docopt, six, ruamel.yaml, PyYAML, packaging, colorama, python-dateutil, pykwalify, west
+Successfully installed PyYAML-6.0.3 colorama-0.4.6 docopt-0.6.2 packaging-26.2 pykwalify-1.8.0 python-dateutil-2.9.0.post0 ruamel.yaml-0.19.1 six-1.17.0 west-1.5.0
+petarmladenov@Petars-MacBook-Pro zfw % 

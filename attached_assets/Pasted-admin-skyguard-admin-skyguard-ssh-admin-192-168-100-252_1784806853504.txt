@@ -1,0 +1,96 @@
+admin@skyguard:~ $ 
+admin@skyguard:~ $ ssh admin@192.168.100.252
+admin@192.168.100.252's password: 
+Linux skyguard 6.18.34+rpt-rpi-v8 #1 SMP PREEMPT Debian 1:6.18.34-1+rpt1 (2026-06-09) aarch64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Wed Jul 22 20:53:20 2026 from 192.168.100.66
+admin@skyguard:~ $ 
+admin@skyguard:~ $ sudo systemctl status skyguard-hackrf-bridge skyguard-droneID-scanner skyguard-ambient-scanner 2>/dev/null | grep -E "Active:|●"
+● skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge
+     Active: active (running) since Thu 2026-07-23 08:22:55 EEST; 6h ago
+● skyguard-droneID-scanner.service - SkyGuard OS — DroneID BLE Scanner (nRF52840)
+     Active: active (running) since Wed 2026-07-22 12:55:11 EEST; 1 day 1h ago
+● skyguard-ambient-scanner.service - SkyGuard OS Ambient RF Scanner
+     Active: active (running) since Wed 2026-07-22 12:55:11 EEST; 1 day 1h ago
+admin@skyguard:~ $ cat /home/admin/skyguard/hardware/hackrf-bridge/.env
+HACKRF_FREQ_START_MHZ=400
+HACKRF_FREQ_END_MHZ=6000
+HACKRF_BIN_WIDTH_KHZ=100
+HACKRF_LNA_GAIN=16
+HACKRF_VGA_GAIN=20
+WS_PORT=8765
+SKYGUARD_API_BASE=http://192.168.100.224:3001
+SKYGUARD_DEVICE_KEY=sg_a637f2e7a490e894860a60f34e75b058831c5d949de666fb
+ALERT_COOLDOWN_S=60
+CONFIRM_SWEEPS=3
+LOG_LEVEL=INFO
+admin@skyguard:~ $ cat /home/admin/skyguard/hardware/droneID-scanner/.env
+SKYGUARD_API_BASE=http://192.168.100.224:3001
+SKYGUARD_DEVICE_KEY=sg_30722e40a4f7705bf5a39879064fe0814b71296faaab462b
+BLE_ADAPTER=hci1
+SCAN_TIMEOUT_S=5
+CYCLE_INTERVAL_S=2
+LOG_LEVEL=INFO
+admin@skyguard:~ $ cat > /home/admin/skyguard/hardware/ambient-scanner/.env << 'EOF'
+SKYGUARD_API_BASE=http://192.168.100.224:3001
+SKYGUARD_DEVICE_KEY=sg_a637f2e7a490e894860a60f34e75b058831c5d949de666fb
+SCAN_INTERVAL_S=30
+WIFI_IFACE=wlan0
+LOG_LEVEL=INFO
+EOF
+admin@skyguard:~ $ sudo cp /home/admin/skyguard/hardware/hackrf-bridge/skyguard-hackrf-bridge.service /etc/systemd/system/
+sudo cp /home/admin/skyguard/hardware/droneID-scanner/skyguard-droneID-scanner.service /etc/systemd/system/
+sudo cp /home/admin/skyguard/hardware/ambient-scanner/skyguard-ambient-scanner.service /etc/systemd/system/
+sudo systemctl daemon-reload
+admin@skyguard:~ $ sudo systemctl enable --now skyguard-hackrf-bridge
+sudo systemctl enable --now skyguard-droneID-scanner
+sudo systemctl enable --now skyguard-ambient-scanner
+admin@skyguard:~ $ sudo journalctl -u skyguard-hackrf-bridge -n 20 --no-pager
+sudo journalctl -u skyguard-droneID-scanner -n 20 --no-pager
+Jul 23 14:38:38 skyguard python3[22637]: 2026-07-23 14:38:38,535 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz  (watchdog=45s)
+Jul 23 14:38:48 skyguard python3[22637]: 2026-07-23 14:38:48,096 [WARNING] hackrf_sweep exited after 4608 sweeps — restarting
+Jul 23 14:38:48 skyguard python3[22637]: 2026-07-23 14:38:48,096 [INFO] Restarting hackrf_sweep in 5s…
+Jul 23 14:38:53 skyguard python3[22637]: 2026-07-23 14:38:53,101 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz  (watchdog=45s)
+Jul 23 14:39:04 skyguard python3[22637]: 2026-07-23 14:39:04,538 [WARNING] hackrf_sweep exited after 5632 sweeps — restarting
+Jul 23 14:39:04 skyguard python3[22637]: 2026-07-23 14:39:04,539 [INFO] Restarting hackrf_sweep in 5s…
+Jul 23 14:39:09 skyguard python3[22637]: 2026-07-23 14:39:09,542 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz  (watchdog=45s)
+Jul 23 14:39:20 skyguard python3[22637]: 2026-07-23 14:39:20,868 [WARNING] hackrf_sweep exited after 5568 sweeps — restarting
+Jul 23 14:39:20 skyguard python3[22637]: 2026-07-23 14:39:20,868 [INFO] Restarting hackrf_sweep in 5s…
+Jul 23 14:39:25 skyguard python3[22637]: 2026-07-23 14:39:25,871 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz  (watchdog=45s)
+Jul 23 14:39:33 skyguard python3[22637]: 2026-07-23 14:39:33,604 [INFO] Suppressed bands: none
+Jul 23 14:39:37 skyguard python3[22637]: 2026-07-23 14:39:37,244 [WARNING] hackrf_sweep exited after 5504 sweeps — restarting
+Jul 23 14:39:37 skyguard python3[22637]: 2026-07-23 14:39:37,244 [INFO] Restarting hackrf_sweep in 5s…
+Jul 23 14:39:42 skyguard python3[22637]: 2026-07-23 14:39:42,247 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz  (watchdog=45s)
+Jul 23 14:40:27 skyguard python3[22637]: 2026-07-23 14:40:27,255 [WARNING] hackrf_sweep watchdog: no data for 45s after 0 sweeps — killing subprocess and restarting
+Jul 23 14:40:27 skyguard python3[22637]: 2026-07-23 14:40:27,258 [INFO] Restarting hackrf_sweep in 5s…
+Jul 23 14:40:32 skyguard python3[22637]: 2026-07-23 14:40:32,263 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz  (watchdog=45s)
+Jul 23 14:40:33 skyguard python3[22637]: 2026-07-23 14:40:33,775 [INFO] Suppressed bands: none
+Jul 23 14:40:38 skyguard python3[22637]: 2026-07-23 14:40:38,602 [WARNING] hackrf_sweep exited after 2880 sweeps — restarting
+Jul 23 14:40:38 skyguard python3[22637]: 2026-07-23 14:40:38,603 [INFO] Restarting hackrf_sweep in 5s…
+Jul 23 14:40:03 skyguard python3[803]: 2026-07-23 14:40:03,560 [ERROR] Scan cycle failed: adapter 'hci1' not found
+Jul 23 14:40:05 skyguard python3[803]: 2026-07-23 14:40:05,563 [ERROR] Scan cycle failed: adapter 'hci1' not found
+Jul 23 14:40:07 skyguard python3[803]: 2026-07-23 14:40:07,567 [ERROR] Scan cycle failed: adapter 'hci1' not found
+Jul 23 14:40:09 skyguard python3[803]: 2026-07-23 14:40:09,569 [ERROR] Scan cycle failed: adapter 'hci1' not found
+Jul 23 14:40:11 skyguard python3[803]: 2026-07-23 14:40:11,571 [ERROR] Scan cycle failed: adapter 'hci1' not found
+Jul 23 14:40:13 skyguard python3[803]: 2026-07-23 14:40:13,573 [ERROR] Scan cycle failed: adapter 'hci1' not found
+Jul 23 14:40:15 skyguard python3[803]: 2026-07-23 14:40:15,575 [ERROR] Scan cycle failed: adapter 'hci1' not found
+Jul 23 14:40:17 skyguard python3[803]: 2026-07-23 14:40:17,580 [ERROR] Scan cycle failed: adapter 'hci1' not found
+Jul 23 14:40:19 skyguard python3[803]: 2026-07-23 14:40:19,583 [ERROR] Scan cycle failed: adapter 'hci1' not found
+Jul 23 14:40:21 skyguard python3[803]: 2026-07-23 14:40:21,584 [ERROR] Scan cycle failed: adapter 'hci1' not found
+Jul 23 14:40:23 skyguard python3[803]: 2026-07-23 14:40:23,588 [ERROR] Scan cycle failed: adapter 'hci1' not found
+Jul 23 14:40:25 skyguard python3[803]: 2026-07-23 14:40:25,595 [ERROR] Scan cycle failed: adapter 'hci1' not found
+Jul 23 14:40:27 skyguard python3[803]: 2026-07-23 14:40:27,599 [ERROR] Scan cycle failed: adapter 'hci1' not found
+Jul 23 14:40:29 skyguard python3[803]: 2026-07-23 14:40:29,600 [ERROR] Scan cycle failed: adapter 'hci1' not found
+Jul 23 14:40:31 skyguard python3[803]: 2026-07-23 14:40:31,603 [ERROR] Scan cycle failed: adapter 'hci1' not found
+Jul 23 14:40:33 skyguard python3[803]: 2026-07-23 14:40:33,607 [ERROR] Scan cycle failed: adapter 'hci1' not found
+Jul 23 14:40:35 skyguard python3[803]: 2026-07-23 14:40:35,610 [ERROR] Scan cycle failed: adapter 'hci1' not found
+Jul 23 14:40:37 skyguard python3[803]: 2026-07-23 14:40:37,614 [ERROR] Scan cycle failed: adapter 'hci1' not found
+Jul 23 14:40:39 skyguard python3[803]: 2026-07-23 14:40:39,615 [ERROR] Scan cycle failed: adapter 'hci1' not found
+Jul 23 14:40:41 skyguard python3[803]: 2026-07-23 14:40:41,618 [ERROR] Scan cycle failed: adapter 'hci1' not found
+admin@skyguard:~ $ 

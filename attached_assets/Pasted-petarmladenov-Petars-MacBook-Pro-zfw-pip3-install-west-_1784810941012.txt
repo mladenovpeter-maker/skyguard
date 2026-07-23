@@ -1,0 +1,43 @@
+petarmladenov@Petars-MacBook-Pro zfw % pip3 install west --break-system-packages 
+ERROR: Exception:
+Traceback (most recent call last):
+  File "/opt/homebrew/lib/python3.14/site-packages/pip/_internal/cli/base_command.py", line 109, in _run_wrapper
+    status = _inner_run()
+  File "/opt/homebrew/lib/python3.14/site-packages/pip/_internal/cli/base_command.py", line 102, in _inner_run
+    return self.run(options, args)
+           ~~~~~~~~^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.14/site-packages/pip/_internal/cli/req_command.py", line 101, in wrapper
+    return func(self, options, args)
+  File "/opt/homebrew/lib/python3.14/site-packages/pip/_internal/commands/install.py", line 436, in run
+    build_tracker = self.enter_context(get_build_tracker())
+  File "/opt/homebrew/lib/python3.14/site-packages/pip/_internal/cli/command_context.py", line 28, in enter_context
+    return self._main_context.enter_context(context_provider)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 530, in enter_context
+    result = _enter(cm)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/opt/homebrew/lib/python3.14/site-packages/pip/_internal/operations/build/build_tracker.py", line 47, in get_build_tracker
+    root = ctx.enter_context(TempDirectory(kind="build-tracker")).path
+                             ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.14/site-packages/pip/_internal/utils/temp_dir.py", line 135, in __init__
+    path = self._create(kind)
+  File "/opt/homebrew/lib/python3.14/site-packages/pip/_internal/utils/temp_dir.py", line 175, in _create
+    path = os.path.realpath(tempfile.mkdtemp(prefix=f"pip-{kind}-"))
+                            ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/lib/python3.14/tempfile.py", line 370, in mkdtemp
+    prefix, suffix, dir, output_type = _sanitize_params(prefix, suffix, dir)
+                                       ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/lib/python3.14/tempfile.py", line 127, in _sanitize_params
+    dir = gettempdir()
+  File "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/lib/python3.14/tempfile.py", line 312, in gettempdir
+    return _os.fsdecode(_gettempdir())
+                        ~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/lib/python3.14/tempfile.py", line 305, in _gettempdir
+    tempdir = _get_default_tempdir()
+  File "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/lib/python3.14/tempfile.py", line 222, in _get_default_tempdir
+    raise FileNotFoundError(_errno.ENOENT,
+                            "No usable temporary directory found in %s" %
+                            dirlist)
+FileNotFoundError: [Errno 2] No usable temporary directory found in ['/var/folders/62/hwgfzr6j2gv5sz3ff85gktp80000gn/T/', '/tmp', '/var/tmp', '/usr/tmp', '/Users/petarmladenov/zfw']
+petarmladenov@Petars-MacBook-Pro zfw % 

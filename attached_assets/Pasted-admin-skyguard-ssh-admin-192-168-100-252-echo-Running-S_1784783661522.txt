@@ -1,0 +1,60 @@
+admin@skyguard:~ $ ssh admin@192.168.100.252 "
+echo '=== Running SkyGuard services ===' && \
+sudo systemctl status skyguard-hackrf-bridge skyguard-nrf-sniffer skyguard-droneID skyguard-ambient 2>&1 | grep -E 'skyguard|Active|failed|not.found' && \
+echo '=== BLE adapters ===' && \
+hciconfig -a 2>/dev/null || echo 'no hciconfig' && \
+echo '=== USB devices ===' && \
+lsusb | grep -iE 'nordic|nrf|acm|1915' && \
+echo '=== WiFi interfaces ===' && \
+ip link show | grep -E 'wlan|wl'
+"
+admin@192.168.100.252's password: 
+=== Running SkyGuard services ===
+Unit skyguard-droneID.service could not be found.
+Unit skyguard-ambient.service could not be found.
+● skyguard-hackrf-bridge.service - SkyGuard OS HackRF Sweep Bridge
+     Loaded: loaded (/etc/systemd/system/skyguard-hackrf-bridge.service; enabled; preset: enabled)
+     Active: active (running) since Wed 2026-07-22 22:35:52 EEST; 9h ago
+     CGroup: /system.slice/skyguard-hackrf-bridge.service
+             ├─10482 /home/admin/hackrf_sweep/venv/bin/python3 /home/admin/skyguard/hardware/hackrf-bridge/bridge.py
+Jul 23 08:13:10 skyguard python3[10482]: 2026-07-23 08:13:10,960 [WARNING] hackrf_sweep exited after 1728 sweeps — restarting
+Jul 23 08:13:10 skyguard python3[10482]: 2026-07-23 08:13:10,961 [INFO] Restarting hackrf_sweep in 5s…
+Jul 23 08:13:15 skyguard python3[10482]: 2026-07-23 08:13:15,962 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz  (watchdog=45s)
+Jul 23 08:13:20 skyguard python3[10482]: 2026-07-23 08:13:20,367 [WARNING] hackrf_sweep exited after 1760 sweeps — restarting
+Jul 23 08:13:20 skyguard python3[10482]: 2026-07-23 08:13:20,368 [INFO] Restarting hackrf_sweep in 5s…
+Jul 23 08:13:25 skyguard python3[10482]: 2026-07-23 08:13:25,370 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz  (watchdog=45s)
+Jul 23 08:13:33 skyguard python3[10482]: 2026-07-23 08:13:33,518 [WARNING] hackrf_sweep exited after 3680 sweeps — restarting
+Jul 23 08:13:33 skyguard python3[10482]: 2026-07-23 08:13:33,518 [INFO] Restarting hackrf_sweep in 5s…
+Jul 23 08:13:38 skyguard python3[10482]: 2026-07-23 08:13:38,523 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz  (watchdog=45s)
+Jul 23 08:13:49 skyguard python3[10482]: 2026-07-23 08:13:49,680 [INFO] Suppressed bands: none
+● skyguard-nrf-sniffer.service - SkyGuard nRF52840 BLE Remote ID Sniffer Bridge
+     Loaded: loaded (/etc/systemd/system/skyguard-nrf-sniffer.service; enabled; preset: enabled)
+     Active: active (running) since Wed 2026-07-22 15:39:55 EEST; 16h ago
+     CGroup: /system.slice/skyguard-nrf-sniffer.service
+             ├─4792 /home/admin/nrfutil7 ble-sniffer sniff --port /dev/ttyACM0 --only-advertising --output-pcap-file /tmp/skyguard-sniffer.pcap --coded
+             ├─4793 /home/admin/.nrfutil/bin/nrfutil ble-sniffer sniff --port /dev/ttyACM0 --only-advertising --output-pcap-file /tmp/skyguard-sniffer.pcap --coded
+             └─4795 /home/admin/.nrfutil/bin/nrfutil-ble-sniffer sniff --port /dev/ttyACM0 --only-advertising --output-pcap-file /tmp/skyguard-sniffer.pcap --coded
+=== BLE adapters ===
+hci0:	Type: Primary  Bus: UART
+	BD Address: B8:27:EB:C2:EE:91  ACL MTU: 1021:8  SCO MTU: 64:1
+	UP RUNNING 
+	RX bytes:30841 acl:0 sco:0 events:1305 errors:0
+	TX bytes:68637 acl:0 sco:0 commands:445 errors:0
+	Features: 0xbf 0xfe 0xcf 0xfe 0xdb 0xff 0x7b 0x87
+	Packet type: DM1 DM3 DM5 DH1 DH3 DH5 HV1 HV2 HV3 
+	Link policy: RSWITCH SNIFF 
+	Link mode: PERIPHERAL ACCEPT 
+	Name: 'skyguard'
+	Class: 0x6c0000
+	Service Classes: Rendering, Capturing, Audio, Telephony
+	Device Class: Miscellaneous, 
+	HCI Version: 5.0 (0x9)  Revision: 0x17e
+	LMP Version: 5.0 (0x9)  Subversion: 0x6119
+	Manufacturer: Cypress Semiconductor (305)
+
+=== USB devices ===
+Bus 001 Device 008: ID 1915:522a Nordic Semiconductor ASA nRF Sniffer for Bluetooth LE
+=== WiFi interfaces ===
+3: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DORMANT group default qlen 1000
+6: wlan1: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN mode DORMANT group default qlen 1000
+admin@skyguard:~ $ 
