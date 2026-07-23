@@ -1,0 +1,30 @@
+admin@skyguard:~/skyguard $ cd ~/skyguard && git pull && sudo systemctl restart skyguard-dji-wifi-scanner && sudo journalctl -u skyguard-dji-wifi-scanner -f
+remote: Enumerating objects: 14, done.
+remote: Counting objects: 100% (14/14), done.
+remote: Compressing objects: 100% (3/3), done.
+remote: Total 9 (delta 6), reused 9 (delta 6), pack-reused 0 (from 0)
+Unpacking objects: 100% (9/9), 3.51 KiB | 179.00 KiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+   d48ee12..5a6732c  main       -> origin/main
+Updating d48ee12..5a6732c
+Fast-forward
+ .../Pasted-admin-skyguard-skyguard-git-stash-git-pull-No-local-cha_1784821201647.txt  | 180 ++++++++++++++++++++++++++++++++++++++++++
+ hardware/dji-wifi-scanner/scanner.py                                                  |   3 +-
+ 2 files changed, 181 insertions(+), 2 deletions(-)
+ create mode 100644 attached_assets/Pasted-admin-skyguard-skyguard-git-stash-git-pull-No-local-cha_1784821201647.txt
+Jul 23 18:43:38 skyguard systemd[1]: skyguard-dji-wifi-scanner.service: Scheduled restart job, restart counter is at 18.
+Jul 23 18:43:38 skyguard systemd[1]: Started skyguard-dji-wifi-scanner.service - SkyGuard DJI Wi-Fi DroneID Scanner.
+Jul 23 18:43:38 skyguard python3[36948]:   File "/home/admin/skyguard/hardware/dji-wifi-scanner/scanner.py", line 113
+Jul 23 18:43:38 skyguard python3[36948]:     global MON_IFACE
+Jul 23 18:43:38 skyguard python3[36948]:     ^^^^^^^^^^^^^^^^
+Jul 23 18:43:38 skyguard python3[36948]: SyntaxError: name 'MON_IFACE' is used prior to global declaration
+Jul 23 18:43:38 skyguard systemd[1]: skyguard-dji-wifi-scanner.service: Main process exited, code=exited, status=1/FAILURE
+Jul 23 18:43:38 skyguard systemd[1]: skyguard-dji-wifi-scanner.service: Failed with result 'exit-code'.
+Jul 23 18:43:42 skyguard systemd[1]: Stopped skyguard-dji-wifi-scanner.service - SkyGuard DJI Wi-Fi DroneID Scanner.
+Jul 23 18:43:42 skyguard systemd[1]: Started skyguard-dji-wifi-scanner.service - SkyGuard DJI Wi-Fi DroneID Scanner.
+Jul 23 18:43:43 skyguard python3[36968]: 2026-07-23 18:43:43,745 [INFO] Setting up monitor mode on wlan1 → wlan1mon
+Jul 23 18:43:44 skyguard python3[36968]: 2026-07-23 18:43:44,301 [INFO] Monitor interface wlan1mon up (iw method)
+Jul 23 18:43:44 skyguard python3[36968]: 2026-07-23 18:43:44,301 [INFO] SkyGuard DJI Wi-Fi Scanner ready.
+Jul 23 18:43:44 skyguard python3[36968]: 2026-07-23 18:43:44,301 [INFO] API: http://192.168.100.224:3001/api/detections | Iface: wlan1mon | Hop: 0.3s
+Jul 23 18:43:48 skyguard python3[36968]: 2026-07-23 18:43:48,693 [INFO] Sniffing on wlan1mon …
+
