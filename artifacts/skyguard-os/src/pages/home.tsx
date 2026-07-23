@@ -8,7 +8,7 @@ import { format } from "date-fns";
 import { bg, enUS } from "date-fns/locale";
 import {
   AlertTriangle, Loader2, Zap, Activity, Crosshair, Navigation,
-  Radio, MapPin, Clock, ChevronRight
+  Radio, MapPin, Clock, ChevronRight, Bluetooth, Wifi, Signal
 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
@@ -163,6 +163,176 @@ function BandMonitor({ bins, wsStatus, lastSweepTs, sweepCount }: {
           {wsStatus === "connecting" ? "Свързване…" : stale ? "LINK LOST >30s" : "Изчакване на данни…"}
         </div>
       )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// BLE / WiFi hooks & panel
+// ---------------------------------------------------------------------------
+
+interface BleStatus {
+  totalScans: number;
+  dronesDetected: number;
+  adapter: string;
+  ts: string;
+  receivedAt: string;
+}
+
+interface AmbientDevice {
+  id: number;
+  mac: string;
+  name: string | null;
+  signalType: "BLE" | "WIFI";
+  rssiDbm: number | null;
+  vendor: string | null;
+  timestamp: string;
+}
+
+function useBleStatus() {
+  return useQuery<BleStatus | null>({
+    queryKey: ["ble-status"],
+    queryFn: async () => {
+      const res = await fetch(`${import.meta.env.BASE_URL}api/ble-status`, { credentials: "include" });
+      if (res.status === 204) return null;
+      if (!res.ok) return null;
+      return res.json();
+    },
+    refetchInterval: 30_000,
+    staleTime: 25_000,
+  });
+}
+
+function useAmbientDevices() {
+  return useQuery<AmbientDevice[]>({
+    queryKey: ["ambient-active"],
+    queryFn: async () => {
+      const res = await fetch(`${import.meta.env.BASE_URL}api/ambient/active`, { credentials: "include" });
+      if (!res.ok) return [];
+      return res.json();
+    },
+    refetchInterval: 15_000,
+    staleTime: 12_000,
+  });
+}
+
+function rssiBar(dbm: number | null): number {
+  if (dbm === null) return 0;
+  return Math.max(0, Math.min(100, ((dbm + 100) / 70) * 100));
+}
+
+function timeAgo(iso: string): string {
+  const secs = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+  if (secs < 60) return `${secs}s`;
+  if (secs < 3600) return `${Math.floor(secs / 60)}m`;
+  return `${Math.floor(secs / 3600)}h`;
+}
+
+function BleWifiPanel() {
+  const { data: bleStatus } = useBleStatus();
+  const { data: ambient = [] } = useAmbientDevices();
+
+  const staleSecs = bleStatus
+    ? Math.floor((Date.now() - new Date(bleStatus.receivedAt).getTime()) / 1000)
+    : null;
+  const bleAlive = staleSecs !== null && staleSecs < 90;
+
+  const bleDevices  = ambient.filter(d => d.signalType === "BLE");
+  const wifiDevices = ambient.filter(d => d.signalType === "WIFI");
+  const sorted = [...ambient].sort((a, b) =>
+    new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+  ).slice(0, 5);
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", overflow: "hidden" }}>
+      {/* Header */}
+      <div className="px-3 py-2 flex items-center gap-2 border-b border-border/30" style={{ flexShrink: 0 }}>
+        <Bluetooth className="w-3.5 h-3.5 text-primary" />
+        <span className="font-mono text-xs font-bold text-primary uppercase tracking-wider">BLE / WiFi</span>
+        <div className="ml-auto flex items-center gap-2">
+          {bleAlive ? (
+            <>
+              <span className="text-[10px] font-mono text-muted-foreground">
+                {bleStatus!.totalScans.toLocaleString()} scans
+              </span>
+              <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+            </>
+          ) : (
+            <>
+              <span className="text-[10px] font-mono text-muted-foreground/40 uppercase">
+                {bleStatus ? "Stale" : "Waiting"}
+              </span>
+              <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/30" />
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Stats row */}
+      <div className="px-3 pt-1.5 pb-1 flex gap-3" style={{ flexShrink: 0 }}>
+        <div className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground">
+          <Bluetooth className="w-3 h-3" />
+          <span className={cn(bleDevices.length > 0 ? "text-foreground" : "text-muted-foreground/40")}>
+            {bleDevices.length}
+          </span>
+        </div>
+        <div className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground">
+          <Wifi className="w-3 h-3" />
+          <span className={cn(wifiDevices.length > 0 ? "text-foreground" : "text-muted-foreground/40")}>
+            {wifiDevices.length}
+          </span>
+        </div>
+        <div className="ml-auto text-[10px] font-mono text-muted-foreground/50">
+          {bleStatus ? `${bleStatus.adapter}` : "—"}
+        </div>
+      </div>
+
+      {/* Device list */}
+      <div className="flex-1 overflow-hidden px-2 pb-1">
+        {sorted.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full gap-1 text-muted-foreground/30">
+            <Signal className="w-4 h-4" />
+            <span className="text-[10px] font-mono uppercase">
+              {bleAlive ? "Сканира…" : "Няма хардуер"}
+            </span>
+          </div>
+        ) : (
+          <div className="space-y-0.5">
+            {sorted.map(d => {
+              const label = d.name || d.vendor || `…${d.mac.slice(-8)}`;
+              const bar = rssiBar(d.rssiDbm);
+              return (
+                <div key={d.id} className="flex items-center gap-2 py-0.5 px-1 rounded hover:bg-white/5 transition-colors">
+                  <div className={cn(
+                    "text-[9px] font-mono font-bold px-1 rounded flex-shrink-0",
+                    d.signalType === "BLE"
+                      ? "bg-blue-500/15 text-blue-400"
+                      : "bg-green-500/15 text-green-400"
+                  )}>
+                    {d.signalType}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-[10px] font-mono text-foreground/70 truncate">{label}</div>
+                    <div className="h-1 bg-white/5 rounded overflow-hidden mt-0.5">
+                      <div
+                        className="h-full rounded"
+                        style={{
+                          width: `${bar}%`,
+                          backgroundColor: d.signalType === "BLE" ? "#60a5fa" : "#4ade80",
+                          opacity: 0.6,
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <div className="text-[9px] font-mono text-muted-foreground/40 flex-shrink-0 w-8 text-right">
+                    {timeAgo(d.timestamp)}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -338,7 +508,7 @@ export default function Home() {
       {/* ── Command Panel (right, fixed width) ── */}
       <div
         className="border-l border-border bg-card/80 backdrop-blur-md"
-        style={{ width: 360, flexShrink: 0, display: "grid", gridTemplateRows: "1fr 230px 196px", overflow: "hidden" }}
+        style={{ width: 360, flexShrink: 0, display: "grid", gridTemplateRows: "1fr 230px 150px 150px", overflow: "hidden" }}
       >
 
         {/* ── Section 1: Active Targets ── */}
@@ -399,7 +569,12 @@ export default function Home() {
           </div>
         </div>
 
-        {/* ── Section 3: History ── */}
+        {/* ── Section 3: BLE / WiFi ── */}
+        <div style={{ display: "flex", flexDirection: "column", overflow: "hidden", borderBottom: "1px solid hsl(var(--border) / 0.5)" }}>
+          <BleWifiPanel />
+        </div>
+
+        {/* ── Section 4: History ── */}
         <div style={{ display: "flex", flexDirection: "column", overflow: "hidden" }}>
           <div className="px-3 py-2 flex items-center gap-2 border-b border-border/30" style={{ flexShrink: 0 }}>
             <Clock className="w-3.5 h-3.5 text-primary" />
