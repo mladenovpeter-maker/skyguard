@@ -97,7 +97,7 @@ export function RadarMap({ config, activeTracks, rfAlerts = [] }: RadarMapProps)
 
   return (
     <div className={`w-full h-full relative ${hasAlarm ? 'alarm-active' : ''}`}>
-      <MapContainer
+      <MapContainer attributionControl={false}
         center={[config.lat, config.lng]}
         zoom={16}
         className="w-full h-full bg-background"

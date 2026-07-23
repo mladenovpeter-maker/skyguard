@@ -72,7 +72,7 @@ export function LocationPicker({ lat, lng, onChange }: LocationPickerProps) {
   return (
     <div className="space-y-2">
       <div className="relative w-full h-64 rounded-md overflow-hidden border border-border">
-        <MapContainer
+        <MapContainer attributionControl={false}
           key={hasValidPosition ? "positioned" : "default"}
           center={center}
           zoom={hasValidPosition ? 15 : 6}
