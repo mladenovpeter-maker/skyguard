@@ -194,7 +194,7 @@ export default function Admin() {
                     : t("admin.neverConnected")}
                 </div>
                 <div className="text-right">
-                  {!device.revoked && (
+                  {(
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive hover:bg-destructive/10">
