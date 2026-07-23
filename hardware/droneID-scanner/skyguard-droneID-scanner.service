@@ -5,10 +5,10 @@ Wants=bluetooth.target
 
 [Service]
 Type=simple
-User=root
-WorkingDirectory=/home/pi/skyguard/hardware/droneID-scanner
-EnvironmentFile=/home/pi/skyguard/hardware/droneID-scanner/.env
-ExecStart=/usr/bin/python3 /home/pi/skyguard/hardware/droneID-scanner/scanner.py
+User=admin
+WorkingDirectory=/home/admin/skyguard/hardware/droneID-scanner
+EnvironmentFile=/home/admin/skyguard/hardware/droneID-scanner/.env
+ExecStart=/home/admin/hackrf_sweep/venv/bin/python3 /home/admin/skyguard/hardware/droneID-scanner/scanner.py
 Restart=always
 RestartSec=5
 StandardOutput=journal

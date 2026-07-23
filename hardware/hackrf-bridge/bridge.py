@@ -140,8 +140,13 @@ try:
     sys.path.insert(0, str(Path(__file__).parent.parent / "rf-fingerprinting"))
     from classify import load_model, classify_band as rf_classify_band
     _rf_model_available = load_model()
-except Exception:
+    if _rf_model_available:
+        log.info("RF fingerprinting model loaded ✓")
+    else:
+        log.warning("RF fingerprinting: load_model() returned False (model file missing?)")
+except Exception as _fp_exc:
     _rf_model_available = False
+    log.warning("RF fingerprinting disabled: %s", _fp_exc)
     def rf_classify_band(*_a, **_kw): return None  # type: ignore
 
 if not API_BASE or not DEVICE_KEY:

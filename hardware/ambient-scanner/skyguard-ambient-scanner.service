@@ -6,9 +6,9 @@ Wants=bluetooth.target
 [Service]
 Type=simple
 User=root
-WorkingDirectory=/home/pi/skyguard/hardware/ambient-scanner
-EnvironmentFile=/home/pi/skyguard/hardware/ambient-scanner/.env
-ExecStart=/usr/bin/python3 /home/pi/skyguard/hardware/ambient-scanner/scanner.py
+WorkingDirectory=/home/admin/skyguard/hardware/ambient-scanner
+EnvironmentFile=/home/admin/skyguard/hardware/ambient-scanner/.env
+ExecStart=/home/admin/hackrf_sweep/venv/bin/python3 /home/admin/skyguard/hardware/ambient-scanner/scanner.py
 Restart=always
 RestartSec=5
 StandardOutput=journal
