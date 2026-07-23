@@ -1,0 +1,65 @@
+tmm@tmm:~/skyguard$ git stash && git pull && pnpm --filter @workspace/skyguard-os run build && sudo nginx -s reload
+Saved working directory and index state WIP on main: 9fa1d0e Add screenshot attachment
+Updating 9fa1d0e..e190a87
+Fast-forward
+ .agents/memory/MEMORY.md                                                                         |     1 +
+ .agents/memory/linux-server-git-sync.md                                                          |    29 +
+ artifacts/api-server/dist/index.mjs                                                              | 60033 ----------------------------------------------------------
+ artifacts/api-server/dist/index.mjs.map                                                          |     7 -
+ artifacts/api-server/dist/pino-file.mjs                                                          |  4350 -----
+ artifacts/api-server/dist/pino-file.mjs.map                                                      |     7 -
+ artifacts/api-server/dist/pino-pretty.mjs                                                        |  3306 ----
+ artifacts/api-server/dist/pino-pretty.mjs.map                                                    |     7 -
+ artifacts/api-server/dist/pino-worker.mjs                                                        |  4706 -----
+ artifacts/api-server/dist/pino-worker.mjs.map                                                    |     7 -
+ artifacts/api-server/dist/thread-stream-worker.mjs                                               |   228 -
+ artifacts/api-server/dist/thread-stream-worker.mjs.map                                           |     7 -
+ artifacts/skyguard-os/dist/public/favicon.svg                                                    |     3 -
+ artifacts/skyguard-os/dist/public/index.html                                                     |    25 -
+ artifacts/skyguard-os/dist/public/logo.svg                                                       |     8 -
+ artifacts/skyguard-os/dist/public/robots.txt                                                     |     2 -
+ artifacts/skyguard-os/src/App.tsx                                                                |     6 +-
+ artifacts/skyguard-os/src/pages/home.tsx                                                         |     4 +-
+ artifacts/skyguard-os/src/pages/landing.tsx                                                      |   245 +
+ artifacts/skyguard-os/src/pages/spectrum.tsx                                                     |     4 +-
+ attached_assets/Pasted-admin-skyguard-skyguard-cd-skyguard-git-pull-pnpm-filte_1784833135778.txt |    48 +
+ attached_assets/Pasted-tmm-tmm-skyguard-git-stash-git-pull-pnpm-filter-workspa_1784833266590.txt |    68 +
+ hardware/hackrf-bridge/frequencies.json                                                          |     6 +-
+ 23 files changed, 404 insertions(+), 72703 deletions(-)
+ create mode 100644 .agents/memory/linux-server-git-sync.md
+ delete mode 100644 artifacts/api-server/dist/index.mjs
+ delete mode 100644 artifacts/api-server/dist/index.mjs.map
+ delete mode 100644 artifacts/api-server/dist/pino-file.mjs
+ delete mode 100644 artifacts/api-server/dist/pino-file.mjs.map
+ delete mode 100644 artifacts/api-server/dist/pino-pretty.mjs
+ delete mode 100644 artifacts/api-server/dist/pino-pretty.mjs.map
+ delete mode 100644 artifacts/api-server/dist/pino-worker.mjs
+ delete mode 100644 artifacts/api-server/dist/pino-worker.mjs.map
+ delete mode 100644 artifacts/api-server/dist/thread-stream-worker.mjs
+ delete mode 100644 artifacts/api-server/dist/thread-stream-worker.mjs.map
+ delete mode 100644 artifacts/skyguard-os/dist/public/favicon.svg
+ delete mode 100644 artifacts/skyguard-os/dist/public/index.html
+ delete mode 100644 artifacts/skyguard-os/dist/public/logo.svg
+ delete mode 100644 artifacts/skyguard-os/dist/public/robots.txt
+ create mode 100644 artifacts/skyguard-os/src/pages/landing.tsx
+ create mode 100644 attached_assets/Pasted-admin-skyguard-skyguard-cd-skyguard-git-pull-pnpm-filte_1784833135778.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-git-stash-git-pull-pnpm-filter-workspa_1784833266590.txt
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2722 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.54 kB
+dist/public/assets/index-BkG5i5kI.css  146.84 kB │ gzip:  29.98 kB
+dist/public/assets/index-Dm8nDu0S.js   752.73 kB │ gzip: 233.17 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 4.95s
+2026/07/23 19:29:03 [notice] 1055468#1055468: signal process started
+tmm@tmm:~/skyguard$ 
