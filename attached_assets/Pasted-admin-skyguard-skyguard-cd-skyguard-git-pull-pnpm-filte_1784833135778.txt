@@ -1,0 +1,48 @@
+admin@skyguard:~/skyguard $ cd ~/skyguard
+git pull
+pnpm --filter @workspace/skyguard-os run build
+sudo nginx -s reload
+remote: Enumerating objects: 22, done.
+remote: Counting objects: 100% (22/22), done.
+remote: Compressing objects: 100% (10/10), done.
+remote: Total 20 (delta 10), reused 20 (delta 10), pack-reused 0 (from 0)
+Unpacking objects: 100% (20/20), 1.26 MiB | 1.80 MiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+   902448d..9fa1d0e  main       -> origin/main
+Updating 902448d..9fa1d0e
+Fast-forward
+ attached_assets/Pasted-tmm-tmm-skyguard-sudo-systemctl-start-cloudflared-sudo-_1784832750106.txt |  23 +++++++++++++++++++++++
+ attached_assets/Screenshot_2026-07-23_at_21.45.53_1784832355905.png                              | Bin 0 -> 400871 bytes
+ attached_assets/Screenshot_2026-07-23_at_21.48.04_1784832488169.png                              | Bin 0 -> 390550 bytes
+ attached_assets/Screenshot_2026-07-23_at_21.54.22_1784832866424.png                              | Bin 0 -> 575742 bytes
+ attached_assets/Screenshot_2026-07-23_at_21.55.05_1784832909779.png                              | Bin 0 -> 140329 bytes
+ 5 files changed, 23 insertions(+)
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-sudo-systemctl-start-cloudflared-sudo-_1784832750106.txt
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_21.45.53_1784832355905.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_21.48.04_1784832488169.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_21.54.22_1784832866424.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_21.55.05_1784832909779.png
+
+> @workspace/skyguard-os@0.0.0 build /home/admin/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+failed to load config from /home/admin/skyguard/artifacts/skyguard-os/vite.config.ts
+error during build:
+Error: Cannot find module '../lightningcss.linux-arm64-gnu.node'
+Require stack:
+- /home/admin/skyguard/node_modules/.pnpm/lightningcss@1.32.0/node_modules/lightningcss/node/index.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Module._load (node:internal/modules/cjs/loader:1038:27)
+    at Module.require (node:internal/modules/cjs/loader:1289:19)
+    at require (node:internal/modules/helpers:182:18)
+    at Object.<anonymous> (/home/admin/skyguard/node_modules/.pnpm/lightningcss@1.32.0/node_modules/lightningcss/node/index.js:20:12)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+    at Module.load (node:internal/modules/cjs/loader:1266:32)
+    at Module._load (node:internal/modules/cjs/loader:1091:12)
+    at cjsLoader (node:internal/modules/esm/translators:298:15)
+/home/admin/skyguard/artifacts/skyguard-os:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/skyguard-os@0.0.0 build: `vite build --config vite.config.ts`
+Exit status 1
+sudo: nginx: command not found
+admin@skyguard:~/skyguard $ 
