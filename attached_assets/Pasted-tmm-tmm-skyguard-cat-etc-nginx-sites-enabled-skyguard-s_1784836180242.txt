@@ -1,0 +1,66 @@
+tmm@tmm:~/skyguard$ cat /etc/nginx/sites-enabled/skyguard
+server {
+    listen 8090;
+    server_name _;
+
+    root /var/www/skyguard/public;
+    index index.html;
+
+    location /api/ {
+        proxy_pass http://127.0.0.1:3001;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    location /hackrf-ws {
+        proxy_pass http://192.168.100.252:8765;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_read_timeout 86400s;
+        proxy_send_timeout 86400s;
+    }
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
+tmm@tmm:~/skyguard$ cd ~/skyguard && git pull && pnpm --filter @workspace/skyguard-os run build
+remote: Enumerating objects: 16, done.
+remote: Counting objects: 100% (16/16), done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 9 (delta 7), reused 9 (delta 7), pack-reused 0 (from 0)
+Unpacking objects: 100% (9/9), 6.35 KiB | 2.12 MiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+   c00a228..4d32a55  main       -> origin/main
+Updating c00a228..4d32a55
+Fast-forward
+ artifacts/skyguard-os/src/pages/landing.tsx                                                      | 567 ++++++++++++++++++++++++++++--------------------------------
+ attached_assets/Pasted-tmm-tmm-cd-skyguard-git-pull-pnpm-filter-workspace-skyg_1784835706158.txt |  33 ++++
+ 2 files changed, 302 insertions(+), 298 deletions(-)
+ create mode 100644 attached_assets/Pasted-tmm-tmm-cd-skyguard-git-pull-pnpm-filter-workspace-skyg_1784835706158.txt
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2722 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.54 kB
+dist/public/assets/index-C9-7o2Qe.css  143.08 kB │ gzip:  29.59 kB
+dist/public/assets/index-BAT1fuxv.js   763.90 kB │ gzip: 235.94 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 4.71s
+tmm@tmm:~/skyguard$ sudo sed -i 's|index index.html;|index index.html;\n        try_files $uri $uri/ /index.html;|' /etc/nginx/sites-enabled/skyguard
+tmm@tmm:~/skyguard$ sudo nginx -t && sudo nginx -s reload
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+2026/07/23 19:49:30 [notice] 1077151#1077151: signal process started
+tmm@tmm:~/skyguard$ 
