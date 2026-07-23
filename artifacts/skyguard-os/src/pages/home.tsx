@@ -232,14 +232,15 @@ function BleWifiPanel() {
   const { data: bleStatus } = useBleStatus();
   const { data: ambient = [] } = useAmbientDevices();
 
+  // DroneID scanner heartbeat freshness (sends every ~28s by default)
   const staleSecs = bleStatus
     ? Math.floor((Date.now() - new Date(bleStatus.receivedAt).getTime()) / 1000)
     : null;
-  const bleAlive = staleSecs !== null && staleSecs < 90;
+  const droneIdAlive = staleSecs !== null && staleSecs < 90;
 
-  const bleDevices  = ambient.filter(d => d.signalType === "BLE");
+  // ambient-scanner is WiFi-only; BLE count from ambient will always be 0
   const wifiDevices = ambient.filter(d => d.signalType === "WIFI");
-  const sorted = [...ambient].sort((a, b) =>
+  const sorted = [...wifiDevices].sort((a, b) =>
     new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
   ).slice(0, 5);
 
@@ -248,53 +249,49 @@ function BleWifiPanel() {
       {/* Header */}
       <div className="px-3 py-2 flex items-center gap-2 border-b border-border/30" style={{ flexShrink: 0 }}>
         <Bluetooth className="w-3.5 h-3.5 text-primary" />
-        <span className="font-mono text-xs font-bold text-primary uppercase tracking-wider">BLE / WiFi</span>
+        <span className="font-mono text-xs font-bold text-primary uppercase tracking-wider">DroneID / WiFi</span>
         <div className="ml-auto flex items-center gap-2">
-          {bleAlive ? (
-            <>
-              <span className="text-[10px] font-mono text-muted-foreground">
-                {bleStatus!.totalScans.toLocaleString()} scans
-              </span>
-              <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-            </>
-          ) : (
-            <>
-              <span className="text-[10px] font-mono text-muted-foreground/40 uppercase">
-                {bleStatus ? "Stale" : "Waiting"}
-              </span>
-              <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/30" />
-            </>
+          {wifiDevices.length > 0 && (
+            <span className="text-[10px] font-mono text-muted-foreground">
+              {wifiDevices.length} AP
+            </span>
           )}
+          <div className={cn(
+            "w-1.5 h-1.5 rounded-full",
+            wifiDevices.length > 0 ? "bg-green-400 animate-pulse" : "bg-muted-foreground/30"
+          )} />
         </div>
       </div>
 
-      {/* Stats row */}
-      <div className="px-3 pt-1.5 pb-1 flex gap-3" style={{ flexShrink: 0 }}>
-        <div className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground">
-          <Bluetooth className="w-3 h-3" />
-          <span className={cn(bleDevices.length > 0 ? "text-foreground" : "text-muted-foreground/40")}>
-            {bleDevices.length}
+      {/* Stats row: DroneID scanner + WiFi count */}
+      <div className="px-3 pt-1.5 pb-1 flex items-center gap-3" style={{ flexShrink: 0 }}>
+        {/* DroneID scanner status */}
+        <div className="flex items-center gap-1.5">
+          <Bluetooth className="w-3 h-3 text-muted-foreground" />
+          <span className={cn(
+            "text-[10px] font-mono font-bold uppercase",
+            droneIdAlive ? "text-green-400" : "text-muted-foreground/40"
+          )}>
+            {droneIdAlive ? `LIVE · ${bleStatus!.totalScans.toLocaleString()}` : "OFFLINE"}
           </span>
         </div>
-        <div className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground">
-          <Wifi className="w-3 h-3" />
-          <span className={cn(wifiDevices.length > 0 ? "text-foreground" : "text-muted-foreground/40")}>
+        <div className="flex items-center gap-1 ml-auto">
+          <Wifi className="w-3 h-3 text-muted-foreground" />
+          <span className={cn(
+            "text-[10px] font-mono",
+            wifiDevices.length > 0 ? "text-foreground" : "text-muted-foreground/40"
+          )}>
             {wifiDevices.length}
           </span>
         </div>
-        <div className="ml-auto text-[10px] font-mono text-muted-foreground/50">
-          {bleStatus ? `${bleStatus.adapter}` : "—"}
-        </div>
       </div>
 
-      {/* Device list */}
+      {/* WiFi device list */}
       <div className="flex-1 overflow-hidden px-2 pb-1">
         {sorted.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full gap-1 text-muted-foreground/30">
-            <Signal className="w-4 h-4" />
-            <span className="text-[10px] font-mono uppercase">
-              {bleAlive ? "Сканира…" : "Няма хардуер"}
-            </span>
+          <div className="flex items-center justify-center h-full gap-2 text-muted-foreground/30">
+            <Signal className="w-3.5 h-3.5" />
+            <span className="text-[10px] font-mono uppercase">Сканира WiFi…</span>
           </div>
         ) : (
           <div className="space-y-0.5">
@@ -303,29 +300,18 @@ function BleWifiPanel() {
               const bar = rssiBar(d.rssiDbm);
               return (
                 <div key={d.id} className="flex items-center gap-2 py-0.5 px-1 rounded hover:bg-white/5 transition-colors">
-                  <div className={cn(
-                    "text-[9px] font-mono font-bold px-1 rounded flex-shrink-0",
-                    d.signalType === "BLE"
-                      ? "bg-blue-500/15 text-blue-400"
-                      : "bg-green-500/15 text-green-400"
-                  )}>
-                    {d.signalType}
-                  </div>
+                  <Wifi className="w-3 h-3 text-green-400/60 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div className="text-[10px] font-mono text-foreground/70 truncate">{label}</div>
                     <div className="h-1 bg-white/5 rounded overflow-hidden mt-0.5">
                       <div
                         className="h-full rounded"
-                        style={{
-                          width: `${bar}%`,
-                          backgroundColor: d.signalType === "BLE" ? "#60a5fa" : "#4ade80",
-                          opacity: 0.6,
-                        }}
+                        style={{ width: `${bar}%`, backgroundColor: "#4ade80", opacity: 0.55 }}
                       />
                     </div>
                   </div>
                   <div className="text-[9px] font-mono text-muted-foreground/40 flex-shrink-0 w-8 text-right">
-                    {timeAgo(d.timestamp)}
+                    {d.rssiDbm !== null ? `${d.rssiDbm}` : ""}
                   </div>
                 </div>
               );
@@ -528,9 +514,9 @@ export default function Home() {
           <ScrollArea style={{ flex: 1, minHeight: 0 }}>
             <div className="p-2 space-y-2">
               {tracks.length === 0 ? (
-                <div className="flex flex-col items-center gap-2 py-6 text-muted-foreground/40">
-                  <Crosshair className="w-7 h-7" />
-                  <span className="text-xs font-mono uppercase">{t("telemetry.noTargets")}</span>
+                <div className="flex items-center justify-center gap-2 py-3 text-muted-foreground/30">
+                  <Crosshair className="w-3.5 h-3.5" />
+                  <span className="text-[10px] font-mono uppercase">{t("telemetry.noTargets")}</span>
                 </div>
               ) : (
                 tracks.map(track => <TargetCard key={track.droneId} track={track} />)
