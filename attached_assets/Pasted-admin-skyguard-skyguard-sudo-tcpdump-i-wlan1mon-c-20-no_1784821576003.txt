@@ -1,0 +1,22 @@
+admin@skyguard:~/skyguard $ sudo tcpdump -i wlan1mon -c 20 --no-promiscuous-mode 2>&1 | head -20
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on wlan1mon, link-type IEEE802_11_RADIO (802.11 plus radiotap header), snapshot length 262144 bytes
+18:46:08.909241 145018152us tsft 1.0 Mb/s 2412 MHz 11b -62dBm signal -62dBm signal antenna 0 Beacon (SAS) [1.0* 2.0* 5.5* 11.0* 9.0 18.0 36.0 54.0 Mbit] ESS CH: 1, PRIVACY
+18:46:08.916107 145027145us tsft 24.0 Mb/s 2412 MHz 11g -58dBm signal -58dBm signal antenna 0 Data IV:d059 Pad 20 KeyID 2
+18:46:08.916223 145027284us tsft 24.0 Mb/s 2412 MHz 11g -58dBm signal -58dBm signal antenna 0 Data IV:977c Pad 20 KeyID 2
+18:46:08.919107 145027976us tsft 1.0 Mb/s 2412 MHz 11b -86dBm signal -86dBm signal antenna 0 Beacon (:)) [1.0* 2.0* 5.5* 11.0* 18.0 24.0 36.0 54.0 Mbit] ESS CH: 1, PRIVACY
+18:46:08.934176 145045171us tsft 6.0 Mb/s 2412 MHz 11g -74dBm signal -74dBm signal antenna 0 Data IV: 2d Pad 20 KeyID 2
+18:46:08.934241 145045385us tsft 24.0 Mb/s 2412 MHz 11g -58dBm signal -58dBm signal antenna 0 Data IV:d05a Pad 20 KeyID 2
+18:46:08.934321 145045471us tsft 24.0 Mb/s 2412 MHz 11g -58dBm signal -58dBm signal antenna 0 Data IV:977d Pad 20 KeyID 2
+18:46:08.936670 145045976us tsft 1.0 Mb/s 2412 MHz 11b -82dBm signal -82dBm signal antenna 0 Beacon (Mladenovi) [1.0* 2.0* 5.5* 11.0* 6.0* 9.0 12.0* 18.0 Mbit] ESS CH: 1, PRIVACY
+18:46:08.936853 145047887us tsft 6.0 Mb/s 2412 MHz 11g -76dBm signal -76dBm signal antenna 0 Data IV: 1d Pad 20 KeyID 2
+18:46:08.960662 145071411us tsft 6.0 Mb/s 2412 MHz 11g -76dBm signal -76dBm signal antenna 0 Beacon () [1.0* 2.0* 5.5* 11.0* 6.0* 9.0 12.0* 18.0 Mbit] ESS CH: 1, PRIVACY
+18:46:08.964031 145074354us tsft 1.0 Mb/s 2412 MHz 11b -46dBm signal -46dBm signal antenna 0 Beacon (SmartLife-8064) [5.5* 11.0* 1.0* 2.0* 6.0 12.0 24.0 48.0 Mbit] ESS CH: 1
+18:46:08.969986 145079750us tsft 1.0 Mb/s 2412 MHz 11b -78dBm signal -78dBm signal antenna 0 Beacon (Meross_SW_AEE8) [1.0* 2.0* 5.5* 11.0* 6.0 9.0 12.0 18.0 Mbit] ESS CH: 1
+18:46:08.973242 145082757us tsft 1.0 Mb/s 2412 MHz 11b -70dBm signal -70dBm signal antenna 0 Beacon (AP_3116602913) [1.0* 2.0* 5.5* 11.0* 6.0 9.0 12.0 18.0 Mbit] ESS CH: 1, PRIVACY
+18:46:09.004498 145113416us tsft 1.0 Mb/s 2412 MHz 11b -62dBm signal -62dBm signal antenna 0 Beacon (Mladenovi) [1.0* 2.0* 5.5* 11.0* 9.0 18.0 36.0 54.0 Mbit] ESS CH: 1, PRIVACY
+18:46:09.008633 145117547us tsft 1.0 Mb/s 2412 MHz 11b -62dBm signal -62dBm signal antenna 0 Beacon (SAS) [1.0* 2.0* 5.5* 11.0* 9.0 18.0 36.0 54.0 Mbit] ESS CH: 1, PRIVACY
+18:46:09.019090 145130071us tsft 6.0 Mb/s 2412 MHz 11g -76dBm signal -76dBm signal antenna 0 Data IV: 2e Pad 20 KeyID 2
+18:46:09.021621 145132666us tsft 24.0 Mb/s 2412 MHz 11g -58dBm signal -58dBm signal antenna 0 Data IV:977e Pad 20 KeyID 2
+18:46:09.021673 145132796us tsft 24.0 Mb/s 2412 MHz 11g -58dBm signal -58dBm signal antenna 0 Data IV:d05b Pad 20 KeyID 2
+admin@skyguard:~/skyguard $ 
