@@ -1,0 +1,23 @@
+tmm@tmm:~/skyguard$ sudo systemctl start cloudflared
+sudo systemctl status cloudflared
+● cloudflared.service - Cloudflare Tunnel client
+     Loaded: loaded (/etc/systemd/system/cloudflared.service; enabled; preset: enabled)
+     Active: active (running) since Thu 2026-07-23 18:49:31 UTC; 2min 53s ago
+   Main PID: 1013848 (cloudflared)
+      Tasks: 12 (limit: 18848)
+     Memory: 16.5M (peak: 18.9M)
+        CPU: 850ms
+     CGroup: /system.slice/cloudflared.service
+             └─1013848 /usr/bin/cloudflared --no-autoupdate tunnel run --token-file /etc/cloudflared/token
+
+Jul 23 18:49:36 tmm cloudflared[1013848]: 2026-07-23T18:49:36Z INF |  SUMMARY: Environment is healthy. cloudflared will use 'quic' as primary protocol.  |
+Jul 23 18:49:36 tmm cloudflared[1013848]: 2026-07-23T18:49:36Z INF +-------------------------------------------------------------------------------------+
+Jul 23 18:49:36 tmm cloudflared[1013848]: 2026-07-23T18:49:36Z INF precheck component="DNS Resolution" details="DNS Resolved successfully" run_id=dafcff03-6e7c-4dd2>
+Jul 23 18:49:36 tmm cloudflared[1013848]: 2026-07-23T18:49:36Z INF precheck component="DNS Resolution" details="DNS Resolved successfully" run_id=dafcff03-6e7c-4dd2>
+Jul 23 18:49:36 tmm cloudflared[1013848]: 2026-07-23T18:49:36Z INF precheck component="UDP Connectivity" details="QUIC connection successful" run_id=dafcff03-6e7c-4>
+Jul 23 18:49:36 tmm cloudflared[1013848]: 2026-07-23T18:49:36Z INF precheck component="UDP Connectivity" details="QUIC connection successful" run_id=dafcff03-6e7c-4>
+Jul 23 18:49:36 tmm cloudflared[1013848]: 2026-07-23T18:49:36Z INF precheck component="TCP Connectivity" details="HTTP/2 connection successful" run_id=dafcff03-6e7c>
+Jul 23 18:49:36 tmm cloudflared[1013848]: 2026-07-23T18:49:36Z INF precheck component="TCP Connectivity" details="HTTP/2 connection successful" run_id=dafcff03-6e7c>
+Jul 23 18:49:36 tmm cloudflared[1013848]: 2026-07-23T18:49:36Z INF precheck component="Cloudflare API" details="API is reachable" run_id=dafcff03-6e7c-4dd2-9d34-389>
+Jul 23 18:49:36 tmm cloudflared[1013848]: 2026-07-23T18:49:36Z INF precheck complete hard_fail=false run_id=dafcff03-6e7c-4dd2-9d34-3893f17a4e67 suggested_protocol=>
+lines 1-20/20 (END)
