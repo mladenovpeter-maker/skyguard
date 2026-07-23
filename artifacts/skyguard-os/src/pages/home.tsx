@@ -336,10 +336,10 @@ export default function Home() {
       </div>
 
       {/* ── Command Panel (right, fixed width) ── */}
-      <div className="w-[360px] flex-shrink-0 flex flex-col border-l border-border bg-card/80 backdrop-blur-md">
+      <div className="w-[360px] flex-shrink-0 flex flex-col border-l border-border bg-card/80 backdrop-blur-md overflow-hidden">
 
         {/* ── Section 1: Active Targets ── */}
-        <div className="flex flex-col" style={{ flex: "1 1 0", minHeight: 0 }}>
+        <div className="flex flex-col min-h-0 flex-1 overflow-hidden">
           <div className="px-3 py-2 border-b border-border/50 flex items-center gap-2 flex-shrink-0">
             <Crosshair className="w-3.5 h-3.5 text-primary" />
             <span className="font-mono text-xs font-bold text-primary uppercase tracking-wider">
