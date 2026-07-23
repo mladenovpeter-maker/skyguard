@@ -1,0 +1,38 @@
+admin@skyguard:~/skyguard $ cd ~/skyguard && git pull && pnpm --filter @workspace/skyguard-os run build && sudo nginx -s reload
+remote: Enumerating objects: 10, done.
+remote: Counting objects: 100% (10/10), done.
+remote: Compressing objects: 100% (3/3), done.
+remote: Total 8 (delta 5), reused 8 (delta 5), pack-reused 0 (from 0)
+Unpacking objects: 100% (8/8), 2.34 KiB | 66.00 KiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+   e190a87..072f655  main       -> origin/main
+Updating e190a87..072f655
+Fast-forward
+ .../Pasted-admin-skyguard-skyguard-ssh-admin-192-168-100-252-cd-sk_1784835071503.txt  | 49 ++++++++++++++++++++++++++++++++
+ .../Pasted-tmm-tmm-skyguard-git-stash-git-pull-pnpm-filter-workspa_1784834950977.txt  | 65 +++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 114 insertions(+)
+ create mode 100644 attached_assets/Pasted-admin-skyguard-skyguard-ssh-admin-192-168-100-252-cd-sk_1784835071503.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-git-stash-git-pull-pnpm-filter-workspa_1784834950977.txt
+
+> @workspace/skyguard-os@0.0.0 build /home/admin/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+failed to load config from /home/admin/skyguard/artifacts/skyguard-os/vite.config.ts
+error during build:
+Error: Cannot find module '../lightningcss.linux-arm64-gnu.node'
+Require stack:
+- /home/admin/skyguard/node_modules/.pnpm/lightningcss@1.32.0/node_modules/lightningcss/node/index.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Module._load (node:internal/modules/cjs/loader:1038:27)
+    at Module.require (node:internal/modules/cjs/loader:1289:19)
+    at require (node:internal/modules/helpers:182:18)
+    at Object.<anonymous> (/home/admin/skyguard/node_modules/.pnpm/lightningcss@1.32.0/node_modules/lightningcss/node/index.js:20:12)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+    at Module.load (node:internal/modules/cjs/loader:1266:32)
+    at Module._load (node:internal/modules/cjs/loader:1091:12)
+    at cjsLoader (node:internal/modules/esm/translators:298:15)
+/home/admin/skyguard/artifacts/skyguard-os:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/skyguard-os@0.0.0 build: `vite build --config vite.config.ts`
+Exit status 1
+admin@skyguard:~/skyguard $ 
