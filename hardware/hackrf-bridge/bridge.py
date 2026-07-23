@@ -417,11 +417,12 @@ def check_bands(bins: list[dict]) -> None:
 
         # Determine effective alert threshold
         band_static_threshold = band.get("alert_dbm", ALERT_DBM)
-        if baseline is not None:
+        if baseline is not None and not band.get("static_threshold_only", False):
             # Alert when signal is significantly above ambient baseline
             dynamic_threshold = baseline + BASELINE_MARGIN_DB
             effective_threshold = max(band_static_threshold, dynamic_threshold)
         else:
+            # Static threshold only (used for wideband signals like OcuSync 2.4GHz)
             effective_threshold = band_static_threshold
 
         if peak["dbm"] < effective_threshold:
