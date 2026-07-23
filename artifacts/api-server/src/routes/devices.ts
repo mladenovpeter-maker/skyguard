@@ -14,7 +14,7 @@ function toDeviceJson(device: typeof devicesTable.$inferSelect) {
     name: device.name,
     apiKeyPrefix: device.apiKeyPrefix,
     revoked: device.revoked,
-    createdAt: device.createdAt.toISOString(),
+    createdAt: device.createdAt ? device.createdAt.toISOString() : new Date(0).toISOString(),
     lastSeenAt: device.lastSeenAt ? device.lastSeenAt.toISOString() : null,
   };
 }
