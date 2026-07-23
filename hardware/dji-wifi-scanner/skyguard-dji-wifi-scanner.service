@@ -1,0 +1,15 @@
+[Unit]
+Description=SkyGuard DJI Wi-Fi DroneID Scanner
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/home/pi/skyguard/hardware/dji-wifi-scanner
+EnvironmentFile=/home/pi/skyguard/.env
+ExecStart=/usr/bin/python3 scanner.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

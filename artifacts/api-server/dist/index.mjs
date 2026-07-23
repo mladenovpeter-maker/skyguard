@@ -58994,7 +58994,7 @@ async function getOrCreateHomeConfig() {
   const [created] = await db.insert(homeConfigTable).values(DEFAULT_HOME).returning();
   return created;
 }
-router3.get("/home", requireAuth, async (_req, res) => {
+router3.get("/home", requireSession, async (_req, res) => {
   const home = await getOrCreateHomeConfig();
   res.json(GetHomeConfigResponse.parse(home));
 });
@@ -59617,6 +59617,7 @@ var logger = (0, import_pino.default)({
 
 // src/app.ts
 var app = (0, import_express14.default)();
+app.set("trust proxy", 1);
 app.use(
   (0, import_pino_http.default)({
     logger,
@@ -59640,7 +59641,7 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: false,
       sameSite: "lax",
       maxAge: 7 * 24 * 60 * 60 * 1e3
       // 7 days
