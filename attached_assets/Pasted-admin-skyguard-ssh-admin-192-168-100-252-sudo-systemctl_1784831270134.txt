@@ -1,0 +1,64 @@
+admin@skyguard:~ $ ssh admin@192.168.100.252
+sudo systemctl status skyguard-hackrf-bridge
+admin@192.168.100.252's password: 
+Linux skyguard 6.18.34+rpt-rpi-v8 #1 SMP PREEMPT Debian 1:6.18.34-1+rpt1 (2026-06-09) aarch64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Thu Jul 23 21:18:53 2026 from 192.168.100.252
+admin@skyguard:~ $ sudo journalctl -u skyguard-hackrf-bridge -n 50 --no-pager
+Jul 23 21:25:10 skyguard python3[39523]: 2026-07-23 21:25:10,022 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz  (watchdog=45s)
+Jul 23 21:25:16 skyguard python3[39523]: 2026-07-23 21:25:16,283 [WARNING] hackrf_sweep exited after 2240 sweeps — restarting
+Jul 23 21:25:16 skyguard python3[39523]: 2026-07-23 21:25:16,283 [INFO] Restarting hackrf_sweep in 5s…
+Jul 23 21:25:21 skyguard python3[39523]: 2026-07-23 21:25:21,287 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz  (watchdog=45s)
+Jul 23 21:25:25 skyguard python3[39523]: 2026-07-23 21:25:25,621 [WARNING] hackrf_sweep exited after 1376 sweeps — restarting
+Jul 23 21:25:25 skyguard python3[39523]: 2026-07-23 21:25:25,621 [INFO] Restarting hackrf_sweep in 5s…
+Jul 23 21:25:30 skyguard python3[39523]: 2026-07-23 21:25:30,626 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz  (watchdog=45s)
+Jul 23 21:25:38 skyguard python3[39523]: 2026-07-23 21:25:38,977 [WARNING] hackrf_sweep exited after 3200 sweeps — restarting
+Jul 23 21:25:38 skyguard python3[39523]: 2026-07-23 21:25:38,977 [INFO] Restarting hackrf_sweep in 5s…
+Jul 23 21:25:43 skyguard python3[39523]: 2026-07-23 21:25:43,983 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz  (watchdog=45s)
+Jul 23 21:25:49 skyguard python3[39523]: 2026-07-23 21:25:49,715 [INFO] Suppressed bands: none
+Jul 23 21:25:50 skyguard python3[39523]: 2026-07-23 21:25:50,348 [WARNING] hackrf_sweep exited after 2240 sweeps — restarting
+Jul 23 21:25:50 skyguard python3[39523]: 2026-07-23 21:25:50,349 [INFO] Restarting hackrf_sweep in 5s…
+Jul 23 21:25:55 skyguard python3[39523]: 2026-07-23 21:25:55,352 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz  (watchdog=45s)
+Jul 23 21:25:57 skyguard python3[39523]: 2026-07-23 21:25:57,026 [INFO] RF FINGERPRINT suppressed DJI O3 Low-band 5.1 GHz → classified as wifi
+Jul 23 21:26:01 skyguard python3[39523]: 2026-07-23 21:26:01,393 [WARNING] Alert POST 500: <!DOCTYPE html>
+Jul 23 21:26:01 skyguard python3[39523]: <html lang="en">
+Jul 23 21:26:01 skyguard python3[39523]: <head>
+Jul 23 21:26:01 skyguard python3[39523]: <meta charset="utf-8">
+Jul 23 21:26:01 skyguard python3[39523]: <title>Error</tit
+Jul 23 21:26:01 skyguard python3[39523]: 2026-07-23 21:26:01,740 [WARNING] hackrf_sweep exited after 2240 sweeps — restarting
+Jul 23 21:26:01 skyguard python3[39523]: 2026-07-23 21:26:01,740 [INFO] Restarting hackrf_sweep in 5s…
+Jul 23 21:26:06 skyguard python3[39523]: 2026-07-23 21:26:06,742 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz  (watchdog=45s)
+Jul 23 21:26:14 skyguard python3[39523]: 2026-07-23 21:26:14,585 [WARNING] hackrf_sweep exited after 2816 sweeps — restarting
+Jul 23 21:26:14 skyguard python3[39523]: 2026-07-23 21:26:14,586 [INFO] Restarting hackrf_sweep in 5s…
+Jul 23 21:26:17 skyguard python3[39523]: 2026-07-23 21:26:17,813 [INFO] WS client disconnected (total: 3)
+Jul 23 21:26:17 skyguard python3[39523]: 2026-07-23 21:26:17,815 [INFO] connection open
+Jul 23 21:26:17 skyguard python3[39523]: 2026-07-23 21:26:17,816 [INFO] WS client connected from ('192.168.100.224', 52822)  (total: 4)
+Jul 23 21:26:19 skyguard python3[39523]: 2026-07-23 21:26:19,588 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz  (watchdog=45s)
+Jul 23 21:26:21 skyguard python3[39523]: 2026-07-23 21:26:21,405 [INFO] connection open
+Jul 23 21:26:21 skyguard python3[39523]: 2026-07-23 21:26:21,407 [INFO] WS client connected from ('192.168.100.224', 52830)  (total: 5)
+Jul 23 21:26:26 skyguard python3[39523]: 2026-07-23 21:26:26,268 [WARNING] hackrf_sweep exited after 2880 sweeps — restarting
+Jul 23 21:26:26 skyguard python3[39523]: 2026-07-23 21:26:26,268 [INFO] Restarting hackrf_sweep in 5s…
+Jul 23 21:26:31 skyguard python3[39523]: 2026-07-23 21:26:31,114 [INFO] WS client disconnected (total: 4)
+Jul 23 21:26:31 skyguard python3[39523]: 2026-07-23 21:26:31,132 [INFO] connection open
+Jul 23 21:26:31 skyguard python3[39523]: 2026-07-23 21:26:31,133 [INFO] WS client connected from ('192.168.100.224', 58546)  (total: 5)
+Jul 23 21:26:31 skyguard python3[39523]: 2026-07-23 21:26:31,270 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz  (watchdog=45s)
+Jul 23 21:26:34 skyguard python3[39523]: 2026-07-23 21:26:34,442 [INFO] connection open
+Jul 23 21:26:34 skyguard python3[39523]: 2026-07-23 21:26:34,443 [INFO] WS client connected from ('192.168.100.224', 46302)  (total: 6)
+Jul 23 21:27:16 skyguard python3[39523]: 2026-07-23 21:27:16,275 [WARNING] hackrf_sweep watchdog: no data for 45s after 0 sweeps — killing subprocess and restarting
+Jul 23 21:27:16 skyguard python3[39523]: 2026-07-23 21:27:16,279 [INFO] Restarting hackrf_sweep in 5s…
+Jul 23 21:27:21 skyguard python3[39523]: 2026-07-23 21:27:21,283 [INFO] Starting hackrf_sweep 400–6000 MHz  bin=100 kHz  (watchdog=45s)
+Jul 23 21:27:21 skyguard python3[39523]: 2026-07-23 21:27:21,303 [INFO] WS client disconnected (total: 5)
+Jul 23 21:27:21 skyguard python3[39523]: 2026-07-23 21:27:21,305 [INFO] WS client disconnected (total: 4)
+Jul 23 21:27:21 skyguard python3[39523]: 2026-07-23 21:27:21,306 [INFO] WS client disconnected (total: 3)
+Jul 23 21:27:21 skyguard python3[39523]: 2026-07-23 21:27:21,307 [INFO] WS client disconnected (total: 2)
+Jul 23 21:27:21 skyguard python3[39523]: 2026-07-23 21:27:21,310 [INFO] WS client disconnected (total: 1)
+Jul 23 21:27:21 skyguard python3[39523]: 2026-07-23 21:27:21,311 [INFO] WS client disconnected (total: 0)
+Jul 23 21:27:21 skyguard python3[39523]: 2026-07-23 21:27:21,388 [INFO] connection open
+Jul 23 21:27:21 skyguard python3[39523]: 2026-07-23 21:27:21,388 [INFO] WS client connected from ('192.168.100.224', 55072)  (total: 1)
+admin@skyguard:~ $ 
