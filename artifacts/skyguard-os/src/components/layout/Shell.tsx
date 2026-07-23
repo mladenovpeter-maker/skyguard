@@ -263,7 +263,7 @@ export function Shell({ children }: { children: ReactNode }) {
         </div>
       )}
 
-      <main className="flex-1 flex flex-col relative overflow-hidden">
+      <main className="flex-1 flex flex-col relative overflow-y-auto">
         {children}
       </main>
 

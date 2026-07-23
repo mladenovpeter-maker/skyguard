@@ -1,6 +1,7 @@
-- [SkyGuard hardware setup](hardware-setup.md) — all hardware (HackRF, UB500 BLE, WiFi USB) is on the Raspberry Pi (admin@skyguard, STATIC IP 192.168.100.252); Linux server at 192.168.100.224 (user: tmm) runs API+nginx only.
+- [SkyGuard hardware setup](hardware-setup.md) — all hardware (HackRF, nRF52840 as hci_usb/hci1, WiFi USB) is on the Raspberry Pi (admin@skyguard, STATIC IP 192.168.100.252); Linux server at 192.168.100.224 (user: tmm) runs API+nginx only.
 - [Leaflet dark-mode via CSS invert](leaflet-dark-invert.md) — inverting an already-dark tile layer washes it out light; only invert controls, not `.leaflet-layer`.
 - [Testing Clerk-gated flows](clerk-testing-tickets.md) — sign-up/sign-in UI hits bot/email challenges a tester can't solve; use Clerk Backend API sign-in tickets to bypass.
 - [HackRF WebSocket proxy](hackrf-ws-proxy.md) — browser cannot reach Pi:8765 directly; nginx on Linux server proxies /hackrf-ws → ws://192.168.100.237:8765.
 - [HackRF sweep architecture + RF Fingerprinting roadmap](hackrf-sweep-vs-droneID.md) — bridge.py използва hackrf_sweep (не gr-DroneID); публични dataset-и съществуват; dataset-ите да се пазят на Linux сървъра, не на Pi.
-- [RF Datasets TODO](rf-datasets-todo.md) — 4 dataset-а за изтегляне: Zenodo RF UAV, KU Leuven 2024, IEEE DataPort Open Access (контролер), VTI_DroneSET_FFT Mendeley. CardRF е платен.
+- [RF Fingerprinting статус](rf-datasets-todo.md) — модел натрениран (Jul 22), deploy-нат на Pi, зарежда се при старт на hackrf-bridge. ЗАВЪРШЕНО.
+- [Linux server deploy law](linux-deploy-law.md) — след ВСЯКА промяна по skyguard-os: `git pull && pnpm build && sudo nginx -s reload` на 192.168.100.224. ЗАДЪЛЖИТЕЛНО преди обявяване на задача за завършена.
