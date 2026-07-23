@@ -305,7 +305,7 @@ export default function Home() {
   );
 
   return (
-    <div className="flex-1 flex overflow-hidden">
+    <div style={{ position: "absolute", inset: 0, display: "flex", overflow: "hidden" }}>
       <AudioAlarm active={hasAlarm} />
 
       {/* ── Map (left, flex-1) ── */}
