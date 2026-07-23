@@ -1,0 +1,68 @@
+tmm@tmm:~/skyguard/artifacts/api-server$ cd ~/skyguard && pnpm install && \
+cd artifacts/api-server && pnpm run build && \
+cd ~/skyguard && BASE_PATH=/ pnpm --filter @workspace/skyguard-os run build && \
+sudo systemctl restart skyguard-api && \
+sudo nginx -s reload
+Scope: all 10 workspace projects
+Lockfile is up to date, resolution step is skipped
+Packages: +85
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+   ╭──────────────────────────────────────────╮
+   │                                          │
+   │   Update available! 10.34.5 → 11.16.0.   │
+   │   Changelog: https://pnpm.io/v/11.16.0   │
+   │     To update, run: pnpm add -g pnpm     │
+   │                                          │
+   ╰──────────────────────────────────────────╯
+
+Downloading three@0.179.1: 7.71 MB/7.71 MB, done
+Downloading hls.js@1.6.16: 5.87 MB/5.87 MB, done
+Downloading @mediapipe/tasks-vision@0.10.17: 6.13 MB/6.13 MB, done
+Progress: resolved 85, reused 0, downloaded 85, added 85, done
+. preinstall$ sh -c 'rm -f package-lock.json yarn.lock; case "$npm_config_user_agent" in pnpm/*) ;; *) echo "Use pnpm instead" >&2; exit 1 ;; esac'
+└─ Done in 17ms
+╭ Warning ───────────────────────────────────────────────────────────────────────────────────╮
+│                                                                                            │
+│   Ignored build scripts: @clerk/shared@3.47.8.                                             │
+│   Run "pnpm approve-builds" to pick which dependencies should be allowed to run scripts.   │
+│                                                                                            │
+╰────────────────────────────────────────────────────────────────────────────────────────────╯
+Done in 5s using pnpm v10.34.5
+
+> @workspace/api-server@0.0.0 build /home/tmm/skyguard/artifacts/api-server
+> node ./build.mjs
+
+
+  dist/index.mjs                       2.3mb ⚠️
+  dist/pino-worker.mjs               153.4kb
+  dist/pino-file.mjs                 142.1kb
+  dist/pino-pretty.mjs               114.4kb
+  dist/thread-stream-worker.mjs        7.3kb
+  dist/index.mjs.map                   3.9mb
+  dist/pino-worker.mjs.map           256.9kb
+  dist/pino-file.mjs.map             229.0kb
+  dist/pino-pretty.mjs.map           203.6kb
+  dist/thread-stream-worker.mjs.map   12.0kb
+
+⚡ Done in 176ms
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2721 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.54 kB
+dist/public/assets/index-gOQM5VU8.css  140.59 kB │ gzip:  29.26 kB
+dist/public/assets/index-BxSOW4ie.js   740.16 kB │ gzip: 229.85 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 4.72s
+[sudo] password for tmm: 
+2026/07/23 14:46:08 [notice] 759834#759834: signal process started
+tmm@tmm:~/skyguard$ 
