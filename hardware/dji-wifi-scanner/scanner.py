@@ -90,6 +90,7 @@ def _run(cmd: list[str], check: bool = True) -> subprocess.CompletedProcess:
 
 def setup_monitor() -> bool:
     """Create a monitor-mode interface; return True on success."""
+    global MON_IFACE
     log.info("Setting up monitor mode on %s → %s", WIFI_IFACE, MON_IFACE)
 
     # Remove stale monitor iface if present
@@ -109,8 +110,6 @@ def setup_monitor() -> bool:
         _run(["ip", "link", "set", WIFI_IFACE, "down"])
         _run(["iw", "dev", WIFI_IFACE, "set", "type", "monitor"])
         _run(["ip", "link", "set", WIFI_IFACE, "up"])
-        # In this path, sniff on WIFI_IFACE itself
-        global MON_IFACE
         MON_IFACE = WIFI_IFACE
         log.info("Direct monitor mode on %s", WIFI_IFACE)
         return True
