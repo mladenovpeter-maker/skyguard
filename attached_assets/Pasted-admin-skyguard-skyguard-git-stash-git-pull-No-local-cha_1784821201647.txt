@@ -1,0 +1,180 @@
+admin@skyguard:~/skyguard $ git stash && git pull
+No local changes to save
+remote: Enumerating objects: 278, done.
+remote: Counting objects: 100% (278/278), done.
+remote: Compressing objects: 100% (154/154), done.
+remote: Total 232 (delta 119), reused 186 (delta 73), pack-reused 0 (from 0)
+Receiving objects: 100% (232/232), 10.37 MiB | 7.24 MiB/s, done.
+Resolving deltas: 100% (119/119), completed with 38 local objects.
+From https://github.com/mladenovpeter-maker/skyguard
+   8c66354..d48ee12  main       -> origin/main
+Updating 8c66354..d48ee12
+Fast-forward
+ .agents/memory/MEMORY.md                                                              |     5 +-
+ .agents/memory/linux-deploy-law.md                                                    |    22 +
+ .agents/memory/rf-datasets-todo.md                                                    |    43 +-
+ artifacts/api-server/dist/index.mjs                                                   | 17802 ++---------
+ artifacts/api-server/dist/index.mjs.map                                               |     8 +-
+ artifacts/api-server/package.json                                                     |     2 +
+ artifacts/api-server/src/app.ts                                                       |    39 +-
+ artifacts/api-server/src/lib/telegram.ts                                              |    71 +
+ artifacts/api-server/src/lib/users.ts                                                 |    23 +
+ artifacts/api-server/src/middlewares/requireAdmin.ts                                  |    19 +
+ artifacts/api-server/src/middlewares/requireSession.ts                                |    24 +
+ artifacts/api-server/src/routes/ambient.ts                                            |     5 +-
+ artifacts/api-server/src/routes/auth.ts                                               |    36 +
+ artifacts/api-server/src/routes/detections.ts                                         |    20 +-
+ artifacts/api-server/src/routes/devices.ts                                            |    15 +-
+ artifacts/api-server/src/routes/home.ts                                               |     6 +-
+ artifacts/api-server/src/routes/index.ts                                              |     2 +
+ artifacts/api-server/src/routes/known-rf-sources.ts                                   |     6 +-
+ artifacts/api-server/src/routes/rf-alerts.ts                                          |     9 +-
+ artifacts/api-server/src/routes/status.ts                                             |     5 +-
+ artifacts/skyguard-dome/public/model.stl                                              | 66590 ++++++++++++++++++++--------------------
+ artifacts/skyguard-os/dist/public/assets/index-BgO9_SQ9.css                           |     1 -
+ artifacts/skyguard-os/dist/public/assets/index-DF1kR8Ql.js                            |    68 -
+ artifacts/skyguard-os/dist/public/index.html                                          |     4 +-
+ artifacts/skyguard-os/src/App.tsx                                                     |   158 +-
+ artifacts/skyguard-os/src/components/layout/Shell.tsx                                 |    23 +-
+ artifacts/skyguard-os/src/components/radar/RadarMap.tsx                               |     2 +-
+ artifacts/skyguard-os/src/components/settings/LocationPicker.tsx                      |     9 +-
+ artifacts/skyguard-os/src/lib/auth.tsx                                                |    66 +
+ artifacts/skyguard-os/src/pages/admin.tsx                                             |     2 +-
+ artifacts/skyguard-os/src/pages/login.tsx                                             |    76 +
+ attached_assets/IMG_2939_1784814461448.png                                            |   Bin 0 -> 1834987 bytes
+ .../Pasted--5-Node-modules-builds-du-sh-skyguard-node-modules-2-de_1784782484665.txt  |    63 +
+ .../Pasted--west-build-generating-a-build-system-Loading-Zephyr-de_1784812243535.txt  |   701 +
+ .../Pasted-Last-login-Fri-Jul-17-21-45-24-on-ttys000-petarmladenov_1784814793203.txt  |  3290 ++
+ .../Pasted-admin-skyguard-admin-skyguard-ssh-admin-192-168-100-252_1784783820038.txt  |    68 +
+ .../Pasted-admin-skyguard-admin-skyguard-ssh-admin-192-168-100-252_1784806853504.txt  |    96 +
+ .../Pasted-admin-skyguard-cd-skyguard-git-pull-origin-main-sudo-sy_1784808702733.txt  |    29 +
+ .../Pasted-admin-skyguard-pip3-install-nrfutil-break-system-packag_1784807568912.txt  |    99 +
+ .../Pasted-admin-skyguard-skyguard-hciconfig-hci1-hci1-Type-Primar_1784813077528.txt  |    34 +
+ .../Pasted-admin-skyguard-skyguard-home-admin-nrfutil-env-bin-pip-_1784808833988.txt  |    27 +
+ .../Pasted-admin-skyguard-skyguard-sudo-journalctl-u-skyguard-hack_1784808872006.txt  |    22 +
+ .../Pasted-admin-skyguard-ssh-admin-192-168-100-252-echo-Running-S_1784783661522.txt  |    60 +
+ .../Pasted-admin-skyguard-sudo-journalctl-xeu-skyguard-hackrf-brid_1784807102449.txt  |   150 +
+ .../Pasted-admin-skyguard-tmp-sudo-tee-etc-systemd-system-skyguard_1784807900518.txt  |    51 +
+ .../Pasted-petarmladenov-Petars-MacBook-Pro-brew-install-cmake-nin_1784810918010.txt  |   165 +
+ .../Pasted-petarmladenov-Petars-MacBook-Pro-zfw-ZEPHYR-SDK-INSTALL_1784812396687.txt  |    48 +
+ .../Pasted-petarmladenov-Petars-MacBook-Pro-zfw-ZEPHYR-SDK-INSTALL_1784812410828.txt  |    48 +
+ .../Pasted-petarmladenov-Petars-MacBook-Pro-zfw-pip3-install-west-_1784810941012.txt  |    43 +
+ .../Pasted-petarmladenov-Petars-MacBook-Pro-zfw-rm-f-tmp-sdk-tar-x_1784810976754.txt  |    38 +
+ .../Pasted-tmm-tmm-skyguard-artifacts-api-server-cd-skyguard-git-p_1784818293830.txt  |    36 +
+ .../Pasted-tmm-tmm-skyguard-artifacts-api-server-cd-skyguard-pnpm-_1784817976164.txt  |    68 +
+ .../Pasted-tmm-tmm-skyguard-artifacts-api-server-sudo-journalctl-u_1784818247075.txt  |    22 +
+ .../Pasted-tmm-tmm-skyguard-cd-skyguard-git-pull-cd-artifacts-api-_1784818135254.txt  |    39 +
+ .../Pasted-tmm-tmm-skyguard-cd-skyguard-git-pull-origin-main-BASE-_1784784901688.txt  |    24 +
+ .../Pasted-tmm-tmm-skyguard-cd-skyguard-git-pull-origin-main-pnpm-_1784782569844.txt  |    56 +
+ .../Pasted-tmm-tmm-skyguard-git-checkout-artifacts-api-server-dist_1784817933578.txt  |   172 +
+ .../Pasted-tmm-tmm-skyguard-git-pull-origin-main-BASE-PATH-pnpm-fi_1784785107635.txt  |    36 +
+ .../Pasted-tmm-tmm-skyguard-git-pull-origin-main-rm-rf-artifacts-s_1784784977145.txt  |    24 +
+ .../Pasted-tmm-tmm-skyguard-rm-rf-skyguard-artifacts-skyguard-os-n_1784784940629.txt  |    21 +
+ .../Pasted-tmm-tmm-skyguard-ssh-tmm-192-168-100-224-cd-skyguard-gi_1784784758087.txt  |    43 +
+ .../Pasted-tmm-tmm-skyguard-ssh-tmm-192-168-100-224-cd-skyguard-gi_1784784817235.txt  |    25 +
+ .../Pasted-tmm-tmm-skyguard-sudo-journalctl-u-skyguard-api-n-20-no_1784814968866.txt  |    22 +
+ .../Pasted-tmm-tmm-skyguard-sudo-journalctl-u-skyguard-api-n-30-no_1784803238102.txt  |    33 +
+ .../Pasted-tmm-tmm-skyguard-sudo-systemctl-status-skyguard-api-no-_1784799607991.txt  |    23 +
+ .../Pasted-tmm-tmm-skyguard-sudo-tail-50-var-log-postgresql-postgr_1784782299288.txt  |    51 +
+ .../Pasted-tmm-tmm-skyguard-tmm-tmm-skyguard-git-pull-origin-main-_1784805228197.txt  |    36 +
+ attached_assets/Screenshot_2026-07-23_at_08.03.21_1784783003361.png                   |   Bin 0 -> 465864 bytes
+ attached_assets/Screenshot_2026-07-23_at_08.39.39_1784785182780.png                   |   Bin 0 -> 932773 bytes
+ attached_assets/Screenshot_2026-07-23_at_12.16.01_1784798165043.png                   |   Bin 0 -> 935959 bytes
+ attached_assets/Screenshot_2026-07-23_at_12.25.24_1784798727701.png                   |   Bin 0 -> 289847 bytes
+ attached_assets/Screenshot_2026-07-23_at_13.36.42_1784803008998.png                   |   Bin 0 -> 441520 bytes
+ attached_assets/Screenshot_2026-07-23_at_13.39.34_1784803176818.png                   |   Bin 0 -> 581061 bytes
+ attached_assets/Screenshot_2026-07-23_at_13.43.35_1784803422425.png                   |   Bin 0 -> 336160 bytes
+ attached_assets/Screenshot_2026-07-23_at_13.45.11_1784803514814.png                   |   Bin 0 -> 1107579 bytes
+ attached_assets/Screenshot_2026-07-23_at_13.45.48_1784803552032.png                   |   Bin 0 -> 1199118 bytes
+ attached_assets/Screenshot_2026-07-23_at_14.22.36_1784805760226.png                   |   Bin 0 -> 186965 bytes
+ attached_assets/Screenshot_2026-07-23_at_14.30.02_1784806208436.png                   |   Bin 0 -> 174607 bytes
+ attached_assets/Screenshot_2026-07-23_at_15.41.34_1784810496560.png                   |   Bin 0 -> 405654 bytes
+ attached_assets/Screenshot_2026-07-23_at_15.43.54_1784810636747.png                   |   Bin 0 -> 387070 bytes
+ attached_assets/Screenshot_2026-07-23_at_15.44.23_1784810665411.png                   |   Bin 0 -> 401305 bytes
+ attached_assets/Screenshot_2026-07-23_at_16.14.54_1784812497128.png                   |   Bin 0 -> 374226 bytes
+ attached_assets/Screenshot_2026-07-23_at_16.15.14_1784812516633.png                   |   Bin 0 -> 358417 bytes
+ attached_assets/Screenshot_2026-07-23_at_16.15.18_1784812520404.png                   |   Bin 0 -> 368014 bytes
+ attached_assets/Screenshot_2026-07-23_at_16.25.46_1784813150214.png                   |   Bin 0 -> 53860 bytes
+ attached_assets/Screenshot_2026-07-23_at_16.34.49_1784813695533.png                   |   Bin 0 -> 195135 bytes
+ attached_assets/Screenshot_2026-07-23_at_16.37.59_1784813883077.png                   |   Bin 0 -> 195818 bytes
+ attached_assets/Screenshot_2026-07-23_at_17.04.48_1784815492058.png                   |   Bin 0 -> 120335 bytes
+ attached_assets/Screenshot_2026-07-23_at_17.05.57_1784815560344.png                   |   Bin 0 -> 39610 bytes
+ attached_assets/Screenshot_2026-07-23_at_17.48.13_1784818096373.png                   |   Bin 0 -> 77818 bytes
+ hardware/dji-wifi-scanner/README.md                                                   |    60 +
+ hardware/dji-wifi-scanner/scanner.py                                                  |   395 +
+ hardware/dji-wifi-scanner/skyguard-dji-wifi-scanner.service                           |    15 +
+ pnpm-lock.yaml                                                                        |    77 +
+ 94 files changed, 42845 insertions(+), 48626 deletions(-)
+ create mode 100644 .agents/memory/linux-deploy-law.md
+ create mode 100644 artifacts/api-server/src/lib/telegram.ts
+ create mode 100644 artifacts/api-server/src/lib/users.ts
+ create mode 100644 artifacts/api-server/src/middlewares/requireAdmin.ts
+ create mode 100644 artifacts/api-server/src/middlewares/requireSession.ts
+ create mode 100644 artifacts/api-server/src/routes/auth.ts
+ delete mode 100644 artifacts/skyguard-os/dist/public/assets/index-BgO9_SQ9.css
+ delete mode 100644 artifacts/skyguard-os/dist/public/assets/index-DF1kR8Ql.js
+ create mode 100644 artifacts/skyguard-os/src/lib/auth.tsx
+ create mode 100644 artifacts/skyguard-os/src/pages/login.tsx
+ create mode 100644 attached_assets/IMG_2939_1784814461448.png
+ create mode 100644 attached_assets/Pasted--5-Node-modules-builds-du-sh-skyguard-node-modules-2-de_1784782484665.txt
+ create mode 100644 attached_assets/Pasted--west-build-generating-a-build-system-Loading-Zephyr-de_1784812243535.txt
+ create mode 100644 attached_assets/Pasted-Last-login-Fri-Jul-17-21-45-24-on-ttys000-petarmladenov_1784814793203.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-admin-skyguard-ssh-admin-192-168-100-252_1784783820038.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-admin-skyguard-ssh-admin-192-168-100-252_1784806853504.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-cd-skyguard-git-pull-origin-main-sudo-sy_1784808702733.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-pip3-install-nrfutil-break-system-packag_1784807568912.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-skyguard-hciconfig-hci1-hci1-Type-Primar_1784813077528.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-skyguard-home-admin-nrfutil-env-bin-pip-_1784808833988.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-skyguard-sudo-journalctl-u-skyguard-hack_1784808872006.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-ssh-admin-192-168-100-252-echo-Running-S_1784783661522.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-sudo-journalctl-xeu-skyguard-hackrf-brid_1784807102449.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-tmp-sudo-tee-etc-systemd-system-skyguard_1784807900518.txt
+ create mode 100644 attached_assets/Pasted-petarmladenov-Petars-MacBook-Pro-brew-install-cmake-nin_1784810918010.txt
+ create mode 100644 attached_assets/Pasted-petarmladenov-Petars-MacBook-Pro-zfw-ZEPHYR-SDK-INSTALL_1784812396687.txt
+ create mode 100644 attached_assets/Pasted-petarmladenov-Petars-MacBook-Pro-zfw-ZEPHYR-SDK-INSTALL_1784812410828.txt
+ create mode 100644 attached_assets/Pasted-petarmladenov-Petars-MacBook-Pro-zfw-pip3-install-west-_1784810941012.txt
+ create mode 100644 attached_assets/Pasted-petarmladenov-Petars-MacBook-Pro-zfw-rm-f-tmp-sdk-tar-x_1784810976754.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-artifacts-api-server-cd-skyguard-git-p_1784818293830.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-artifacts-api-server-cd-skyguard-pnpm-_1784817976164.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-artifacts-api-server-sudo-journalctl-u_1784818247075.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-cd-skyguard-git-pull-cd-artifacts-api-_1784818135254.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-cd-skyguard-git-pull-origin-main-BASE-_1784784901688.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-cd-skyguard-git-pull-origin-main-pnpm-_1784782569844.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-git-checkout-artifacts-api-server-dist_1784817933578.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-git-pull-origin-main-BASE-PATH-pnpm-fi_1784785107635.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-git-pull-origin-main-rm-rf-artifacts-s_1784784977145.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-rm-rf-skyguard-artifacts-skyguard-os-n_1784784940629.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-ssh-tmm-192-168-100-224-cd-skyguard-gi_1784784758087.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-ssh-tmm-192-168-100-224-cd-skyguard-gi_1784784817235.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-sudo-journalctl-u-skyguard-api-n-20-no_1784814968866.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-sudo-journalctl-u-skyguard-api-n-30-no_1784803238102.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-sudo-systemctl-status-skyguard-api-no-_1784799607991.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-sudo-tail-50-var-log-postgresql-postgr_1784782299288.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-tmm-tmm-skyguard-git-pull-origin-main-_1784805228197.txt
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_08.03.21_1784783003361.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_08.39.39_1784785182780.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_12.16.01_1784798165043.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_12.25.24_1784798727701.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_13.36.42_1784803008998.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_13.39.34_1784803176818.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_13.43.35_1784803422425.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_13.45.11_1784803514814.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_13.45.48_1784803552032.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_14.22.36_1784805760226.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_14.30.02_1784806208436.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_15.41.34_1784810496560.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_15.43.54_1784810636747.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_15.44.23_1784810665411.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_16.14.54_1784812497128.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_16.15.14_1784812516633.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_16.15.18_1784812520404.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_16.25.46_1784813150214.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_16.34.49_1784813695533.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_16.37.59_1784813883077.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_17.04.48_1784815492058.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_17.05.57_1784815560344.png
+ create mode 100644 attached_assets/Screenshot_2026-07-23_at_17.48.13_1784818096373.png
+ create mode 100644 hardware/dji-wifi-scanner/README.md
+ create mode 100644 hardware/dji-wifi-scanner/scanner.py
+ create mode 100644 hardware/dji-wifi-scanner/skyguard-dji-wifi-scanner.service
+admin@skyguard:~/skyguard $ 
