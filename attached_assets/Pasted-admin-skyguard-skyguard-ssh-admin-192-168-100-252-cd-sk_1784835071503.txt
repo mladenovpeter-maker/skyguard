@@ -1,0 +1,49 @@
+admin@skyguard:~/skyguard $ ssh admin@192.168.100.252 "cd ~/skyguard && git pull && sudo systemctl restart skyguard-hackrf-bridge"
+admin@192.168.100.252's password: 
+From https://github.com/mladenovpeter-maker/skyguard
+   9fa1d0e..e190a87  main       -> origin/main
+Updating 9fa1d0e..e190a87
+Fast-forward
+ .agents/memory/MEMORY.md                           |     1 +
+ .agents/memory/linux-server-git-sync.md            |    29 +
+ artifacts/api-server/dist/index.mjs                | 60033 -------------------
+ artifacts/api-server/dist/index.mjs.map            |     7 -
+ artifacts/api-server/dist/pino-file.mjs            |  4350 --
+ artifacts/api-server/dist/pino-file.mjs.map        |     7 -
+ artifacts/api-server/dist/pino-pretty.mjs          |  3306 -
+ artifacts/api-server/dist/pino-pretty.mjs.map      |     7 -
+ artifacts/api-server/dist/pino-worker.mjs          |  4706 --
+ artifacts/api-server/dist/pino-worker.mjs.map      |     7 -
+ artifacts/api-server/dist/thread-stream-worker.mjs |   228 -
+ .../api-server/dist/thread-stream-worker.mjs.map   |     7 -
+ artifacts/skyguard-os/dist/public/favicon.svg      |     3 -
+ artifacts/skyguard-os/dist/public/index.html       |    25 -
+ artifacts/skyguard-os/dist/public/logo.svg         |     8 -
+ artifacts/skyguard-os/dist/public/robots.txt       |     2 -
+ artifacts/skyguard-os/src/App.tsx                  |     6 +-
+ artifacts/skyguard-os/src/pages/home.tsx           |     4 +-
+ artifacts/skyguard-os/src/pages/landing.tsx        |   245 +
+ artifacts/skyguard-os/src/pages/spectrum.tsx       |     4 +-
+ ...-skyguard-git-pull-pnpm-filte_1784833135778.txt |    48 +
+ ...-git-pull-pnpm-filter-workspa_1784833266590.txt |    68 +
+ hardware/hackrf-bridge/frequencies.json            |     6 +-
+ 23 files changed, 404 insertions(+), 72703 deletions(-)
+ create mode 100644 .agents/memory/linux-server-git-sync.md
+ delete mode 100644 artifacts/api-server/dist/index.mjs
+ delete mode 100644 artifacts/api-server/dist/index.mjs.map
+ delete mode 100644 artifacts/api-server/dist/pino-file.mjs
+ delete mode 100644 artifacts/api-server/dist/pino-file.mjs.map
+ delete mode 100644 artifacts/api-server/dist/pino-pretty.mjs
+ delete mode 100644 artifacts/api-server/dist/pino-pretty.mjs.map
+ delete mode 100644 artifacts/api-server/dist/pino-worker.mjs
+ delete mode 100644 artifacts/api-server/dist/pino-worker.mjs.map
+ delete mode 100644 artifacts/api-server/dist/thread-stream-worker.mjs
+ delete mode 100644 artifacts/api-server/dist/thread-stream-worker.mjs.map
+ delete mode 100644 artifacts/skyguard-os/dist/public/favicon.svg
+ delete mode 100644 artifacts/skyguard-os/dist/public/index.html
+ delete mode 100644 artifacts/skyguard-os/dist/public/logo.svg
+ delete mode 100644 artifacts/skyguard-os/dist/public/robots.txt
+ create mode 100644 artifacts/skyguard-os/src/pages/landing.tsx
+ create mode 100644 attached_assets/Pasted-admin-skyguard-skyguard-cd-skyguard-git-pull-pnpm-filte_1784833135778.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-git-stash-git-pull-pnpm-filter-workspa_1784833266590.txt
+admin@skyguard:~/skyguard $ 
