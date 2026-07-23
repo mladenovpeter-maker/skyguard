@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
+import { useTheme } from "next-themes";
 import { Icon } from "leaflet";
 import { Crosshair, Loader2 } from "lucide-react";
 import "leaflet/dist/leaflet.css";
@@ -38,6 +39,10 @@ function ClickHandler({ onPick }: { onPick: (lat: number, lng: number) => void }
 export function LocationPicker({ lat, lng, onChange }: LocationPickerProps) {
   const { t } = useLanguage();
   const { toast } = useToast();
+  const { theme } = useTheme();
+  const tileUrl = theme === "light"
+    ? "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+    : "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
   const [locating, setLocating] = useState(false);
   const hasValidPosition = Number.isFinite(lat) && Number.isFinite(lng) && (lat !== 0 || lng !== 0);
   const center: [number, number] = hasValidPosition ? [lat, lng] : [42.6977, 23.3219];
@@ -80,7 +85,7 @@ export function LocationPicker({ lat, lng, onChange }: LocationPickerProps) {
           scrollWheelZoom
         >
           <TileLayer
-            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+            url={tileUrl}
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
           />
           <ClickHandler onPick={onChange} />
