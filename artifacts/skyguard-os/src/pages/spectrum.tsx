@@ -487,6 +487,29 @@ export default function Spectrum() {
     return () => wsRef.current?.close();
   }, [connect]);
 
+  // ── Stale-data watchdog ────────────────────────────────────────────────────
+  // If the WS is nominally "connected" but we haven't received a sweep in
+  // STALE_MS ms, the hackrf_sweep subprocess on the Pi has likely crashed
+  // while the nginx proxy is keeping the TCP connection alive.
+  // Force-close so the onclose handler fires and triggers a reconnect.
+  const STALE_MS = 15_000;
+  useEffect(() => {
+    const id = setInterval(() => {
+      if (wsStatus === "connected" && lastSweepTs !== null && Date.now() - lastSweepTs > STALE_MS) {
+        console.warn("[HackRF] stale — no sweep in >15 s, forcing reconnect");
+        const ws = wsRef.current;
+        if (ws) {
+          ws.onclose = null; // prevent the normal onclose from double-firing
+          ws.onerror = null;
+          ws.close();
+        }
+        setWsStatus("error");
+        setTimeout(connect, 500);
+      }
+    }, 5_000);
+    return () => clearInterval(id);
+  }, [wsStatus, lastSweepTs, connect]);
+
   const highAlerts = rfAlerts.filter(a => a.threat === "high");
 
   return (
