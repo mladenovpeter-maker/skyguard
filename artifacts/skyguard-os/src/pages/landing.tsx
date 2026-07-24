@@ -353,7 +353,7 @@ export default function LandingPage() {
           <Reveal y={20}>
             <div style={{ position: "relative", borderRadius: 24, overflow: "hidden" }}>
               <img
-                src={`${import.meta.env.BASE_URL}skyguard_plastic_cutaway.jpg`}
+                src={`${import.meta.env.BASE_URL}dronexit_internals.png`}
                 alt="DronExit internals"
                 style={{ width: "100%", display: "block", borderRadius: 24 }}
               />
