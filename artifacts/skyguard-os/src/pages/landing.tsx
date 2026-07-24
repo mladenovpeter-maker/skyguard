@@ -266,7 +266,7 @@ export default function LandingPage() {
               transition={{ duration: 0.7, delay: 0.35 }}
               style={{ display: "flex", gap: 14 }}
             >
-              <button className="btn-primary" onClick={() => scrollTo("pricing")}>Buy Now — €999</button>
+              <button className="btn-primary" onClick={() => scrollTo("pricing")}>Buy Now — €1999</button>
               <button className="btn-ghost" onClick={() => scrollTo("how-it-works")}>How It Works</button>
             </motion.div>
           </div>
@@ -541,7 +541,7 @@ export default function LandingPage() {
           <div className="price-card" style={{ maxWidth: 640, margin: "0 auto", textAlign: "center" }}>
             {/* Big price */}
             <div style={{ marginBottom: 8 }}>
-              <span style={{ fontSize: "clamp(96px,12vw,140px)", fontWeight: 900, letterSpacing: "-0.05em", lineHeight: 1 }}>€999</span>
+              <span style={{ fontSize: "clamp(96px,12vw,140px)", fontWeight: 900, letterSpacing: "-0.05em", lineHeight: 1 }}>€1999</span>
             </div>
             <div style={{ fontSize: 14, color: "rgba(255,255,255,0.3)", marginBottom: 48, letterSpacing: "0.08em" }}>ONE-TIME · NO SUBSCRIPTION · NO MONTHLY FEES</div>
 

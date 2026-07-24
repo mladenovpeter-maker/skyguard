@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/lib/auth";
 
+const BLUE = "#1A6BFF";
+
 export default function LoginPage() {
   const { login, user } = useAuth();
   const [, navigate] = useLocation();
@@ -10,7 +12,6 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Already logged in → go to radar
   if (user) { navigate("/"); return null; }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -21,107 +22,172 @@ export default function LoginPage() {
       await login(username, password);
       navigate("/");
     } catch {
-      setError("Грешно потребителско име или парола");
+      setError("Incorrect username or password");
       setLoading(false);
     }
   }
 
   return (
-    <div
-      className="min-h-[100dvh] flex items-center justify-center px-4"
-      style={{ background: "#020814", fontFamily: "'Space Mono','Courier New',monospace" }}
-    >
-      <div className="w-full max-w-sm">
-        {/* Logo */}
-        <div className="flex flex-col items-center gap-4 mb-10">
-          <svg width="48" height="48" viewBox="0 0 32 32" fill="none">
-            <polygon points="16,2 28,9 28,23 16,30 4,23 4,9" stroke="#00ff88" strokeWidth="1.2" fill="none" opacity="0.6"/>
-            <circle cx="16" cy="16" r="7" stroke="#00ff88" strokeWidth="1" fill="none" opacity="0.4"/>
-            <line x1="16" y1="9" x2="16" y2="23" stroke="#00ff88" strokeWidth="0.6" opacity="0.4"/>
-            <line x1="9" y1="16" x2="23" y2="16" stroke="#00ff88" strokeWidth="0.6" opacity="0.4"/>
-            <circle cx="16" cy="16" r="2.2" fill="#00ff88"/>
-            <line x1="16" y1="16" x2="11" y2="11" stroke="#00ff88" strokeWidth="1.2" strokeLinecap="round"/>
-            <line x1="16" y1="16" x2="21" y2="11" stroke="#00ff88" strokeWidth="1.2" strokeLinecap="round"/>
-            <line x1="16" y1="16" x2="11" y2="21" stroke="#00ff88" strokeWidth="1.2" strokeLinecap="round"/>
-            <line x1="16" y1="16" x2="21" y2="21" stroke="#00ff88" strokeWidth="1.2" strokeLinecap="round"/>
-            <circle cx="10.5" cy="10.5" r="2.2" stroke="#00ff88" strokeWidth="0.8" fill="none" opacity="0.7"/>
-            <circle cx="21.5" cy="10.5" r="2.2" stroke="#00ff88" strokeWidth="0.8" fill="none" opacity="0.7"/>
-            <circle cx="10.5" cy="21.5" r="2.2" stroke="#00ff88" strokeWidth="0.8" fill="none" opacity="0.7"/>
-            <circle cx="21.5" cy="21.5" r="2.2" stroke="#00ff88" strokeWidth="0.8" fill="none" opacity="0.7"/>
-            <circle cx="21.5" cy="10.5" r="1" fill="#ff5050" opacity="0.9"/>
+    <div style={{
+      minHeight: "100dvh",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "#080808",
+      fontFamily: "Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",
+      padding: "0 16px",
+    }}>
+      {/* Subtle radial glow behind card */}
+      <div style={{
+        position: "fixed", inset: 0, pointerEvents: "none",
+        background: "radial-gradient(ellipse 700px 500px at 50% 40%, rgba(26,107,255,0.07) 0%, transparent 70%)",
+      }} />
+
+      <div style={{ width: "100%", maxWidth: 400, position: "relative" }}>
+
+        {/* Logo + wordmark */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12, marginBottom: 48 }}>
+          {/* Radar icon matching the landing page nav */}
+          <svg width="42" height="42" viewBox="0 0 32 32" fill="none">
+            <circle cx="16" cy="16" r="15" stroke={BLUE} strokeWidth="1" opacity="0.2" />
+            <circle cx="16" cy="16" r="9" stroke={BLUE} strokeWidth="1" opacity="0.35" />
+            <circle cx="16" cy="16" r="3.5" fill={BLUE} opacity="0.9" />
+            <line x1="16" y1="16" x2="9" y2="7" stroke={BLUE} strokeWidth="1.5" strokeLinecap="round" opacity="0.7" />
           </svg>
-          <div className="text-center">
-            <div className="text-lg font-bold tracking-[0.25em]" style={{ color: "#00ff88" }}>DRONEXIT</div>
-            <div className="text-xs tracking-widest mt-1" style={{ color: "rgba(255,255,255,0.25)" }}>ОГРАНИЧЕН ДОСТЪП</div>
+          <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: "-0.03em", color: "#fff" }}>
+            Drone<span style={{ color: BLUE }}>Exit</span>
+          </div>
+          <div style={{ fontSize: 12, fontWeight: 500, letterSpacing: "0.15em", color: "rgba(255,255,255,0.2)", textTransform: "uppercase" }}>
+            Dashboard Access
           </div>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <input
-            placeholder="Потребител"
-            value={username}
-            onChange={e => setUsername(e.target.value)}
-            autoComplete="username"
-            required
-            className="w-full px-4 py-3 text-sm outline-none transition-colors"
-            style={{
-              background: "rgba(255,255,255,0.03)",
-              border: "1px solid rgba(0,255,136,0.2)",
-              color: "rgba(255,255,255,0.85)",
-              fontFamily: "inherit",
-            }}
-            onFocus={e => (e.target.style.borderColor = "rgba(0,255,136,0.6)")}
-            onBlur={e => (e.target.style.borderColor = "rgba(0,255,136,0.2)")}
-          />
-          <input
-            type="password"
-            placeholder="Парола"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            autoComplete="current-password"
-            required
-            className="w-full px-4 py-3 text-sm outline-none transition-colors"
-            style={{
-              background: "rgba(255,255,255,0.03)",
-              border: "1px solid rgba(0,255,136,0.2)",
-              color: "rgba(255,255,255,0.85)",
-              fontFamily: "inherit",
-            }}
-            onFocus={e => (e.target.style.borderColor = "rgba(0,255,136,0.6)")}
-            onBlur={e => (e.target.style.borderColor = "rgba(0,255,136,0.2)")}
-          />
+        {/* Card */}
+        <div style={{
+          background: "rgba(255,255,255,0.03)",
+          border: "1px solid rgba(255,255,255,0.07)",
+          borderRadius: 20,
+          padding: "36px 32px",
+        }}>
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
 
-          {error && (
-            <p className="text-xs text-center py-2" style={{ color: "#ff5050" }}>{error}</p>
-          )}
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <label style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.1em", color: "rgba(255,255,255,0.3)", textTransform: "uppercase" }}>
+                Username
+              </label>
+              <input
+                placeholder="Enter username"
+                value={username}
+                onChange={e => setUsername(e.target.value)}
+                autoComplete="username"
+                required
+                style={{
+                  width: "100%",
+                  padding: "12px 16px",
+                  fontSize: 14,
+                  fontFamily: "inherit",
+                  background: "rgba(255,255,255,0.04)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  borderRadius: 12,
+                  color: "#fff",
+                  outline: "none",
+                  transition: "border-color 0.15s",
+                  boxSizing: "border-box",
+                }}
+                onFocus={e => (e.target.style.borderColor = "rgba(26,107,255,0.5)")}
+                onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.08)")}
+              />
+            </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 text-sm font-bold tracking-widest transition-all mt-2"
-            style={{
-              background: loading ? "rgba(0,255,136,0.3)" : "#00ff88",
-              color: "#020814",
-              fontFamily: "inherit",
-              cursor: loading ? "not-allowed" : "pointer",
-            }}
-          >
-            {loading ? "ВЛИЗАНЕ..." : "ВХОД →"}
-          </button>
-        </form>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <label style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.1em", color: "rgba(255,255,255,0.3)", textTransform: "uppercase" }}>
+                Password
+              </label>
+              <input
+                type="password"
+                placeholder="Enter password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                autoComplete="current-password"
+                required
+                style={{
+                  width: "100%",
+                  padding: "12px 16px",
+                  fontSize: 14,
+                  fontFamily: "inherit",
+                  background: "rgba(255,255,255,0.04)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  borderRadius: 12,
+                  color: "#fff",
+                  outline: "none",
+                  transition: "border-color 0.15s",
+                  boxSizing: "border-box",
+                }}
+                onFocus={e => (e.target.style.borderColor = "rgba(26,107,255,0.5)")}
+                onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.08)")}
+              />
+            </div>
 
-        <div className="mt-8 text-center">
+            {error && (
+              <div style={{
+                fontSize: 13,
+                color: "#f87171",
+                textAlign: "center",
+                padding: "8px 12px",
+                background: "rgba(248,113,113,0.08)",
+                borderRadius: 8,
+                border: "1px solid rgba(248,113,113,0.15)",
+              }}>
+                {error}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                marginTop: 8,
+                width: "100%",
+                padding: "13px 0",
+                fontSize: 14,
+                fontWeight: 700,
+                fontFamily: "inherit",
+                letterSpacing: "0.02em",
+                background: loading ? "rgba(26,107,255,0.4)" : BLUE,
+                color: "#fff",
+                border: "none",
+                borderRadius: 12,
+                cursor: loading ? "not-allowed" : "pointer",
+                transition: "background 0.2s, opacity 0.2s",
+              }}
+              onMouseEnter={e => { if (!loading) e.currentTarget.style.background = "#2979ff"; }}
+              onMouseLeave={e => { if (!loading) e.currentTarget.style.background = BLUE; }}
+            >
+              {loading ? "Signing in…" : "Sign In →"}
+            </button>
+          </form>
+        </div>
+
+        {/* Back link */}
+        <div style={{ marginTop: 24, textAlign: "center" }}>
           <button
             onClick={() => navigate("/")}
-            className="text-xs transition-colors"
-            style={{ color: "rgba(255,255,255,0.2)", fontFamily: "inherit" }}
-            onMouseEnter={e => (e.currentTarget.style.color = "rgba(0,255,136,0.5)")}
+            style={{
+              background: "none",
+              border: "none",
+              fontSize: 13,
+              color: "rgba(255,255,255,0.2)",
+              fontFamily: "inherit",
+              cursor: "pointer",
+              transition: "color 0.15s",
+            }}
+            onMouseEnter={e => (e.currentTarget.style.color = "rgba(255,255,255,0.5)")}
             onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.2)")}
           >
-            ← ОБРАТНО
+            ← Back to dronexit.com
           </button>
         </div>
+
       </div>
     </div>
   );
