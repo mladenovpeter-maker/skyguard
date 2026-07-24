@@ -1,0 +1,57 @@
+admin@skyguard:~ $ cd ~/skyguard && git pull && sudo systemctl restart hackrf-bridge
+remote: Enumerating objects: 117, done.
+remote: Counting objects: 100% (117/117), done.
+remote: Compressing objects: 100% (69/69), done.
+remote: Total 95 (delta 59), reused 61 (delta 25), pack-reused 0 (from 0)
+Unpacking objects: 100% (95/95), 1.97 MiB | 849.00 KiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+   072f655..8b98b90  main       -> origin/main
+Updating 072f655..8b98b90
+Fast-forward
+ .agents/memory/docs-improvements.md                                                   |     55 +
+ artifacts/skyguard-dome/public/base.stl                                               | 163102 +++++++++++++++++++++
+ artifacts/skyguard-dome/public/dome.stl                                               | 308226 +++++++++++++++++++++++++++++++++++++++
+ artifacts/skyguard-dome/public/model.stl                                              | 181772 +++++++++++++----------
+ artifacts/skyguard-dome/src/App.tsx                                                   |     17 +-
+ artifacts/skyguard-dome/src/base_only.scad                                            |      4 +
+ artifacts/skyguard-dome/src/dome_only.scad                                            |      7 +
+ artifacts/skyguard-dome/src/model.scad                                                |    200 +-
+ artifacts/skyguard-os/public/ui-radar.jpg                                             |    Bin 0 -> 77969 bytes
+ artifacts/skyguard-os/src/components/layout/Shell.tsx                                 |      2 +-
+ artifacts/skyguard-os/src/pages/home.tsx                                              |    185 +-
+ artifacts/skyguard-os/src/pages/landing.tsx                                           |    787 +-
+ artifacts/skyguard-os/src/pages/login.tsx                                             |    134 +-
+ artifacts/skyguard-os/src/pages/spectrum.tsx                                          |     23 +
+ attached_assets/IMG_2619_1784881217592.jpg                                            |    Bin 0 -> 22917 bytes
+ attached_assets/IMG_2619_1784881641142.jpg                                            |    Bin 0 -> 22917 bytes
+ attached_assets/IMG_2958_1784876197365.jpeg                                           |    Bin 0 -> 88643 bytes
+ .../Pasted--DRONEXIT-WEBSITE-REDESIGN-COMPLETE-UI-UX-OVERHAUL-The-_1784889124515.txt  |    326 +
+ .../Pasted--DronExit-Direction-Module-Estimated-Direction-Engine-D_1784885774455.txt  |    339 +
+ .../Pasted-admin-skyguard-skyguard-cd-skyguard-git-pull-pnpm-filte_1784835395608.txt  |     38 +
+ .../Pasted-tmm-tmm-cd-skyguard-git-pull-pnpm-filter-workspace-skyg_1784835706158.txt  |     33 +
+ .../Pasted-tmm-tmm-skyguard-cat-etc-nginx-sites-enabled-skyguard-s_1784836180242.txt  |     66 +
+ .../Pasted-tmm-tmm-skyguard-cd-skyguard-git-pull-pnpm-filter-works_1784869986451.txt  |     34 +
+ attached_assets/Screenshot_2026-07-24_at_11.27.10_1784881633643.png                   |    Bin 0 -> 288976 bytes
+ attached_assets/screenshot-radar.jpg                                                  |    Bin 0 -> 77969 bytes
+ attached_assets/screenshot-spectrum.jpg                                               |    Bin 0 -> 74532 bytes
+ 26 files changed, 580253 insertions(+), 75097 deletions(-)
+ create mode 100644 .agents/memory/docs-improvements.md
+ create mode 100644 artifacts/skyguard-dome/public/base.stl
+ create mode 100644 artifacts/skyguard-dome/public/dome.stl
+ create mode 100644 artifacts/skyguard-dome/src/base_only.scad
+ create mode 100644 artifacts/skyguard-dome/src/dome_only.scad
+ create mode 100644 artifacts/skyguard-os/public/ui-radar.jpg
+ create mode 100644 attached_assets/IMG_2619_1784881217592.jpg
+ create mode 100644 attached_assets/IMG_2619_1784881641142.jpg
+ create mode 100644 attached_assets/IMG_2958_1784876197365.jpeg
+ create mode 100644 attached_assets/Pasted--DRONEXIT-WEBSITE-REDESIGN-COMPLETE-UI-UX-OVERHAUL-The-_1784889124515.txt
+ create mode 100644 attached_assets/Pasted--DronExit-Direction-Module-Estimated-Direction-Engine-D_1784885774455.txt
+ create mode 100644 attached_assets/Pasted-admin-skyguard-skyguard-cd-skyguard-git-pull-pnpm-filte_1784835395608.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-cd-skyguard-git-pull-pnpm-filter-workspace-skyg_1784835706158.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-cat-etc-nginx-sites-enabled-skyguard-s_1784836180242.txt
+ create mode 100644 attached_assets/Pasted-tmm-tmm-skyguard-cd-skyguard-git-pull-pnpm-filter-works_1784869986451.txt
+ create mode 100644 attached_assets/Screenshot_2026-07-24_at_11.27.10_1784881633643.png
+ create mode 100644 attached_assets/screenshot-radar.jpg
+ create mode 100644 attached_assets/screenshot-spectrum.jpg
+Failed to restart hackrf-bridge.service: Unit hackrf-bridge.service not found.
+admin@skyguard:~/skyguard $ 
