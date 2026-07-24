@@ -205,7 +205,7 @@ export default function LandingPage() {
             <button key={id} className="nav-link" onClick={() => scrollTo(id)} style={{ textTransform: "capitalize" }}>{id}</button>
           ))}
           <button className="nav-link" onClick={() => scrollTo("contact")}>Contact</button>
-          <button className="btn-primary" style={{ padding: "9px 22px", fontSize: 13, borderRadius: 10 }} onClick={() => nav("/login")}>
+          <button className="btn-ghost" style={{ padding: "9px 22px", fontSize: 13, borderRadius: 10 }} onClick={() => nav("/login")}>
             Dashboard →
           </button>
         </div>
@@ -504,21 +504,25 @@ export default function LandingPage() {
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16 }}>
           {[
-            { icon: "⌂", title: "Luxury Homes",       sub: "Protect family privacy from surveillance drones." },
-            { icon: "◫", title: "Villas & Estates",    sub: "Large perimeter, continuous outdoor monitoring." },
-            { icon: "▦", title: "Warehouses",          sub: "Detect industrial espionage and unauthorized overflights." },
-            { icon: "◈", title: "Factories",           sub: "Secure production facilities and IP." },
-            { icon: "⬡", title: "Construction Sites",  sub: "Monitor for competitor or press drones." },
-            { icon: "⊞", title: "Business Buildings",  sub: "Executive floors, boardrooms, perimeter security." },
-          ].map(({ icon, title, sub }, i) => (
+            { img: "dronexit_hero_v2.png",   pos: "0% 0%",    title: "Luxury Homes",      sub: "Protect family privacy from surveillance drones." },
+            { img: "dronexit_hero_v2.png",   pos: "0% 100%",  title: "Villas & Estates",  sub: "Large perimeter, continuous outdoor monitoring." },
+            { img: "dronexit_hero_v2.png",   pos: "100% 100%",title: "Factories",         sub: "Secure production facilities and IP." },
+            { img: "dronexit_deck_edit.jpg", pos: "center",   title: "Yachts & Marinas",  sub: "Maritime security against surveillance drones." },
+            { img: "dronexit_pole.jpg",      pos: "center 60%",title: "Construction Sites",sub: "Monitor for competitor or press drones." },
+            { img: "dronexit_hero_v2.png",   pos: "100% 0%",  title: "Business Buildings",sub: "Executive floors, boardrooms, perimeter security." },
+          ].map(({ img, pos, title, sub }, i) => (
             <Reveal key={title} delay={i * 0.06}>
-              <div className="use-card">
-                <div style={{ padding: 32 }}>
-                  <div style={{ fontSize: 28, marginBottom: 16, color: BLUE }}>{icon}</div>
-                  <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 10 }}>{title}</div>
-                  <div style={{ fontSize: 13, lineHeight: 1.7, color: "rgba(255,255,255,0.35)", fontWeight: 300 }}>{sub}</div>
+              <div className="use-card" style={{ height: 300 }}>
+                {/* Background photo */}
+                <img src={`${import.meta.env.BASE_URL}${img}`} alt={title}
+                  style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: pos, opacity: 0.55 }} />
+                {/* Gradient overlay */}
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(8,8,8,0.95) 30%, rgba(8,8,8,0.3) 100%)" }} />
+                {/* Text */}
+                <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: 28 }}>
+                  <div style={{ fontSize: 17, fontWeight: 700, marginBottom: 8 }}>{title}</div>
+                  <div style={{ fontSize: 13, lineHeight: 1.6, color: "rgba(255,255,255,0.45)", fontWeight: 300 }}>{sub}</div>
                 </div>
-                <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 3, background: `linear-gradient(to right, ${BLUE}, transparent)`, opacity: 0 }} className="use-accent"/>
               </div>
             </Reveal>
           ))}
@@ -534,41 +538,35 @@ export default function LandingPage() {
           </Reveal>
         </div>
         <Reveal delay={0.15} y={24}>
-          <div className="price-card">
-            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 32 }}>
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: BLUE, letterSpacing: "0.12em", marginBottom: 8 }}>DRONEXIT</div>
-                <div style={{ fontSize: 15, color: "rgba(255,255,255,0.4)", fontWeight: 300 }}>Passive drone detection appliance</div>
-              </div>
-              <div style={{ textAlign: "right" }}>
-                <div style={{ fontSize: 52, fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 1 }}>€999</div>
-                <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", marginTop: 4 }}>one-time · no subscription</div>
-              </div>
+          <div className="price-card" style={{ maxWidth: 640, margin: "0 auto", textAlign: "center" }}>
+            {/* Big price */}
+            <div style={{ marginBottom: 8 }}>
+              <span style={{ fontSize: "clamp(96px,12vw,140px)", fontWeight: 900, letterSpacing: "-0.05em", lineHeight: 1 }}>€999</span>
             </div>
-            <div style={{ marginBottom: 40 }}>
+            <div style={{ fontSize: 14, color: "rgba(255,255,255,0.3)", marginBottom: 48, letterSpacing: "0.08em" }}>ONE-TIME · NO SUBSCRIPTION · NO MONTHLY FEES</div>
+
+            {/* Features grid */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 48, textAlign: "left" }}>
               {[
-                "HackRF Pro SDR · 400 MHz – 6 GHz",
-                "Remote ID decoder (BLE/Wi-Fi)",
-                "Telegram + SMS alerts",
-                "Web dashboard (self-hosted)",
-                "Industrial PoE enclosure",
+                "Wideband RF detection · 400 MHz – 6 GHz",
+                "Remote ID decoder (BLE / Wi-Fi)",
+                "Telegram + SMS instant alerts",
+                "Self-hosted web dashboard",
+                "Industrial PoE enclosure · IP54",
                 "Lifetime software updates",
+                "Made in EU",
                 "No monthly fees — ever",
               ].map(f => (
-                <div key={f} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-                  <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="6.5" fill={BLUE_DIM} stroke={BLUE} strokeWidth="1"/><path d="M4.5 7.5l2 2 4-4" stroke={BLUE} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                  <span style={{ fontSize: 14, color: "rgba(255,255,255,0.6)" }}>{f}</span>
+                <div key={f} style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+                  <svg width="15" height="15" viewBox="0 0 15 15" fill="none" style={{ flexShrink: 0, marginTop: 2 }}><circle cx="7.5" cy="7.5" r="6.5" fill={BLUE_DIM} stroke={BLUE} strokeWidth="1"/><path d="M4.5 7.5l2 2 4-4" stroke={BLUE} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  <span style={{ fontSize: 13, color: "rgba(255,255,255,0.55)", lineHeight: 1.5 }}>{f}</span>
                 </div>
               ))}
             </div>
-            <div style={{ display: "flex", gap: 14 }}>
-              <button className="btn-primary" style={{ flex: 1, justifyContent: "center", borderRadius: 14, padding: "16px" }} onClick={() => scrollTo("contact")}>
-                Order Now →
-              </button>
-              <button className="btn-ghost" style={{ borderRadius: 14, padding: "16px 24px" }} onClick={() => scrollTo("how-it-works")}>
-                Learn More
-              </button>
-            </div>
+
+            <button className="btn-primary" style={{ width: "100%", justifyContent: "center", borderRadius: 14, padding: "18px", fontSize: 16, letterSpacing: "0.02em" }} onClick={() => scrollTo("contact")}>
+              Order Now →
+            </button>
           </div>
         </Reveal>
       </Section>
