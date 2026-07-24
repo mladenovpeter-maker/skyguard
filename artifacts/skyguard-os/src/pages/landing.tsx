@@ -504,12 +504,12 @@ export default function LandingPage() {
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16 }}>
           {[
-            { img: "dronexit_hero_v2.png",   pos: "0% 0%",    title: "Luxury Homes",      sub: "Protect family privacy from surveillance drones." },
-            { img: "dronexit_hero_v2.png",   pos: "0% 100%",  title: "Villas & Estates",  sub: "Large perimeter, continuous outdoor monitoring." },
-            { img: "dronexit_hero_v2.png",   pos: "100% 100%",title: "Factories",         sub: "Secure production facilities and IP." },
-            { img: "dronexit_deck_edit.jpg", pos: "center",   title: "Yachts & Marinas",  sub: "Maritime security against surveillance drones." },
-            { img: "dronexit_pole.jpg",      pos: "center 60%",title: "Construction Sites",sub: "Monitor for competitor or press drones." },
-            { img: "dronexit_hero_v2.png",   pos: "100% 0%",  title: "Business Buildings",sub: "Executive floors, boardrooms, perimeter security." },
+            { img: "uc_luxury_home.jpg",        pos: "center", title: "Luxury Homes",      sub: "Protect family privacy from surveillance drones." },
+            { img: "uc_villa_estate.jpg",       pos: "center", title: "Villas & Estates",  sub: "Large perimeter, continuous outdoor monitoring." },
+            { img: "uc_factory.jpg",            pos: "center", title: "Factories",         sub: "Secure production facilities and IP." },
+            { img: "uc_yacht_marina.jpg",       pos: "center", title: "Yachts & Marinas",  sub: "Maritime security against surveillance drones." },
+            { img: "uc_construction_site.jpg",  pos: "center", title: "Construction Sites",sub: "Monitor for competitor or press drones." },
+            { img: "uc_business_building.jpg",  pos: "center", title: "Business Buildings",sub: "Executive floors, boardrooms, perimeter security." },
           ].map(({ img, pos, title, sub }, i) => (
             <Reveal key={title} delay={i * 0.06}>
               <div className="use-card" style={{ height: 300 }}>
