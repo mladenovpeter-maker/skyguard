@@ -280,7 +280,7 @@ export default function LandingPage() {
           >
             <motion.div style={{ y: imgY }}>
               <img
-                src={`${import.meta.env.BASE_URL}dronexit_hero.png`}
+                src={`${import.meta.env.BASE_URL}dronexit_hero_v2.png`}
                 alt="DronExit hardware"
                 style={{
                   width: 420,
