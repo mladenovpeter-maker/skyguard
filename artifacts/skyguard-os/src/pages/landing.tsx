@@ -281,34 +281,36 @@ export default function LandingPage() {
             {/* Glow behind */}
             <div style={{ position: "absolute", width: 420, height: 420, borderRadius: "50%", background: `radial-gradient(circle, ${BLUE_GLOW} 0%, transparent 70%)`, pointerEvents: "none" }} />
             <motion.div style={{ y: imgY }}>
-              <div style={{ animation: "floatProduct 5s ease-in-out infinite", position: "relative" }}>
+              <div style={{ animation: "floatProduct 5s ease-in-out infinite", position: "relative", width: 480, height: 520, borderRadius: 24, overflow: "hidden", boxShadow: `0 40px 120px rgba(0,0,0,0.7), 0 0 60px ${BLUE_GLOW}` }}>
                 <img
-                  src={`${import.meta.env.BASE_URL}dronexit_deck_edit.jpg`}
+                  src={`${import.meta.env.BASE_URL}dronexit_pole.jpg`}
                   alt="DronExit hardware"
-                  style={{ width: 480, height: 480, objectFit: "cover", objectPosition: "center 20%", borderRadius: 24, display: "block", boxShadow: `0 40px 120px rgba(0,0,0,0.7), 0 0 60px ${BLUE_GLOW}` }}
+                  style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 58%", display: "block" }}
                 />
-                {/* DronExit logo overlay */}
+                {/* Cover — скрива целия SkyGuard текст + лого */}
                 <div style={{
                   position: "absolute",
-                  top: "33%", left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  display: "flex", flexDirection: "column", alignItems: "center", gap: 7,
+                  top: 0, left: "5%", width: "88%", height: "50%",
+                  background: "radial-gradient(ellipse 70% 75% at 50% 38%, rgba(207,207,211,1) 0%, rgba(207,207,211,0.98) 40%, rgba(207,207,211,0.7) 62%, transparent 80%)",
+                  pointerEvents: "none",
+                }}/>
+                {/* DronExit лого */}
+                <div style={{
+                  position: "absolute",
+                  top: "14%", left: "50%", transform: "translateX(-50%)",
+                  display: "flex", flexDirection: "column", alignItems: "center", gap: 8,
                   pointerEvents: "none",
                 }}>
-                  <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                  <svg width="42" height="42" viewBox="0 0 48 48" fill="none">
                     <path d="M24 5L8 12v13c0 10.2 7.3 19.8 16 22 8.7-2.2 16-11.8 16-22V12L24 5z"
-                      fill="rgba(26,107,255,0.15)" stroke="rgba(26,107,255,0.7)" strokeWidth="1.6"/>
-                    <circle cx="24" cy="23" r="6" fill="none" stroke="rgba(26,107,255,0.6)" strokeWidth="1.2"/>
-                    <circle cx="24" cy="23" r="2.5" fill="#1A6BFF"/>
-                    <line x1="24" y1="17" x2="24" y2="23" stroke="#1A6BFF" strokeWidth="1.3" strokeLinecap="round"/>
-                    <line x1="24" y1="23" x2="29" y2="18" stroke="#1A6BFF" strokeWidth="1.3" strokeLinecap="round"/>
-                    <circle cx="29.5" cy="17.5" r="2.5" fill="#ff4444"/>
+                      fill="rgba(26,107,255,0.12)" stroke={BLUE} strokeWidth="1.8"/>
+                    <circle cx="24" cy="23" r="5.5" fill="none" stroke="rgba(26,107,255,0.55)" strokeWidth="1.1"/>
+                    <circle cx="24" cy="23" r="2.4" fill={BLUE}/>
+                    <line x1="24" y1="18" x2="24" y2="23" stroke={BLUE} strokeWidth="1.4" strokeLinecap="round"/>
+                    <line x1="24" y1="23" x2="29" y2="18" stroke={BLUE} strokeWidth="1.4" strokeLinecap="round"/>
+                    <circle cx="29.5" cy="17.5" r="2.5" fill="#ff4040"/>
                   </svg>
-                  <span style={{
-                    fontSize: 14, fontWeight: 700, letterSpacing: "0.1em",
-                    color: "rgba(30,30,30,0.85)",
-                    fontFamily: "Inter,-apple-system,sans-serif",
-                  }}>DronExit</span>
+                  <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: "0.14em", color: "rgba(20,20,30,0.82)", fontFamily: "Inter,sans-serif" }}>DRONEXIT</span>
                 </div>
               </div>
             </motion.div>
