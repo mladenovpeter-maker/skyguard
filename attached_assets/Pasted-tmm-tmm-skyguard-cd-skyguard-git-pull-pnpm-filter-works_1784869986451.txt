@@ -1,0 +1,34 @@
+tmm@tmm:~/skyguard$ cd ~/skyguard && git pull && pnpm --filter @workspace/skyguard-os run build && sudo nginx -s reload
+remote: Enumerating objects: 25, done.
+remote: Counting objects: 100% (25/25), done.
+remote: Compressing objects: 100% (5/5), done.
+remote: Total 13 (delta 8), reused 12 (delta 7), pack-reused 0 (from 0)
+Unpacking objects: 100% (13/13), 54.99 KiB | 493.00 KiB/s, done.
+From https://github.com/mladenovpeter-maker/skyguard
+   f07b4a5..84d2364  main       -> origin/main
+Updating f07b4a5..84d2364
+Fast-forward
+ artifacts/skyguard-dome/public/model.stl              | 65378 ++++++++++++++++++++++++++++++++++++++++++++++++++---------------------------------------------------
+ artifacts/skyguard-os/src/components/layout/Shell.tsx |     2 +-
+ artifacts/skyguard-os/src/pages/home.tsx              |    30 +-
+ 3 files changed, 32715 insertions(+), 32695 deletions(-)
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2722 modules transformed.
+dist/public/index.html                   1.38 kB │ gzip:   0.54 kB
+dist/public/assets/index-tyOZ5Ao5.css  143.15 kB │ gzip:  29.60 kB
+dist/public/assets/index-CovWdUaK.js   767.32 kB │ gzip: 236.24 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 4.78s
+[sudo] password for tmm: 
+2026/07/24 05:12:59 [notice] 1663106#1663106: signal process started
+tmm@tmm:~/skyguard$ 
