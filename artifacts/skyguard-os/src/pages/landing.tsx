@@ -413,7 +413,7 @@ export default function LandingPage() {
               </div>
               <div className="p-6 space-y-3">
                 {[
-                  ["DJI Mini 2 / Mini SE", "249g — без Remote ID, OcuSync proprietary"],
+                  ["DJI Mini 2 / Mini SE", "Без Remote ID, OcuSync proprietary"],
                   ["DJI Phantom 4 (стар)", "Без Remote ID, стар OcuSync"],
                   ["DJI FPV Gen 1",        "Без Remote ID"],
                   ["Военни дрони",         "Криптирани, frequency hopping"],
@@ -425,11 +425,6 @@ export default function LandingPage() {
                     <span className="text-xs text-right shrink-0" style={{ color:"rgba(255,80,80,0.6)" }}>{reason}</span>
                   </div>
                 ))}
-              </div>
-              <div className="px-6 pb-5">
-                <div className="text-xs p-3" style={{ background:"rgba(245,158,11,0.06)", border:"1px solid rgba(245,158,11,0.2)", color:"rgba(245,158,11,0.8)" }}>
-                  ⚠ DJI Mini 2 е точно 249g — под Remote ID прага. RF дава подозрение, не потвърждение.
-                </div>
               </div>
             </div>
           </div>
@@ -467,26 +462,66 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── HARDWARE ─────────────────────────────────────────────────────── */}
-      <section className="py-24 px-6" style={{ borderTop:"1px solid rgba(0,255,136,0.08)", background:"rgba(0,0,0,0.3)" }}>
+      {/* ── VISUAL SHOWCASE ──────────────────────────────────────────────── */}
+      <section className="py-24 px-6" style={{ borderTop:"1px solid rgba(0,255,136,0.08)", background:"rgba(0,0,0,0.25)" }}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <div className="text-xs tracking-[0.3em] mb-3" style={{ color:"rgba(0,255,136,0.5)" }}>ХАРДУЕР</div>
-            <h2 className="text-3xl font-bold">Работи на стандартен хардуер</h2>
-            <p className="text-sm mt-3" style={{ color:"rgba(255,255,255,0.35)" }}>Без proprietary устройства. Всеки компонент е достъпен и заменяем.</p>
+            <div className="text-xs tracking-[0.3em] mb-3" style={{ color:"rgba(0,255,136,0.5)" }}>В ДЕЙСТВИЕ</div>
+            <h2 className="text-3xl font-bold">Реална засечена заплаха</h2>
+            <p className="text-sm mt-3 max-w-xl mx-auto" style={{ color:"rgba(255,255,255,0.35)" }}>
+              Системата работи 24/7. Всяко засичане се записва с timestamp, координати и RF данни.
+            </p>
           </div>
-          <div className="grid lg:grid-cols-3 gap-6">
-            {[
-              { name:"Raspberry Pi 4", role:"Централен процесор", spec:"4-core ARM · 4GB RAM · 24/7", color:"#00ff88" },
-              { name:"HackRF One",     role:"RF Спектър 1MHz–6GHz",     spec:"SDR · 20 MSPS · Пасивен",   color:"#0ea5e9" },
-              { name:"Nordic nRF52840",role:"Remote ID / BLE декодер",  spec:"ASTM F3411 · hci_usb",      color:"#a78bfa" },
-            ].map(({ name, role, spec, color }) => (
-              <div key={name} className="p-6 text-center" style={{ border:`1px solid ${color}22`, background:`${color}05` }}>
-                <div className="text-2xl font-bold mb-2" style={{ color }}>{name}</div>
-                <div className="text-sm mb-1" style={{ color:"rgba(255,255,255,0.6)" }}>{role}</div>
-                <div className="text-xs tracking-widest" style={{ color:"rgba(255,255,255,0.25)" }}>{spec}</div>
+
+          {/* Main showcase — UI screenshot + device photo */}
+          <div className="grid lg:grid-cols-2 gap-6 mb-6">
+            {/* App UI */}
+            <div style={{ border:"1px solid rgba(0,255,136,0.15)", overflow:"hidden", position:"relative" }}>
+              <div className="px-4 py-2 flex items-center gap-2" style={{ borderBottom:"1px solid rgba(0,255,136,0.1)", background:"rgba(0,0,0,0.4)" }}>
+                <StatusDot />
+                <span className="text-xs tracking-widest" style={{ color:"rgba(0,255,136,0.6)" }}>RADAR — LIVE VIEW</span>
               </div>
-            ))}
+              <img
+                src={`${import.meta.env.BASE_URL}ui-radar.jpg`}
+                alt="DronExit radar live view"
+                className="w-full block"
+                style={{ filter:"brightness(0.95) contrast(1.05)" }}
+              />
+            </div>
+
+            {/* Device photo */}
+            <div style={{ border:"1px solid rgba(255,255,255,0.08)", overflow:"hidden" }}>
+              <div className="px-4 py-2 flex items-center gap-2" style={{ borderBottom:"1px solid rgba(255,255,255,0.06)", background:"rgba(0,0,0,0.4)" }}>
+                <span className="w-2 h-2 rounded-full" style={{ background:"rgba(255,255,255,0.2)" }} />
+                <span className="text-xs tracking-widest" style={{ color:"rgba(255,255,255,0.3)" }}>УСТРОЙСТВО</span>
+              </div>
+              <img
+                src={`${import.meta.env.BASE_URL}skyguard_dome.jpg`}
+                alt="DronExit detection unit"
+                className="w-full block object-cover"
+                style={{ maxHeight:340, objectPosition:"center" }}
+              />
+            </div>
+          </div>
+
+          {/* Two more photos */}
+          <div className="grid lg:grid-cols-2 gap-6">
+            <div style={{ border:"1px solid rgba(255,255,255,0.08)", overflow:"hidden" }}>
+              <img
+                src={`${import.meta.env.BASE_URL}skyguard_box_exterior.jpg`}
+                alt="DronExit unit exterior"
+                className="w-full block object-cover"
+                style={{ maxHeight:240, objectPosition:"center" }}
+              />
+            </div>
+            <div style={{ border:"1px solid rgba(255,255,255,0.08)", overflow:"hidden" }}>
+              <img
+                src={`${import.meta.env.BASE_URL}skyguard_plastic_cutaway.jpg`}
+                alt="DronExit internal components"
+                className="w-full block object-cover"
+                style={{ maxHeight:240, objectPosition:"center" }}
+              />
+            </div>
           </div>
         </div>
       </section>
