@@ -233,8 +233,8 @@ export default function LandingPage() {
               transition={{ duration: 0.9, delay: 0.1, ease: [0.25,0.1,0.25,1] }}
               style={{ fontSize: "clamp(52px,5.5vw,80px)", fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 1.0, marginBottom: 24 }}
             >
-              Protect Your<br />
-              <span style={{ color: BLUE }}>Airspace.</span>
+              Know when a drone<br />
+              <span style={{ color: BLUE }}>enters your airspace.</span>
             </motion.h1>
 
             <motion.p
@@ -252,7 +252,7 @@ export default function LandingPage() {
               transition={{ duration: 0.8, delay: 0.28 }}
               style={{ marginBottom: 48 }}
             >
-              {["No cloud.", "No subscription.", "100% local processing."].map(t => (
+              {["Passive — no RF emissions.", "No cloud. No subscription.", "Made in EU · IP54 · 24/7."].map(t => (
                 <div key={t} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
                   <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke={BLUE} strokeWidth="1.2"/><path d="M4 7l2 2 4-4" stroke={BLUE} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg>
                   <span style={{ fontSize: 14, color: "rgba(255,255,255,0.5)" }}>{t}</span>
@@ -359,10 +359,10 @@ export default function LandingPage() {
               />
               {/* Hotspots */}
               {[
-                { top: "18%", left: "24%", label: "HackRF Pro" },
-                { top: "42%", left: "60%", label: "BLE Module" },
-                { top: "65%", left: "35%", label: "Wi-Fi Monitor" },
-                { top: "28%", left: "75%", label: "PoE Module" },
+                { top: "18%", left: "24%", label: "Spectrum Core" },
+                { top: "42%", left: "60%", label: "Remote ID Listener" },
+                { top: "65%", left: "35%", label: "Airspace Scanner" },
+                { top: "28%", left: "75%", label: "PoE Power Rail" },
               ].map(({ top, left, label }) => (
                 <div key={label} className="hotspot" style={{ top, left }} title={label}>
                   <div className="hotspot-dot" />
@@ -386,11 +386,11 @@ export default function LandingPage() {
             </Reveal>
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {[
-                { name: "HackRF Pro",       desc: "RF spectrum 400 MHz – 6 GHz" },
-                { name: "Nordic nRF52840",  desc: "Remote ID / BLE decoder" },
-                { name: "Wi-Fi Monitor",    desc: "Passive 802.11 detection" },
-                { name: "PoE Module",       desc: "IEEE 802.3af — single cable" },
-                { name: "Industrial Shell", desc: "IP54 rated enclosure" },
+                { name: "Spectrum Core",       desc: "Wideband RF 400 MHz – 6 GHz" },
+                { name: "Remote ID Listener", desc: "BLE · drone broadcast decoder" },
+                { name: "Airspace Scanner",   desc: "Passive 802.11 detection" },
+                { name: "PoE Power Rail",     desc: "Single cable — power + data" },
+                { name: "Industrial Shell",   desc: "IP54 · fanless · 24/7" },
               ].map(({ name, desc }, i) => (
                 <Reveal key={name} delay={0.18 + i * 0.06}>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 0", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
