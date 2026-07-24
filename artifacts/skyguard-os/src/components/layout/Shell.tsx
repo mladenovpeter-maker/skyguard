@@ -174,7 +174,7 @@ export function Shell({ children }: { children: ReactNode }) {
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <ShieldCheck className="h-5 w-5 text-primary" />
-            <h1 className="font-mono font-bold tracking-tight text-primary uppercase text-sm">SkyGuard OS</h1>
+            <h1 className="font-mono font-bold tracking-tight text-primary uppercase text-sm">DRONEXIT</h1>
           </div>
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-1">

@@ -463,10 +463,10 @@ export default function Home() {
   );
 
   return (
-    <div style={{ position: "absolute", inset: 0, display: "flex", overflow: "hidden" }}>
+    <div className="absolute inset-0 flex flex-col md:flex-row overflow-hidden">
       <AudioAlarm active={hasAlarm} />
 
-      {/* ── Map (left, flex-1) ── */}
+      {/* ── Map ── */}
       <div className="flex-1 relative min-w-0">
         <RadarMap config={config} activeTracks={tracks} rfAlerts={latestRfAlerts} />
 
@@ -491,12 +491,32 @@ export default function Home() {
             </div>
           )}
         </div>
+
+        {/* ── Mobile target strip (visible only on small screens) ── */}
+        <div className="md:hidden absolute bottom-0 left-0 right-0 z-[400] bg-black/80 backdrop-blur-md border-t border-border/50">
+          <div className="px-3 py-2 flex items-center gap-2">
+            <Crosshair className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+            <span className="font-mono text-xs font-bold text-primary uppercase tracking-wider">
+              {t("telemetry.activeTargets")}
+            </span>
+            <span className="ml-auto text-xs font-mono font-bold text-primary">{tracks.length}</span>
+          </div>
+          {tracks.length === 0 ? (
+            <div className="px-3 pb-2 text-[10px] font-mono text-muted-foreground/40 uppercase tracking-wider">
+              {t("telemetry.noTargets")}
+            </div>
+          ) : (
+            <div className="px-2 pb-2 flex gap-2 overflow-x-auto">
+              {tracks.slice(0, 3).map(track => <TargetCard key={track.droneId} track={track} />)}
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* ── Command Panel (right, fixed width) ── */}
+      {/* ── Command Panel (desktop only) ── */}
       <div
-        className="border-l border-border bg-card/80 backdrop-blur-md"
-        style={{ width: 360, flexShrink: 0, display: "grid", gridTemplateRows: "1fr 230px 150px 150px", overflow: "hidden" }}
+        className="hidden md:grid border-l border-border bg-card/80 backdrop-blur-md"
+        style={{ width: 360, flexShrink: 0, gridTemplateRows: "1fr 230px 150px 150px", overflow: "hidden" }}
       >
 
         {/* ── Section 1: Active Targets ── */}
