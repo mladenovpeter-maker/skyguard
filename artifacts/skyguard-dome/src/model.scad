@@ -1,89 +1,151 @@
-// ═══════════════════════════════════════════════
-//  SKYGUARD — DOME ENCLOSURE
-//  Референция: снимка — чист, гладък, без нищо отвън
-//  Купол се обръща върху основата, силиконово уплътнение
-//  Scaled за Bambu P1S (256mm): 230×90mm × 142mm
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+//  DronExit — Oval Dome Enclosure  (две части, 3D печат)
+//  Референция: снимка SkyGuard dome
+//
+//  ВАЖНО: основата е ЕЛИПСОВИДНА, не кръгла!
+//    Ширина (отпред): 250 mm  → rx = 125
+//    Дълбочина (отстрани): ~190 mm  → ry = 95
+//    Обща височина: ~165 mm
+//    Купол: ~115 mm (бял, почти сферичен профил)
+//    Основа: ~50 mm (черна, леко конична)
+// ═══════════════════════════════════════════════════════════════
 
 $fn = 128;
 epsilon = 0.01;
 
-// ── Размери ──────────────────────────────────────
-rx     = 115;   // X радиус → 230mm ширина
-ry     = 45;    // Y радиус → 90mm дълбочина
-dome_h = 102;   // Височина на купола
-base_h = 40;    // Височина на основата
-wall   = 4;     // Дебелина стени
+// ── Хоризонтални радиуси (елипса в план) ─────────────────────
+rx = 125;    // Ширина отпред  → 250 mm
+ry =  95;    // Дълбочина      → 190 mm  (НЕ е кръг!)
 
-// ── Монтажна плоча ───────────────────────────────
-plate_x  = rx + 20;
-plate_y  = ry + 20;
-plate_h  = 8;
-corner_r = 10;
+// ── Купол ─────────────────────────────────────────────────────
+dome_rz = 118;   // Вертикален радиус — близо до полусфера
+wall    =   3.5; // Дебелина стена
 
-// ── Цветове ──────────────────────────────────────
-dome_color  = "WhiteSmoke";
-base_color  = "#1e1e1e";
-plate_color = "#141414";
+// ── Основа ────────────────────────────────────────────────────
+base_h       = 50;   // Височина
+base_taper   =  8;   // С колко се стеснява отдолу (rx-taper, ry-taper)
 
-// ════════════════════════════════════════════════
-//  HELPERS
-// ════════════════════════════════════════════════
+// ── Фланец ────────────────────────────────────────────────────
+flange_h   = 10;
+flange_gap = 0.3;
 
-module upper_half_ellipsoid(ex, ey, ez) {
+// ── Кабелна втулка (M25, изпъкнала надолу) ───────────────────
+gland_r_hole = 12.5;
+gland_r_boss = 18;
+gland_boss_h = 18;
+
+// ── Цветове ───────────────────────────────────────────────────
+dome_color = "WhiteSmoke";
+base_color = "#1c1c1c";
+
+// ══════════════════════════════════════════════════════════════
+//  Горна половина на елипсоид с различни rx, ry, rz
+// ══════════════════════════════════════════════════════════════
+module upper_ellipsoid(erx, ery, erz) {
     intersection() {
-        scale([ex, ey, ez]) sphere(r = 1);
-        cylinder(h = ez + 1, r = max(ex, ey) + 1);
+        scale([erx, ery, erz]) sphere(r = 1);
+        // Изрязваме само горната половина
+        translate([0, 0, -epsilon])
+        scale([erx + 1, ery + 1, 1])
+        cylinder(h = erz + 1, r = 1);
     }
 }
 
-module ecyl(h, ex, ey) {
-    scale([ex, ey, 1]) cylinder(h = h, r = 1);
-}
-
-// ════════════════════════════════════════════════
-//  КУПОЛ — бял ASA, RF прозрачен
-//  Гладка черупка, НИЩО отвън
-// ════════════════════════════════════════════════
-module dome() {
+// ══════════════════════════════════════════════════════════════
+//  ГОРЕН КУПОЛ — бял
+// ══════════════════════════════════════════════════════════════
+module dome_part() {
     color(dome_color)
-    difference() {
-        upper_half_ellipsoid(rx, ry, dome_h);
-        translate([0, 0, wall])
-        upper_half_ellipsoid(rx - wall, ry - wall, dome_h - wall);
+    union() {
+        // Черупка
+        difference() {
+            upper_ellipsoid(rx, ry, dome_rz);
+            translate([0, 0, wall])
+            upper_ellipsoid(rx - wall, ry - wall, dome_rz - wall);
+        }
+
+        // Долен rim — ляга върху основата
+        translate([0, 0, -wall])
+        linear_extrude(wall + epsilon)
+        difference() {
+            ellipse_2d(rx, ry);
+            ellipse_2d(rx - wall, ry - wall);
+        }
+
+        // Male фланец
+        translate([0, 0, -flange_h])
+        linear_extrude(flange_h)
+        difference() {
+            ellipse_2d(rx - wall - flange_gap, ry - wall - flange_gap);
+            ellipse_2d(rx - 2*wall - flange_gap, ry - 2*wall - flange_gap);
+        }
     }
 }
 
-// ════════════════════════════════════════════════
-//  ОСНОВА — черен ASA
-//  Гладък цилиндър, НИЩО отвън
-// ════════════════════════════════════════════════
-module base() {
+// ══════════════════════════════════════════════════════════════
+//  ДОЛНА ОСНОВА — черна, елипсовидна, леко конична
+// ══════════════════════════════════════════════════════════════
+module base_part() {
     color(base_color)
     difference() {
-        ecyl(base_h, rx, ry);
+        union() {
+            // Конично тяло (елипса, малко по-тясна долу)
+            hull() {
+                // Горен ръб (= пълна ширина)
+                translate([0, 0, base_h - epsilon])
+                linear_extrude(epsilon)
+                ellipse_2d(rx, ry);
+
+                // Долен ръб (по-тесен)
+                translate([0, 0, 0])
+                linear_extrude(epsilon)
+                ellipse_2d(rx - base_taper, ry - base_taper);
+            }
+
+            // Плоско дъно — малка фаска
+            translate([0, 0, -2])
+            linear_extrude(2 + epsilon)
+            ellipse_2d(rx - base_taper - 2, ry - base_taper - 2);
+
+            // Кабелна водачка (цилиндрична — точно като снимката)
+            translate([0, 0, -(2 + gland_boss_h)])
+            cylinder(h = gland_boss_h + 2 + epsilon, r = gland_r_boss);
+        }
+
+        // Кух интериор
         translate([0, 0, wall])
-        ecyl(base_h + epsilon, rx - wall, ry - wall);
+        hull() {
+            translate([0, 0, base_h])
+            linear_extrude(epsilon)
+            ellipse_2d(rx - wall, ry - wall);
+
+            translate([0, 0, 0])
+            linear_extrude(epsilon)
+            ellipse_2d(rx - base_taper - wall, ry - base_taper - wall);
+        }
+
+        // Female гнездо за купола
+        translate([0, 0, base_h - flange_h])
+        linear_extrude(flange_h + epsilon)
+        ellipse_2d(rx - wall, ry - wall);
+
+        // Отвор за кабела
+        translate([0, 0, -(2 + gland_boss_h + epsilon)])
+        cylinder(h = gland_boss_h + wall + 4 + epsilon, r = gland_r_hole);
     }
 }
 
-// ════════════════════════════════════════════════
-//  МОНТАЖНА ПЛОЧА — черна, долу
-//  Проста плоча с заоблени ъгли
-// ════════════════════════════════════════════════
-module mount_plate() {
-    color(plate_color)
-    translate([0, 0, -plate_h])
-    hull() {
-        for (sx = [-1, 1]) for (sy = [-1, 1])
-        translate([sx * (plate_x - corner_r), sy * (plate_y - corner_r), 0])
-        cylinder(h = plate_h, r = corner_r);
-    }
+// ══════════════════════════════════════════════════════════════
+//  HELPER: 2D елипса
+// ══════════════════════════════════════════════════════════════
+module ellipse_2d(a, b) {
+    scale([a, b]) circle(r = 1);
 }
 
-// ════════════════════════════════════════════════
-//  СГЛОБКА
-// ════════════════════════════════════════════════
-mount_plate();
-base();
-translate([0, 0, base_h]) dome();
+// ══════════════════════════════════════════════════════════════
+//  СГЛОБЕН ИЗГЛЕД
+// ══════════════════════════════════════════════════════════════
+base_part();
+
+translate([0, 0, base_h])
+dome_part();

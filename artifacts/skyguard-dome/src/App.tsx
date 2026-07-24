@@ -211,9 +211,20 @@ function App() {
               </div>
             </dl>
 
-            <a className="download" href={modelUrl} download="model.stl">
-              Download STL
-            </a>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <a className="download" href={`${import.meta.env.BASE_URL}dome.stl`} download="dome_white.stl"
+                style={{ background: '#f0f0f0', color: '#111', textDecoration: 'none', display: 'block', textAlign: 'center', padding: '10px 0', fontWeight: 600, borderRadius: 6 }}>
+                ⬇ Купол (бял)
+              </a>
+              <a className="download" href={`${import.meta.env.BASE_URL}base.stl`} download="base_black.stl"
+                style={{ background: '#1c1c1c', color: '#fff', textDecoration: 'none', display: 'block', textAlign: 'center', padding: '10px 0', fontWeight: 600, borderRadius: 6 }}>
+                ⬇ Основа (черна)
+              </a>
+              <a href={modelUrl} download="assembly.stl"
+                style={{ fontSize: 12, color: '#888', textAlign: 'center', display: 'block', marginTop: 4 }}>
+                Сглобен (преглед)
+              </a>
+            </div>
           </>
         ) : (
           <div className={`status ${modelState.status}`}>

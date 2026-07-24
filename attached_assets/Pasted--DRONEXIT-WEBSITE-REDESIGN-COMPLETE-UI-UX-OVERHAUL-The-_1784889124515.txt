@@ -1,0 +1,326 @@
+# DRONEXIT WEBSITE REDESIGN - COMPLETE UI/UX OVERHAUL
+
+The current website feels like a generic React admin template. We are not selling software. We are selling a premium hardware security appliance.
+
+The website must look like a product from Apple, Tesla, Ubiquiti, Verkada or Ajax Systems.
+
+DO NOT create another dashboard.
+Create a premium product landing page.
+
+--------------------------------------------------
+GENERAL DESIGN
+--------------------------------------------------
+
+Theme:
+- Premium
+- Modern
+- Minimal
+- Luxury
+- Dark
+
+Primary colors:
+- Black (#080808)
+- Dark Gray (#111111)
+- White
+- Electric Blue as accent
+
+Typography:
+- Large bold headlines
+- Minimal text
+- Large spacing
+- Premium feeling
+
+Corners:
+20-24px rounded
+
+Animations:
+- Smooth
+- Framer Motion
+- Fade
+- Blur
+- Scale
+- Floating product
+- No flashy animations
+
+--------------------------------------------------
+NAVIGATION
+--------------------------------------------------
+
+Home
+
+Features
+
+Hardware
+
+Dashboard
+
+Pricing
+
+Support
+
+Contact
+
+Sticky navigation with blur background.
+
+--------------------------------------------------
+HERO SECTION
+--------------------------------------------------
+
+The first screen must immediately explain the product.
+
+Headline:
+
+Protect Your Airspace.
+
+Subtitle:
+
+Know the moment a drone appears near your property.
+
+Supporting text:
+
+DronExit is a passive drone detection appliance designed for homes, villas, businesses and warehouses.
+No cloud.
+No subscription.
+100% local processing.
+
+Buttons:
+
+Watch Demo
+
+Buy Now
+
+On the right side:
+
+Large 3D render of the hardware.
+
+NOT screenshots.
+
+NOT dashboard.
+
+Real premium product render.
+
+Background:
+
+Very subtle animated radar waves.
+
+--------------------------------------------------
+TRUST SECTION
+--------------------------------------------------
+
+Large metrics:
+
+24/7 Monitoring
+
+100% Local Processing
+
+No Subscription
+
+One Cable Installation
+
+--------------------------------------------------
+WHY DRONEXIT
+--------------------------------------------------
+
+Six premium feature cards.
+
+Passive RF Detection
+
+Privacy First
+
+No Cloud
+
+PoE Installation
+
+Mobile Alerts
+
+Designed for Professionals
+
+--------------------------------------------------
+PRODUCT SECTION
+--------------------------------------------------
+
+Large product render.
+
+Exploded view.
+
+Show internal components:
+
+HackRF Pro
+
+BLE Module
+
+Wi-Fi Monitoring
+
+GPS
+
+PoE
+
+Cooling System
+
+Industrial Enclosure
+
+Each component should have animated hotspots.
+
+--------------------------------------------------
+HOW IT WORKS
+--------------------------------------------------
+
+Animated timeline.
+
+Drone
+
+↓
+
+RF Signal
+
+↓
+
+DronExit
+
+↓
+
+AI Analysis
+
+↓
+
+Instant Alert
+
+↓
+
+Dashboard & Mobile
+
+Very clean.
+
+Very modern.
+
+--------------------------------------------------
+LIVE DASHBOARD
+--------------------------------------------------
+
+Replace the fake admin dashboard.
+
+Create realistic security widgets.
+
+System Status
+
+Drone Detection
+
+Estimated Direction
+
+Signal Type
+
+Confidence
+
+Last Detection
+
+Connection Status
+
+Everything should feel like a security appliance.
+
+--------------------------------------------------
+MOBILE APP
+--------------------------------------------------
+
+Show beautiful phone mockups.
+
+Dark mode.
+
+Premium UI.
+
+Live notification:
+
+Drone detected nearby.
+
+Estimated direction:
+North-East
+
+Confidence:
+92%
+
+--------------------------------------------------
+USE CASES
+--------------------------------------------------
+
+Luxury Homes
+
+Villas
+
+Warehouses
+
+Factories
+
+Construction Sites
+
+Business Buildings
+
+Each with premium photography and icons.
+
+--------------------------------------------------
+PRICING
+--------------------------------------------------
+
+Simple.
+
+One product.
+
+DronExit
+
+€999
+
+No monthly subscription.
+
+Optional accessories below.
+
+--------------------------------------------------
+FOOTER
+--------------------------------------------------
+
+Professional.
+
+Documentation
+
+Downloads
+
+Privacy
+
+Terms
+
+Support
+
+Contact
+
+--------------------------------------------------
+IMPORTANT
+--------------------------------------------------
+
+The entire website should feel like:
+
+Apple + Ubiquiti + Verkada + Tesla.
+
+NOT Bootstrap.
+
+NOT Material Dashboard.
+
+NOT Admin Template.
+
+NOT SaaS.
+
+Every section must breathe with lots of whitespace.
+
+Use premium gradients only where appropriate.
+
+Reduce text.
+
+Increase visuals.
+
+Increase product renders.
+
+Increase animations.
+
+The visitor must immediately think:
+
+"This is a premium hardware security product."
+
+NOT
+
+"This is another React dashboard."

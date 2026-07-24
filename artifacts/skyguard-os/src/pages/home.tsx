@@ -8,7 +8,7 @@ import { format } from "date-fns";
 import { bg, enUS } from "date-fns/locale";
 import {
   AlertTriangle, Loader2, Zap, Activity, Crosshair, Navigation,
-  Radio, MapPin, Clock, ChevronRight, Bluetooth, Wifi, Signal
+  Radio, MapPin, Clock, ChevronRight, Bluetooth, Wifi, Signal, Compass
 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
@@ -98,6 +98,152 @@ function useRecentRfAlerts() {
     refetchInterval: 10_000,
     staleTime: 9_000,
   });
+}
+
+// ---------------------------------------------------------------------------
+// Direction Engine
+// ---------------------------------------------------------------------------
+
+function bearingToDeg(homeLat: number, homeLng: number, droneLat: number, droneLng: number): number {
+  const dLat = droneLat - homeLat;
+  const dLng = droneLng - homeLng;
+  const angle = Math.atan2(dLng, dLat) * (180 / Math.PI);
+  return (angle + 360) % 360;
+}
+
+const CARDINALS = [
+  { label: "Север",      short: "N"  },
+  { label: "Североизток", short: "NE" },
+  { label: "Изток",      short: "E"  },
+  { label: "Югоизток",   short: "SE" },
+  { label: "Юг",         short: "S"  },
+  { label: "Югозапад",   short: "SW" },
+  { label: "Запад",      short: "W"  },
+  { label: "Северозапад", short: "NW" },
+];
+
+const ARROWS: Record<string, string> = {
+  N: "↑", NE: "↗", E: "→", SE: "↘", S: "↓", SW: "↙", W: "←", NW: "↖",
+};
+
+interface DirectionResult {
+  direction: string | null;
+  short: string | null;
+  bearing: number | null;
+  confidence: number;
+  sources: string[];
+  signalDbm: number | null;
+}
+
+function computeDirection(
+  tracks: DroneTrack[],
+  rfAlerts: RfAlertMapEntry[],
+  config: { lat: number; lng: number } | undefined
+): DirectionResult {
+  const empty: DirectionResult = { direction: null, short: null, bearing: null, confidence: 0, sources: [], signalDbm: null };
+  if (!config) return empty;
+
+  // Priority 1 — active track with real GPS
+  const gpsTrack = tracks.find(t => t.lat && t.lng);
+  if (gpsTrack) {
+    const bearing = bearingToDeg(config.lat, config.lng, gpsTrack.lat, gpsTrack.lng);
+    const c = CARDINALS[Math.round(bearing / 45) % 8];
+    const rssi = gpsTrack.rssiDbm ?? -80;
+    const confidence = Math.round(Math.min(95, Math.max(60, 95 + (rssi + 40) * 0.5)));
+    return {
+      direction: c.label, short: c.short,
+      bearing: Math.round(bearing),
+      confidence,
+      sources: ["Remote ID"],
+      signalDbm: gpsTrack.rssiDbm ?? null,
+    };
+  }
+
+  // Priority 2 — RF only, no direction possible (честен отговор)
+  const active = rfAlerts.filter(a => a.threat === "high" || a.threat === "medium");
+  if (active.length > 0) {
+    const strongest = active.reduce((a, b) => b.peakDbm > a.peakDbm ? b : a);
+    return { direction: null, short: null, bearing: null, confidence: 0, sources: ["RF"], signalDbm: strongest.peakDbm };
+  }
+
+  return empty;
+}
+
+function DirectionWidget({ tracks, rfAlerts, config }: {
+  tracks: DroneTrack[];
+  rfAlerts: RfAlertMapEntry[];
+  config: { lat: number; lng: number } | undefined;
+}) {
+  const dir = computeDirection(tracks, rfAlerts, config);
+  const hasSignal    = dir.sources.length > 0;
+  const hasDirection = dir.direction !== null;
+
+  const confColor = dir.confidence >= 85 ? "#4ade80"
+    : dir.confidence >= 70 ? "#fbbf24"
+    : "#6b7280";
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", overflow: "hidden" }}>
+      {/* Header */}
+      <div className="px-3 py-2 flex items-center gap-2 border-b border-border/30" style={{ flexShrink: 0 }}>
+        <Compass className="w-3.5 h-3.5 text-primary" />
+        <span className="font-mono text-xs font-bold text-primary uppercase tracking-wider">Посока на заплаха</span>
+        {hasSignal && (
+          <div className="ml-auto flex gap-1">
+            {dir.sources.map(s => (
+              <span key={s} className="text-[9px] font-mono bg-white/10 px-1.5 py-0.5 rounded uppercase tracking-wide">
+                {s}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Body */}
+      <div className="flex items-center gap-3 px-3 py-2 flex-1">
+        {/* Arrow */}
+        <div
+          className="text-4xl font-bold leading-none w-12 text-center flex-shrink-0 select-none"
+          style={{ color: hasDirection ? confColor : "rgba(255,255,255,0.12)" }}
+        >
+          {hasDirection ? ARROWS[dir.short!] : "?"}
+        </div>
+
+        {/* Labels */}
+        <div className="flex-1 min-w-0">
+          {hasDirection ? (
+            <>
+              <div className="font-mono text-sm font-bold text-foreground leading-tight truncate">
+                {dir.direction}
+              </div>
+              <div className="font-mono text-[10px] text-muted-foreground mt-0.5">
+                {dir.bearing}° · {dir.signalDbm} dBm
+              </div>
+            </>
+          ) : hasSignal ? (
+            <div className="font-mono text-[11px] text-muted-foreground/60 leading-tight">
+              Посока неизвестна<br />
+              <span className="text-[10px] text-muted-foreground/40">Само RF — 1 антена</span>
+            </div>
+          ) : (
+            <div className="font-mono text-[11px] text-muted-foreground/30 uppercase tracking-wide">
+              Няма активен сигнал
+            </div>
+          )}
+        </div>
+
+        {/* Confidence */}
+        {hasDirection && (
+          <div className="flex-shrink-0 text-right">
+            <div className="font-mono text-xl font-bold leading-tight" style={{ color: confColor }}>
+              {dir.confidence}%
+            </div>
+            <div className="text-[9px] font-mono text-muted-foreground/40 uppercase">увереност</div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -516,7 +662,7 @@ export default function Home() {
       {/* ── Command Panel (desktop only) ── */}
       <div
         className="hidden md:grid border-l border-border bg-card/80 backdrop-blur-md"
-        style={{ width: 360, flexShrink: 0, gridTemplateRows: "1fr 230px 150px 150px", overflow: "hidden" }}
+        style={{ width: 360, flexShrink: 0, gridTemplateRows: "1fr 95px 230px 150px 150px", overflow: "hidden" }}
       >
 
         {/* ── Section 1: Active Targets ── */}
@@ -547,7 +693,12 @@ export default function Home() {
           </ScrollArea>
         </div>
 
-        {/* ── Section 2: RF Spectrum ── */}
+        {/* ── Section 2: Direction Widget ── */}
+        <div style={{ display: "flex", flexDirection: "column", overflow: "hidden", borderBottom: "1px solid hsl(var(--border) / 0.5)" }}>
+          <DirectionWidget tracks={tracks} rfAlerts={latestRfAlerts} config={config} />
+        </div>
+
+        {/* ── Section 3: RF Spectrum ── */}
         <div style={{ display: "flex", flexDirection: "column", overflow: "hidden", borderBottom: "1px solid hsl(var(--border) / 0.5)" }}>
           <div className="px-3 py-2 flex items-center gap-2" style={{ flexShrink: 0 }}>
             <Radio className="w-3.5 h-3.5 text-primary" />
