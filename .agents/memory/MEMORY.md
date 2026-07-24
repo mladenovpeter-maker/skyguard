@@ -6,3 +6,4 @@
 - [RF Fingerprinting статус](rf-datasets-todo.md) — модел натрениран (Jul 22), deploy-нат на Pi, зарежда се при старт на hackrf-bridge. ЗАВЪРШЕНО.
 - [Linux server deploy law](linux-deploy-law.md) — след ВСЯКА промяна по skyguard-os: `git pull && pnpm build && sudo nginx -s reload` на 192.168.100.224. ЗАДЪЛЖИТЕЛНО преди обявяване на задача за завършена.
 - [Linux server git sync quirk](linux-server-git-sync.md) — git pull пропуска Replit edits; прилагай с `sed -i` директно + rebuild. Всички WS URL-и: `wss://` на HTTPS.
+- [nginx image cache busting](nginx-image-cache.md) — при смяна на static asset (png/jpg) задължително ново файлово ime, иначе nginx сервира стария кеш дори след reload.
