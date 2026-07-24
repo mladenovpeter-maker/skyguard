@@ -278,8 +278,6 @@ export default function LandingPage() {
             transition={{ duration: 1.1, delay: 0.15, ease: [0.25,0.1,0.25,1] }}
             style={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center" }}
           >
-            {/* Glow behind */}
-            <div style={{ position: "absolute", width: 420, height: 420, borderRadius: "50%", background: `radial-gradient(circle, ${BLUE_GLOW} 0%, transparent 70%)`, pointerEvents: "none" }} />
             <motion.div style={{ y: imgY }}>
               <img
                 src={`${import.meta.env.BASE_URL}dronexit_hero.png`}
@@ -289,7 +287,9 @@ export default function LandingPage() {
                   height: "auto",
                   objectFit: "contain",
                   borderRadius: 20, display: "block",
-                  boxShadow: `0 32px 100px rgba(0,0,0,0.55), 0 0 50px ${BLUE_GLOW}`,
+                  boxShadow: "0 32px 100px rgba(0,0,0,0.6)",
+                  userSelect: "none",
+                  pointerEvents: "none",
                 }}
               />
             </motion.div>
