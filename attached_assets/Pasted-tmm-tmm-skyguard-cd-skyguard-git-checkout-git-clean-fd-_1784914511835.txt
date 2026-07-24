@@ -1,0 +1,58 @@
+tmm@tmm:~/skyguard$ cd ~/skyguard && git checkout -- . && git clean -fd && git pull && pnpm --filter @workspace/skyguard-os run build && sudo nginx -s reload
+Removing .env
+Removing artifacts/skyguard-os/public/uc_business_building.jpg
+Removing artifacts/skyguard-os/public/uc_construction_site.jpg
+Removing artifacts/skyguard-os/public/uc_factory.jpg
+Removing artifacts/skyguard-os/public/uc_luxury_home.jpg
+Removing artifacts/skyguard-os/public/uc_villa_estate.jpg
+Removing artifacts/skyguard-os/public/uc_yacht_marina.jpg
+Removing cloudflared.deb
+Removing hardware/rf-fingerprinting/rf_model.joblib
+Removing hardware/sparrow-bridge/.env
+Updating 4f57b63..fcb154f
+Fast-forward
+ artifacts/skyguard-os/index.html                                    |   2 +-
+ artifacts/skyguard-os/public/favicon.svg                            |   7 ++-
+ artifacts/skyguard-os/public/logo.svg                               |  13 ++---
+ artifacts/skyguard-os/public/uc_business_building.jpg               | Bin 0 -> 83036 bytes
+ artifacts/skyguard-os/public/uc_construction_site.jpg               | Bin 0 -> 77283 bytes
+ artifacts/skyguard-os/public/uc_factory.jpg                         | Bin 0 -> 94194 bytes
+ artifacts/skyguard-os/public/uc_luxury_home.jpg                     | Bin 0 -> 154318 bytes
+ artifacts/skyguard-os/public/uc_villa_estate.jpg                    | Bin 0 -> 117105 bytes
+ artifacts/skyguard-os/public/uc_yacht_marina.jpg                    | Bin 0 -> 65426 bytes
+ artifacts/skyguard-os/src/pages/landing.tsx                         |  24 +++++-----
+ artifacts/skyguard-os/src/pages/login.tsx                           | 233 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++--------------------------------
+ attached_assets/Generated_image_1_(15)_1784913193328.png            | Bin 0 -> 2111106 bytes
+ attached_assets/Generated_image_1_(16)_1784913193328.png            | Bin 0 -> 2110196 bytes
+ attached_assets/Generated_image_1_(7)_1784912994473.png             | Bin 0 -> 1358041 bytes
+ attached_assets/Screenshot_2026-07-24_at_20.19.42_1784913584429.png | Bin 0 -> 13196 bytes
+ 15 files changed, 176 insertions(+), 103 deletions(-)
+ create mode 100644 artifacts/skyguard-os/public/uc_business_building.jpg
+ create mode 100644 artifacts/skyguard-os/public/uc_construction_site.jpg
+ create mode 100644 artifacts/skyguard-os/public/uc_factory.jpg
+ create mode 100644 artifacts/skyguard-os/public/uc_luxury_home.jpg
+ create mode 100644 artifacts/skyguard-os/public/uc_villa_estate.jpg
+ create mode 100644 artifacts/skyguard-os/public/uc_yacht_marina.jpg
+ create mode 100644 attached_assets/Generated_image_1_(15)_1784913193328.png
+ create mode 100644 attached_assets/Generated_image_1_(16)_1784913193328.png
+ create mode 100644 attached_assets/Generated_image_1_(7)_1784912994473.png
+ create mode 100644 attached_assets/Screenshot_2026-07-24_at_20.19.42_1784913584429.png
+
+> @workspace/skyguard-os@0.0.0 build /home/tmm/skyguard/artifacts/skyguard-os
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 3123 modules transformed.
+dist/public/index.html                   1.25 kB │ gzip:   0.47 kB
+dist/public/assets/index-BfJSmr1g.css  140.96 kB │ gzip:  29.31 kB
+dist/public/assets/index-DP9dvY4R.js   906.94 kB │ gzip: 282.56 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.60s
+2026/07/24 17:35:03 [notice] 2496353#2496353: signal process started
+tmm@tmm:~/skyguard$ 
