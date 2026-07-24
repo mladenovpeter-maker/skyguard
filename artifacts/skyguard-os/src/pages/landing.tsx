@@ -285,10 +285,11 @@ export default function LandingPage() {
                 src={`${import.meta.env.BASE_URL}dronexit_hero.png`}
                 alt="DronExit hardware"
                 style={{
-                  width: 500, height: 500,
-                  objectFit: "cover", objectPosition: "center center",
-                  borderRadius: 24, display: "block",
-                  boxShadow: `0 40px 120px rgba(0,0,0,0.6), 0 0 60px ${BLUE_GLOW}`,
+                  width: 420,
+                  height: "auto",
+                  objectFit: "contain",
+                  borderRadius: 20, display: "block",
+                  boxShadow: `0 32px 100px rgba(0,0,0,0.55), 0 0 50px ${BLUE_GLOW}`,
                 }}
               />
             </motion.div>
