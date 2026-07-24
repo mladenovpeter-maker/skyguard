@@ -49,13 +49,14 @@ export default function LoginPage() {
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12, marginBottom: 48 }}>
           {/* Radar icon matching the landing page nav */}
           <svg width="42" height="42" viewBox="0 0 32 32" fill="none">
-            <circle cx="16" cy="16" r="15" stroke={BLUE} strokeWidth="1" opacity="0.2" />
-            <circle cx="16" cy="16" r="9" stroke={BLUE} strokeWidth="1" opacity="0.35" />
-            <circle cx="16" cy="16" r="3.5" fill={BLUE} opacity="0.9" />
-            <line x1="16" y1="16" x2="9" y2="7" stroke={BLUE} strokeWidth="1.5" strokeLinecap="round" opacity="0.7" />
+            <circle cx="16" cy="16" r="15" stroke="#ffffff" strokeWidth="1" opacity="0.25" />
+            <circle cx="16" cy="16" r="9"  stroke="#ffffff" strokeWidth="1" opacity="0.45" />
+            <circle cx="16" cy="16" r="3.5" fill="#ffffff" opacity="0.95" />
+            <line x1="16" y1="1" x2="16" y2="9" stroke="#ffffff" strokeWidth="1.5" strokeLinecap="round" opacity="0.9" />
+            <circle cx="21.5" cy="10.5" r="2" fill="#ff4040" />
           </svg>
           <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: "-0.03em", color: "#fff" }}>
-            Drone<span style={{ color: BLUE }}>Exit</span>
+            DronExit
           </div>
           <div style={{ fontSize: 12, fontWeight: 500, letterSpacing: "0.15em", color: "rgba(255,255,255,0.2)", textTransform: "uppercase" }}>
             Dashboard Access

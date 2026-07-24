@@ -192,10 +192,10 @@ export default function LandingPage() {
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
-            <circle cx="16" cy="16" r="14" stroke={BLUE} strokeWidth="1.5" fill="none"/>
-            <circle cx="16" cy="16" r="8"  stroke={BLUE} strokeWidth="1"   fill="none" opacity="0.5"/>
-            <circle cx="16" cy="16" r="3"  fill={BLUE}/>
-            <line x1="16" y1="2"  x2="16" y2="10" stroke={BLUE} strokeWidth="1.5"/>
+            <circle cx="16" cy="16" r="14" stroke="#ffffff" strokeWidth="1.5" fill="none" opacity="0.9"/>
+            <circle cx="16" cy="16" r="8"  stroke="#ffffff" strokeWidth="1"   fill="none" opacity="0.4"/>
+            <circle cx="16" cy="16" r="3"  fill="#ffffff"/>
+            <line x1="16" y1="2"  x2="16" y2="10" stroke="#ffffff" strokeWidth="1.5" opacity="0.9"/>
             <circle cx="21.5" cy="10.5" r="1.8" fill="#ff4040"/>
           </svg>
           <span style={{ fontSize: 15, fontWeight: 700, letterSpacing: "0.04em" }}>DronExit</span>
